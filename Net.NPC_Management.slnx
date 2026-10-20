@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Form/">
+    <Project Path="Net.NPC.Client/Net.NPC.Client.csproj" Id="09ba367c-7923-4ac0-87d7-3e48e461c328" />
+    <Project Path="Net.NPC.Server/Net.NPC.Server.csproj" Id="317c159c-7560-4334-9035-2ba2e2867acc" />
+  </Folder>
+  <Folder Name="/Library/">
+    <Project Path="Net.NPC.BLL/Net.NPC.BLL.csproj" Id="0a1129c6-b443-4348-9585-db18d8092227" />
+    <Project Path="Net.NPC.DAL/Net.NPC.DAL.csproj" Id="5a4d0077-c110-4d06-8a61-93a2aea24600" />
+    <Project Path="Net.NPC.DTO/Net.NPC.DTO.csproj" Id="d61681ab-6eaf-4f37-b0a0-ff048c307026" />
+  </Folder>
+</Solution>

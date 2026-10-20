@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="NPC.BLL/NPC.BLL.csproj" Id="300d1a0b-6835-4197-bbfd-dd9c82e663d1" />
+  <Project Path="NPC.Client/NPC.Client.csproj" />
+  <Project Path="NPC.DAL/NPC.DAL.csproj" Id="be0f5543-7e20-4497-a31c-bb084dc4a715" />
+  <Project Path="NPC.DTO/NPC.DTO.csproj" Id="7908bc81-824a-46b5-9848-5dc51c4f0bf6" />
+  <Project Path="NPC.Server/NPC.Server.csproj" />
+</Solution>
