@@ -153,16 +153,42 @@ namespace NPC.Server
 
             if (Login(username, password))
             {
+                Hide();
                 MessageBox.Show("Đăng nhập thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                // Chuyển sang Form Main
+                NPCData.Disconnect();
+            
+
+                frmMainServer fm = new frmMainServer();
+                fm.ShowDialog();
+                Close();
             }
             else
             {
                 MessageBox.Show("Tên đăng nhập hoặc mật khẩu không chính xác!", "Lỗi đăng nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtTenDangNhap.Text = "";
-                txtTenDangNhap.Text = "";
+                txtMatKhau.Text = "";
+                txtTenDangNhap.Focus();
             }
             picLoading.Visible = false;
+        }
+
+
+        private void txtTenDangNhap_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; 
+                txtMatKhau.Focus();        
+            }
+        }
+
+        private void txtMatKhau_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                btnConfirm.PerformClick();
+            }
         }
 
         #region non-use
@@ -171,12 +197,9 @@ namespace NPC.Server
         private void txtTenDangNhap_TextChanged(object sender, EventArgs e) { }
         private void txtMatKhau_TextChanged(object sender, EventArgs e) { }
         private void picLoading_Click(object sender, EventArgs e) { }
-
+        private void picNen_Click(object sender, EventArgs e){ }
         #endregion
 
-        private void picNen_Click(object sender, EventArgs e)
-        {
 
-        }
     }
 }

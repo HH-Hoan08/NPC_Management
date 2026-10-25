@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPC.DAL;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,6 +25,20 @@ namespace NPC.Server
         {
             string sql;
             sql = "select * from tblMay";
+        }
+
+        private void tsmiThoat_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void tsmiDangXuat_Click(object sender, EventArgs e)
+        {
+            Hide();
+            NPCData.Disconnect();
+            frmDangNhapServer fm = new frmDangNhapServer();
+            fm.ShowDialog();
+            Close();
         }
     }
 }

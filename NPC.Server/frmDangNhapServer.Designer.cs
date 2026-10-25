@@ -74,6 +74,7 @@
             txtTenDangNhap.Size = new Size(242, 35);
             txtTenDangNhap.TabIndex = 2;
             txtTenDangNhap.TextChanged += txtTenDangNhap_TextChanged;
+            txtTenDangNhap.KeyDown += txtTenDangNhap_KeyDown;
             // 
             // txtMatKhau
             // 
@@ -84,6 +85,7 @@
             txtMatKhau.Size = new Size(242, 35);
             txtMatKhau.TabIndex = 3;
             txtMatKhau.TextChanged += txtMatKhau_TextChanged;
+            txtMatKhau.KeyDown += txtMatKhau_KeyDown;
             // 
             // picLoading
             // 
