@@ -1,11 +1,18 @@
-using System;
-using System.Windows.Forms;
 using NPC.DAL;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Windows.Forms;
+using BCrypt.Net;
 
 namespace NPC.Server
 {
     public partial class frmDangNhapServer : Form
     {
+        private Size originalFormSize;
+        private Dictionary<Control, (Rectangle Bounds, float FontSize)> originalControls = new Dictionary<Control, (Rectangle, float)>();
+
         public frmDangNhapServer()
         {
             InitializeComponent();
@@ -13,20 +20,77 @@ namespace NPC.Server
 
         private void frmDangNhapServer_Load(object sender, EventArgs e)
         {
+            picLoading.Parent = picNen;
+
+            originalFormSize = this.ClientSize;
+            SaveOriginalControlBounds(this);
+
             IsDatabaseConn();
+            picLoading.Visible = false;
         }
 
-        private void IsDatabaseConn()
+        private void SaveOriginalControlBounds(Control parent)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                if (!originalControls.ContainsKey(c))
+                {
+                    originalControls.Add(c, (new Rectangle(c.Location, c.Size), c.Font.Size));
+                }
+                if (c.HasChildren)
+                {
+                    SaveOriginalControlBounds(c);
+                }
+            }
+        }
+
+        private void frmDangNhapServer_Resize(object sender, EventArgs e)
+        {
+            if (originalFormSize.Width == 0 || originalFormSize.Height == 0) return;
+
+            // Tính tỷ lệ co giãn X và Y
+            float scaleX = (float)this.ClientSize.Width / originalFormSize.Width;
+            float scaleY = (float)this.ClientSize.Height / originalFormSize.Height;
+            float scaleFont = Math.Min(scaleX, scaleY); // Dùng tỉ lệ nhỏ hơn để font không bị vỡ
+
+            // Tự động scale vị trí, kích thước và cỡ chữ của TẤT CẢ control
+            foreach (var kvp in originalControls)
+            {
+                Control c = kvp.Key;
+                Rectangle origBounds = kvp.Value.Bounds;
+                float origFontSize = kvp.Value.FontSize;
+
+                int newX = (int)(origBounds.X * scaleX);
+                int newY = (int)(origBounds.Y * scaleY);
+                int newWidth = (int)(origBounds.Width * scaleX);
+                int newHeight = (int)(origBounds.Height * scaleY);
+
+                c.Location = new Point(newX, newY);
+                c.Size = new Size(newWidth, newHeight);
+
+                // Scale Font chữ
+                if (origFontSize > 0)
+                {
+                    c.Font = new Font(c.Font.FontFamily, origFontSize * scaleFont, c.Font.Style);
+                }
+            }
+        }
+
+        private bool IsDatabaseConn()
         {
             try
             {
                 // Thử kết nối CSDL
                 NPCData.Connect();
-
                 // Nếu kết nối thành công
                 if (NPCData.IsOK)
                 {
-                    MessageBox.Show("Kết nối CSDL thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    MessageBox.Show("Đăng nhập vào CSDL thành công!",
+                        "Thông báo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    return true;
                 }
             }
             catch (Exception ex)
@@ -37,6 +101,7 @@ namespace NPC.Server
                                 MessageBoxIcon.Error);
                 OpenConfigDatabaseForm();
             }
+            return false;
         }
 
         private void OpenConfigDatabaseForm()
@@ -57,13 +122,61 @@ namespace NPC.Server
             // }
         }
 
-        #region non-Label
+        //Check Login
+        protected bool Login(string tenDangNhap, string matkhau)
+        {
+            string query = "SELECT PasswordHash FROM Employees WHERE Username = @Username";
+            object result = SQLHelper.ExecuteScalar(query, new SqlParameter("@Username", tenDangNhap));
+
+            if (result != null && result != DBNull.Value)
+            {
+                string pass = result.ToString();
+
+                string storedHash = BCrypt.Net.BCrypt.HashPassword(result.ToString());
+                return BCrypt.Net.BCrypt.Verify(matkhau, storedHash);
+            }
+            return false;
+        }
+
+        private void btnConfirm_Click(object sender, EventArgs e)
+        {
+            picLoading.Visible = true;
+            string username = txtTenDangNhap.Text;
+            string password = txtMatKhau.Text;
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+
+            if (Login(username, password))
+            {
+                MessageBox.Show("Đăng nhập thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // Chuyển sang Form Main
+            }
+            else
+            {
+                MessageBox.Show("Tên đăng nhập hoặc mật khẩu không chính xác!", "Lỗi đăng nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtTenDangNhap.Text = "";
+                txtTenDangNhap.Text = "";
+            }
+            picLoading.Visible = false;
+        }
+
+        #region non-use
         private void lblTen_Click(object sender, EventArgs e) { }
         private void lblMatKhau_Click(object sender, EventArgs e) { }
-        #endregion
-
         private void txtTenDangNhap_TextChanged(object sender, EventArgs e) { }
         private void txtMatKhau_TextChanged(object sender, EventArgs e) { }
         private void picLoading_Click(object sender, EventArgs e) { }
+
+        #endregion
+
+        private void picNen_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
@@ -7,8 +7,8 @@ namespace NPC.DAL
 {
     public class NPCData
     {
-        private const string DatabaseFileName = "NPCData.mdf";
-        private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Database", "NPCData.mdf"); public static SqlConnection Con;
+        private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Database", "NPCData.mdf");
+        public static SqlConnection Con;
         public static bool IsOK { get; private set; } = false;
 
         // Cho phép sửa ConnectionString nếu chuỗi mặc định không nối được
@@ -21,7 +21,11 @@ namespace NPC.DAL
                 if (!string.IsNullOrEmpty(CustomConnectionString))
                     return CustomConnectionString;
 
-                return $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""{DbPath}"";Integrated Security=True;Connect Timeout=30;";
+                return $@"Data Source=(LocalDB)\MSSQLLocalDB;" +
+               $@"AttachDbFilename=""{DbPath}"";" +
+               $@"Database=NPCData;" + 
+               $@"Integrated Security=True;" +
+               $@"Connect Timeout=30;";
             }
         }
 

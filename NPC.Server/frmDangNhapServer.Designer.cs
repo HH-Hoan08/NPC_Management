@@ -33,31 +33,34 @@
             txtTenDangNhap = new TextBox();
             txtMatKhau = new TextBox();
             picLoading = new PictureBox();
-            pictureBox1 = new PictureBox();
+            picNen = new PictureBox();
+            btnConfirm = new Button();
             ((System.ComponentModel.ISupportInitialize)picLoading).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picNen).BeginInit();
             SuspendLayout();
             // 
             // lblTen
             // 
+            lblTen.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lblTen.AutoSize = true;
             lblTen.Font = new Font("Rockwell", 14.25F, FontStyle.Bold);
             lblTen.ForeColor = SystemColors.ControlLightLight;
-            lblTen.Location = new Point(19, 345);
+            lblTen.Location = new Point(22, 460);
             lblTen.Name = "lblTen";
-            lblTen.Size = new Size(143, 23);
+            lblTen.Size = new Size(188, 29);
             lblTen.TabIndex = 0;
             lblTen.Text = "Tên đăng nhập";
             lblTen.Click += lblTen_Click;
             // 
             // lblMatKhau
             // 
+            lblMatKhau.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lblMatKhau.AutoSize = true;
             lblMatKhau.Font = new Font("Rockwell", 14.25F, FontStyle.Bold);
             lblMatKhau.ForeColor = SystemColors.ControlLightLight;
-            lblMatKhau.Location = new Point(19, 382);
+            lblMatKhau.Location = new Point(22, 509);
             lblMatKhau.Name = "lblMatKhau";
-            lblMatKhau.Size = new Size(96, 23);
+            lblMatKhau.Size = new Size(126, 29);
             lblMatKhau.TabIndex = 1;
             lblMatKhau.Text = "Mật khẩu";
             lblMatKhau.Click += lblMatKhau_Click;
@@ -65,63 +68,84 @@
             // txtTenDangNhap
             // 
             txtTenDangNhap.Font = new Font("Rockwell", 14.25F);
-            txtTenDangNhap.Location = new Point(168, 342);
+            txtTenDangNhap.Location = new Point(216, 458);
+            txtTenDangNhap.Margin = new Padding(3, 4, 3, 4);
             txtTenDangNhap.Name = "txtTenDangNhap";
-            txtTenDangNhap.Size = new Size(212, 30);
+            txtTenDangNhap.Size = new Size(242, 35);
             txtTenDangNhap.TabIndex = 2;
             txtTenDangNhap.TextChanged += txtTenDangNhap_TextChanged;
             // 
             // txtMatKhau
             // 
             txtMatKhau.Font = new Font("Rockwell", 14.25F);
-            txtMatKhau.Location = new Point(168, 378);
+            txtMatKhau.Location = new Point(216, 503);
+            txtMatKhau.Margin = new Padding(3, 4, 3, 4);
             txtMatKhau.Name = "txtMatKhau";
-            txtMatKhau.Size = new Size(212, 30);
+            txtMatKhau.Size = new Size(242, 35);
             txtMatKhau.TabIndex = 3;
             txtMatKhau.TextChanged += txtMatKhau_TextChanged;
             // 
             // picLoading
             // 
+            picLoading.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             picLoading.BackColor = Color.Transparent;
             picLoading.Image = Properties.Resources.loading_1;
-            picLoading.Location = new Point(680, 302);
+            picLoading.Location = new Point(766, 483);
+            picLoading.Margin = new Padding(3, 4, 3, 4);
             picLoading.Name = "picLoading";
-            picLoading.Size = new Size(35, 34);
+            picLoading.Size = new Size(111, 97);
             picLoading.SizeMode = PictureBoxSizeMode.Zoom;
             picLoading.TabIndex = 4;
             picLoading.TabStop = false;
             picLoading.Click += picLoading_Click;
             // 
-            // pictureBox1
+            // picNen
             // 
-            pictureBox1.BackColor = Color.Transparent;
-            pictureBox1.Image = Properties.Resources.brte;
-            pictureBox1.Location = new Point(-1, 0);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(802, 451);
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox1.TabIndex = 5;
-            pictureBox1.TabStop = false;
+            picNen.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            picNen.BackColor = Color.Transparent;
+            picNen.Image = Properties.Resources.brte;
+            picNen.Location = new Point(-3, 1);
+            picNen.Margin = new Padding(3, 4, 3, 4);
+            picNen.Name = "picNen";
+            picNen.Size = new Size(917, 599);
+            picNen.SizeMode = PictureBoxSizeMode.StretchImage;
+            picNen.TabIndex = 5;
+            picNen.TabStop = false;
+            picNen.Click += picNen_Click;
+            // 
+            // btnConfirm
+            // 
+            btnConfirm.Location = new Point(486, 483);
+            btnConfirm.Margin = new Padding(3, 4, 3, 4);
+            btnConfirm.Name = "btnConfirm";
+            btnConfirm.Size = new Size(98, 37);
+            btnConfirm.TabIndex = 6;
+            btnConfirm.Text = "Xác nhận";
+            btnConfirm.UseVisualStyleBackColor = true;
+            btnConfirm.Click += btnConfirm_Click;
             // 
             // frmDangNhapServer
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlText;
             BackgroundImageLayout = ImageLayout.Zoom;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(914, 600);
+            Controls.Add(btnConfirm);
             Controls.Add(picLoading);
             Controls.Add(txtMatKhau);
             Controls.Add(txtTenDangNhap);
             Controls.Add(lblMatKhau);
             Controls.Add(lblTen);
-            Controls.Add(pictureBox1);
+            Controls.Add(picNen);
             DoubleBuffered = true;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "frmDangNhapServer";
             Text = "Server";
             Load += frmDangNhapServer_Load;
+            Resize += frmDangNhapServer_Resize;
             ((System.ComponentModel.ISupportInitialize)picLoading).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picNen).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -133,6 +157,7 @@
         private TextBox txtTenDangNhap;
         private TextBox txtMatKhau;
         private PictureBox picLoading;
-        private PictureBox pictureBox1;
+        private PictureBox picNen;
+        private Button btnConfirm;
     }
 }
