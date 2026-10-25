@@ -28,35 +28,184 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridView = new DataGridView();
-            ((System.ComponentModel.ISupportInitialize)DataGridView).BeginInit();
+            ToolStripMenuItem tsmiDoanhThu;
+            msMenuChinh = new MenuStrip();
+            tsmiHeThong = new ToolStripMenuItem();
+            tsmiCauHinh = new ToolStripMenuItem();
+            tsmiTaiKhoan = new ToolStripMenuItem();
+            tsmiDangXuat = new ToolStripMenuItem();
+            tsmiCaiDatGiaoDien = new ToolStripMenuItem();
+            tsmiThoat = new ToolStripMenuItem();
+            tsmiQuanLy = new ToolStripMenuItem();
+            tsmiNapTien = new ToolStripMenuItem();
+            tsmiMonAn = new ToolStripMenuItem();
+            tsmiTroGiup = new ToolStripMenuItem();
+            tsmiHuongDan = new ToolStripMenuItem();
+            tsmiThongTin = new ToolStripMenuItem();
+            tsmiBaoCao = new ToolStripMenuItem();
+            tsmiHoiVien = new ToolStripMenuItem();
+            tsmiThongKe = new ToolStripMenuItem();
+            tsmiNhatKy = new ToolStripMenuItem();
+            tsmiDoanhThu = new ToolStripMenuItem();
+            msMenuChinh.SuspendLayout();
             SuspendLayout();
             // 
-            // DataGridView
+            // msMenuChinh
             // 
-            DataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DataGridView.Location = new Point(50, 124);
-            DataGridView.Name = "DataGridView";
-            DataGridView.Size = new Size(359, 204);
-            DataGridView.TabIndex = 0;
-            DataGridView.CellContentClick += DataGridView_CellContentClick;
+            msMenuChinh.ImageScalingSize = new Size(20, 20);
+            msMenuChinh.Items.AddRange(new ToolStripItem[] { tsmiHeThong, tsmiQuanLy, tsmiTroGiup, tsmiBaoCao });
+            msMenuChinh.Location = new Point(0, 0);
+            msMenuChinh.Name = "msMenuChinh";
+            msMenuChinh.Size = new Size(914, 28);
+            msMenuChinh.TabIndex = 1;
+            msMenuChinh.Text = "menuStrip1";
+            // 
+            // tsmiHeThong
+            // 
+            tsmiHeThong.DropDownItems.AddRange(new ToolStripItem[] { tsmiCauHinh, tsmiTaiKhoan, tsmiDangXuat, tsmiCaiDatGiaoDien, tsmiThoat });
+            tsmiHeThong.Name = "tsmiHeThong";
+            tsmiHeThong.Size = new Size(85, 24);
+            tsmiHeThong.Text = "Hệ thống";
+            // 
+            // tsmiCauHinh
+            // 
+            tsmiCauHinh.Name = "tsmiCauHinh";
+            tsmiCauHinh.Size = new Size(206, 26);
+            tsmiCauHinh.Text = "Cấu hình CSDL";
+            // 
+            // tsmiTaiKhoan
+            // 
+            tsmiTaiKhoan.Name = "tsmiTaiKhoan";
+            tsmiTaiKhoan.Size = new Size(206, 26);
+            tsmiTaiKhoan.Text = "Tài khoản";
+            // 
+            // tsmiDangXuat
+            // 
+            tsmiDangXuat.Name = "tsmiDangXuat";
+            tsmiDangXuat.Size = new Size(206, 26);
+            tsmiDangXuat.Text = "Đăng xuất";
+            tsmiDangXuat.Click += tsmiDangXuat_Click;
+            // 
+            // tsmiCaiDatGiaoDien
+            // 
+            tsmiCaiDatGiaoDien.Name = "tsmiCaiDatGiaoDien";
+            tsmiCaiDatGiaoDien.Size = new Size(206, 26);
+            tsmiCaiDatGiaoDien.Text = "Cài đặt giao diện";
+            tsmiCaiDatGiaoDien.Click += tsmiCaiDatGiaoDien_Click;
+            // 
+            // tsmiThoat
+            // 
+            tsmiThoat.Name = "tsmiThoat";
+            tsmiThoat.Size = new Size(206, 26);
+            tsmiThoat.Text = "Thoát";
+            tsmiThoat.Click += tsmiThoat_Click;
+            // 
+            // tsmiQuanLy
+            // 
+            tsmiQuanLy.DropDownItems.AddRange(new ToolStripItem[] { tsmiNapTien, tsmiMonAn });
+            tsmiQuanLy.Name = "tsmiQuanLy";
+            tsmiQuanLy.Size = new Size(73, 24);
+            tsmiQuanLy.Text = "Quản lý";
+            // 
+            // tsmiNapTien
+            // 
+            tsmiNapTien.Name = "tsmiNapTien";
+            tsmiNapTien.Size = new Size(224, 26);
+            tsmiNapTien.Text = "Hội viên/ nạp tiền";
+            // 
+            // tsmiMonAn
+            // 
+            tsmiMonAn.Name = "tsmiMonAn";
+            tsmiMonAn.Size = new Size(224, 26);
+            tsmiMonAn.Text = "Món ăn";
+            // 
+            // tsmiTroGiup
+            // 
+            tsmiTroGiup.DropDownItems.AddRange(new ToolStripItem[] { tsmiHuongDan, tsmiThongTin });
+            tsmiTroGiup.Name = "tsmiTroGiup";
+            tsmiTroGiup.Size = new Size(78, 24);
+            tsmiTroGiup.Text = "Trợ giúp";
+            // 
+            // tsmiHuongDan
+            // 
+            tsmiHuongDan.Name = "tsmiHuongDan";
+            tsmiHuongDan.Size = new Size(224, 26);
+            tsmiHuongDan.Text = "Hướng dẫn sử dụng";
+            // 
+            // tsmiThongTin
+            // 
+            tsmiThongTin.Name = "tsmiThongTin";
+            tsmiThongTin.Size = new Size(224, 26);
+            tsmiThongTin.Text = "Thông tin";
+            // 
+            // tsmiBaoCao
+            // 
+            tsmiBaoCao.DropDownItems.AddRange(new ToolStripItem[] { tsmiDoanhThu, tsmiHoiVien, tsmiThongKe, tsmiNhatKy });
+            tsmiBaoCao.Name = "tsmiBaoCao";
+            tsmiBaoCao.Size = new Size(77, 24);
+            tsmiBaoCao.Text = "Báo cáo";
+            // 
+            // tsmiDoanhThu
+            // 
+            tsmiDoanhThu.Name = "tsmiDoanhThu";
+            tsmiDoanhThu.Size = new Size(267, 26);
+            tsmiDoanhThu.Text = "Doanh thu";
+            // 
+            // tsmiHoiVien
+            // 
+            tsmiHoiVien.Name = "tsmiHoiVien";
+            tsmiHoiVien.Size = new Size(267, 26);
+            tsmiHoiVien.Text = "Nhật ký hội viên";
+            // 
+            // tsmiThongKe
+            // 
+            tsmiThongKe.Name = "tsmiThongKe";
+            tsmiThongKe.Size = new Size(267, 26);
+            tsmiThongKe.Text = "Thống kê dịch vụ bán chạy";
+            // 
+            // tsmiNhatKy
+            // 
+            tsmiNhatKy.Name = "tsmiNhatKy";
+            tsmiNhatKy.Size = new Size(267, 26);
+            tsmiNhatKy.Text = "Nhật ký hệ thống";
             // 
             // frmMainServer
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(DataGridView);
+            ClientSize = new Size(914, 600);
+            Controls.Add(msMenuChinh);
             HelpButton = true;
+            MainMenuStrip = msMenuChinh;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "frmMainServer";
             Text = "Quản lý Server Máy";
             Load += frmMainServer_Load;
-            ((System.ComponentModel.ISupportInitialize)DataGridView).EndInit();
+            Resize += frmMainServer_Resize;
+            msMenuChinh.ResumeLayout(false);
+            msMenuChinh.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
-
-        private DataGridView DataGridView;
+        private MenuStrip msMenuChinh;
+        private ToolStripMenuItem tsmiHeThong;
+        private ToolStripMenuItem tsmiQuanLy;
+        private ToolStripMenuItem tsmiBaoCao;
+        private ToolStripMenuItem tsmiTroGiup;
+        private ToolStripMenuItem tsmiCauHinh;
+        private ToolStripMenuItem tsmiTaiKhoan;
+        private ToolStripMenuItem tsmiDangXuat;
+        private ToolStripMenuItem tsmiCaiDatGiaoDien;
+        private ToolStripMenuItem tsmiNapTien;
+        private ToolStripMenuItem tsmiMonAn;
+        private ToolStripMenuItem tsmiDoanhThu;
+        private ToolStripMenuItem tsmiHoiVien;
+        private ToolStripMenuItem tsmiThongKe;
+        private ToolStripMenuItem tsmiNhatKy;
+        private ToolStripMenuItem tsmiHuongDan;
+        private ToolStripMenuItem tsmiThongTin;
+        private ToolStripMenuItem tsmiThoat;
     }
 }
