@@ -145,7 +145,6 @@
             Name = "frmDangNhapServer";
             Text = "Server";
             Load += frmDangNhapServer_Load;
-            Resize += frmDangNhapServer_Resize;
             ((System.ComponentModel.ISupportInitialize)picLoading).EndInit();
             ((System.ComponentModel.ISupportInitialize)picNen).EndInit();
             ResumeLayout(false);
