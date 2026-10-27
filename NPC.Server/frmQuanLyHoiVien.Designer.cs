@@ -1,4 +1,4 @@
-﻿namespace NPC.Server
+namespace NPC.Server
 {
     partial class frmQuanLyHoiVien
     {
@@ -29,398 +29,371 @@
         private void InitializeComponent()
         {
             lblTieuDe = new Label();
+            tableMain = new TableLayoutPanel();
+            // -- Cột trái --
+            pnlLeft = new Panel();
             gbThongTin = new GroupBox();
-            cboTrangThai = new ComboBox();
-            txtSoDu = new TextBox();
-            lblTrangThai = new Label();
-            lblSoDu = new Label();
-            txtDienThoai = new TextBox();
-            lblDienThoai = new Label();
-            lblMatKhau = new Label();
-            txtMatKhau = new TextBox();
-            txtHoTen = new TextBox();
+            lblMaHoiVien = new Label();
             txtMaHoiVien = new TextBox();
             lblHoTen = new Label();
-            lblMaHoiVien = new Label();
-            backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            txtHoTen = new TextBox();
+            lblMatKhau = new Label();
+            txtMatKhau = new TextBox();
+            lblDienThoai = new Label();
+            txtDienThoai = new TextBox();
+            lblSoDu = new Label();
+            txtSoDu = new TextBox();
+            lblTrangThai = new Label();
+            cboTrangThai = new ComboBox();
             gbTimKiem = new GroupBox();
-            btnLamMoi = new Button();
-            btnTimKiem = new Button();
-            txtTimKiem = new TextBox();
             lblTimKiem = new Label();
-            pnlChucNang = new Panel();
-            btnDong = new Button();
-            btnXuatFile = new Button();
-            btnNapTien = new Button();
-            btnNhapLai = new Button();
-            btnXoa = new Button();
-            btnSua = new Button();
-            btnThem = new Button();
+            txtTimKiem = new TextBox();
+            btnTimKiem = new Button();
+            btnLamMoi = new Button();
+            // -- Cột phải --
             gbDanhSach = new GroupBox();
-            lblTongSoDu = new Label();
-            lblTongSoHoiVien = new Label();
             dgvHoiVien = new DataGridView();
+            pnlSummary = new Panel();
+            lblTongSoHoiVien = new Label();
+            lblTongSoDu = new Label();
+            // -- Panel nút bấm --
+            pnlChucNang = new Panel();
+            btnThem = new Button();
+            btnSua = new Button();
+            btnXoa = new Button();
+            btnNhapLai = new Button();
+            btnNapTien = new Button();
+            btnXuatFile = new Button();
+            btnDong = new Button();
+
+            backgroundWorker = new System.ComponentModel.BackgroundWorker();
             saveFileDialog = new SaveFileDialog();
+
+            tableMain.SuspendLayout();
+            pnlLeft.SuspendLayout();
             gbThongTin.SuspendLayout();
             gbTimKiem.SuspendLayout();
-            pnlChucNang.SuspendLayout();
             gbDanhSach.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvHoiVien).BeginInit();
+            pnlSummary.SuspendLayout();
+            pnlChucNang.SuspendLayout();
             SuspendLayout();
-            // 
+
+            // ──────────────────────────────────────────
             // lblTieuDe
-            // 
-            lblTieuDe.AutoSize = true;
-            lblTieuDe.Font = new Font("Segoe UI", 13.7739134F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTieuDe.Location = new Point(444, 9);
+            // ──────────────────────────────────────────
+            lblTieuDe.Dock = DockStyle.Top;
+            lblTieuDe.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             lblTieuDe.Name = "lblTieuDe";
-            lblTieuDe.Size = new Size(217, 30);
+            lblTieuDe.Height = 40;
+            lblTieuDe.Text = "QUẢN LÝ HỘI VIÊN";
+            lblTieuDe.TextAlign = ContentAlignment.MiddleCenter;
             lblTieuDe.TabIndex = 0;
-            lblTieuDe.Text = "QUẢN LÝ HỘI VIÊN ";
-            // 
+
+            // ──────────────────────────────────────────
+            // pnlChucNang (Dock Bottom)
+            // ──────────────────────────────────────────
+            pnlChucNang.Dock = DockStyle.Bottom;
+            pnlChucNang.Height = 55;
+            pnlChucNang.Name = "pnlChucNang";
+            pnlChucNang.TabIndex = 3;
+            pnlChucNang.Controls.Add(btnThem);
+            pnlChucNang.Controls.Add(btnSua);
+            pnlChucNang.Controls.Add(btnXoa);
+            pnlChucNang.Controls.Add(btnNhapLai);
+            pnlChucNang.Controls.Add(btnNapTien);
+            pnlChucNang.Controls.Add(btnXuatFile);
+            pnlChucNang.Controls.Add(btnDong);
+
+            btnThem.Location = new Point(10, 8);
+            btnThem.Size = new Size(100, 40);
+            btnThem.Text = "Thêm";
+            btnThem.TabIndex = 0;
+            btnThem.UseVisualStyleBackColor = true;
+
+            btnSua.Location = new Point(118, 8);
+            btnSua.Size = new Size(100, 40);
+            btnSua.Text = "Sửa";
+            btnSua.TabIndex = 1;
+            btnSua.UseVisualStyleBackColor = true;
+
+            btnXoa.Location = new Point(226, 8);
+            btnXoa.Size = new Size(100, 40);
+            btnXoa.Text = "Xóa";
+            btnXoa.TabIndex = 2;
+            btnXoa.UseVisualStyleBackColor = true;
+
+            btnNhapLai.Location = new Point(334, 8);
+            btnNhapLai.Size = new Size(100, 40);
+            btnNhapLai.Text = "Nhập lại";
+            btnNhapLai.TabIndex = 3;
+            btnNhapLai.UseVisualStyleBackColor = true;
+
+            btnNapTien.Location = new Point(442, 8);
+            btnNapTien.Size = new Size(100, 40);
+            btnNapTien.Text = "Nạp tiền";
+            btnNapTien.TabIndex = 4;
+            btnNapTien.UseVisualStyleBackColor = true;
+
+            btnXuatFile.Location = new Point(550, 8);
+            btnXuatFile.Size = new Size(100, 40);
+            btnXuatFile.Text = "Xuất File";
+            btnXuatFile.TabIndex = 5;
+            btnXuatFile.UseVisualStyleBackColor = true;
+
+            btnDong.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnDong.Location = new Point(772, 8);
+            btnDong.Size = new Size(100, 40);
+            btnDong.Text = "Đóng";
+            btnDong.TabIndex = 6;
+            btnDong.UseVisualStyleBackColor = true;
+
+            // ──────────────────────────────────────────
+            // tableMain — chia 2 cột: 35% trái | 65% phải
+            // ──────────────────────────────────────────
+            tableMain.Dock = DockStyle.Fill;
+            tableMain.ColumnCount = 2;
+            tableMain.RowCount = 1;
+            tableMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
+            tableMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
+            tableMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableMain.Name = "tableMain";
+            tableMain.TabIndex = 4;
+            tableMain.Padding = new Padding(5, 5, 5, 5);
+            tableMain.Controls.Add(pnlLeft, 0, 0);
+            tableMain.Controls.Add(gbDanhSach, 1, 0);
+
+            // ──────────────────────────────────────────
+            // pnlLeft — panel trái, fill cột TableLayout
+            // ──────────────────────────────────────────
+            pnlLeft.Dock = DockStyle.Fill;
+            pnlLeft.Name = "pnlLeft";
+            pnlLeft.TabIndex = 0;
+            pnlLeft.Controls.Add(gbTimKiem);
+            pnlLeft.Controls.Add(gbThongTin);
+
+            // ──────────────────────────────────────────
             // gbThongTin
-            // 
+            // ──────────────────────────────────────────
             gbThongTin.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            gbThongTin.Controls.Add(cboTrangThai);
-            gbThongTin.Controls.Add(txtSoDu);
-            gbThongTin.Controls.Add(lblTrangThai);
-            gbThongTin.Controls.Add(lblSoDu);
-            gbThongTin.Controls.Add(txtDienThoai);
-            gbThongTin.Controls.Add(lblDienThoai);
-            gbThongTin.Controls.Add(lblMatKhau);
-            gbThongTin.Controls.Add(txtMatKhau);
-            gbThongTin.Controls.Add(txtHoTen);
-            gbThongTin.Controls.Add(txtMaHoiVien);
-            gbThongTin.Controls.Add(lblHoTen);
-            gbThongTin.Controls.Add(lblMaHoiVien);
-            gbThongTin.Location = new Point(12, 55);
+            gbThongTin.Location = new Point(0, 0);
             gbThongTin.Name = "gbThongTin";
-            gbThongTin.Size = new Size(1069, 113);
-            gbThongTin.TabIndex = 1;
+            gbThongTin.Height = 246;
+            gbThongTin.TabIndex = 0;
             gbThongTin.TabStop = false;
             gbThongTin.Text = "Thông tin hội viên";
-            // 
-            // cboTrangThai
-            // 
-            cboTrangThai.FormattingEnabled = true;
-            cboTrangThai.Location = new Point(807, 64);
-            cboTrangThai.Name = "cboTrangThai";
-            cboTrangThai.Size = new Size(198, 27);
-            cboTrangThai.TabIndex = 11;
-            // 
-            // txtSoDu
-            // 
-            txtSoDu.Location = new Point(807, 32);
-            txtSoDu.Name = "txtSoDu";
-            txtSoDu.Size = new Size(198, 26);
-            txtSoDu.TabIndex = 10;
-            // 
-            // lblTrangThai
-            // 
-            lblTrangThai.AutoSize = true;
-            lblTrangThai.Location = new Point(698, 67);
-            lblTrangThai.Name = "lblTrangThai";
-            lblTrangThai.Size = new Size(75, 20);
-            lblTrangThai.TabIndex = 9;
-            lblTrangThai.Text = "Trạng thái";
-            // 
-            // lblSoDu
-            // 
-            lblSoDu.AutoSize = true;
-            lblSoDu.Location = new Point(698, 35);
-            lblSoDu.Name = "lblSoDu";
-            lblSoDu.Size = new Size(93, 20);
-            lblSoDu.TabIndex = 8;
-            lblSoDu.Text = "Số dư (VND)";
-            // 
-            // txtDienThoai
-            // 
-            txtDienThoai.Location = new Point(432, 64);
-            txtDienThoai.Name = "txtDienThoai";
-            txtDienThoai.Size = new Size(207, 26);
-            txtDienThoai.TabIndex = 7;
-            // 
-            // lblDienThoai
-            // 
-            lblDienThoai.AutoSize = true;
-            lblDienThoai.Location = new Point(345, 67);
-            lblDienThoai.Name = "lblDienThoai";
-            lblDienThoai.Size = new Size(81, 20);
-            lblDienThoai.TabIndex = 6;
-            lblDienThoai.Text = "Điện Thoại";
-            // 
-            // lblMatKhau
-            // 
-            lblMatKhau.AutoSize = true;
-            lblMatKhau.Location = new Point(6, 67);
-            lblMatKhau.Name = "lblMatKhau";
-            lblMatKhau.Size = new Size(70, 20);
-            lblMatKhau.TabIndex = 5;
-            lblMatKhau.Text = "Mật khẩu";
-            // 
-            // txtMatKhau
-            // 
-            txtMatKhau.Location = new Point(98, 64);
-            txtMatKhau.Name = "txtMatKhau";
-            txtMatKhau.Size = new Size(207, 26);
-            txtMatKhau.TabIndex = 4;
-            // 
-            // txtHoTen
-            // 
-            txtHoTen.Location = new Point(432, 32);
-            txtHoTen.Name = "txtHoTen";
-            txtHoTen.Size = new Size(207, 26);
-            txtHoTen.TabIndex = 3;
-            // 
-            // txtMaHoiVien
-            // 
-            txtMaHoiVien.Location = new Point(98, 32);
-            txtMaHoiVien.Name = "txtMaHoiVien";
-            txtMaHoiVien.Size = new Size(207, 26);
-            txtMaHoiVien.TabIndex = 2;
-            // 
-            // lblHoTen
-            // 
-            lblHoTen.AutoSize = true;
-            lblHoTen.Location = new Point(345, 35);
-            lblHoTen.Name = "lblHoTen";
-            lblHoTen.Size = new Size(73, 20);
-            lblHoTen.TabIndex = 1;
-            lblHoTen.Text = "Họ và tên";
-            // 
-            // lblMaHoiVien
-            // 
+            gbThongTin.Controls.Add(lblMaHoiVien);
+            gbThongTin.Controls.Add(txtMaHoiVien);
+            gbThongTin.Controls.Add(lblHoTen);
+            gbThongTin.Controls.Add(txtHoTen);
+            gbThongTin.Controls.Add(lblMatKhau);
+            gbThongTin.Controls.Add(txtMatKhau);
+            gbThongTin.Controls.Add(lblDienThoai);
+            gbThongTin.Controls.Add(txtDienThoai);
+            gbThongTin.Controls.Add(lblSoDu);
+            gbThongTin.Controls.Add(txtSoDu);
+            gbThongTin.Controls.Add(lblTrangThai);
+            gbThongTin.Controls.Add(cboTrangThai);
+
             lblMaHoiVien.AutoSize = true;
-            lblMaHoiVien.Location = new Point(6, 35);
-            lblMaHoiVien.Name = "lblMaHoiVien";
-            lblMaHoiVien.Size = new Size(86, 20);
-            lblMaHoiVien.TabIndex = 0;
+            lblMaHoiVien.Location = new Point(10, 28);
             lblMaHoiVien.Text = "Mã hội viên";
-            // 
+            lblMaHoiVien.TabIndex = 0;
+
+            txtMaHoiVien.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtMaHoiVien.Location = new Point(110, 24);
+            txtMaHoiVien.Size = new Size(180, 27);
+            txtMaHoiVien.TabIndex = 1;
+
+            lblHoTen.AutoSize = true;
+            lblHoTen.Location = new Point(10, 66);
+            lblHoTen.Text = "Họ và tên";
+            lblHoTen.TabIndex = 2;
+
+            txtHoTen.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtHoTen.Location = new Point(110, 62);
+            txtHoTen.Size = new Size(180, 27);
+            txtHoTen.TabIndex = 3;
+
+            lblMatKhau.AutoSize = true;
+            lblMatKhau.Location = new Point(10, 104);
+            lblMatKhau.Text = "Mật khẩu";
+            lblMatKhau.TabIndex = 4;
+
+            txtMatKhau.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtMatKhau.Location = new Point(110, 100);
+            txtMatKhau.Size = new Size(180, 27);
+            txtMatKhau.TabIndex = 5;
+
+            lblDienThoai.AutoSize = true;
+            lblDienThoai.Location = new Point(10, 142);
+            lblDienThoai.Text = "Điện thoại";
+            lblDienThoai.TabIndex = 6;
+
+            txtDienThoai.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtDienThoai.Location = new Point(110, 138);
+            txtDienThoai.Size = new Size(180, 27);
+            txtDienThoai.TabIndex = 7;
+
+            lblSoDu.AutoSize = true;
+            lblSoDu.Location = new Point(10, 180);
+            lblSoDu.Text = "Số dư (VNĐ)";
+            lblSoDu.TabIndex = 8;
+
+            txtSoDu.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtSoDu.Location = new Point(110, 176);
+            txtSoDu.Size = new Size(180, 27);
+            txtSoDu.TabIndex = 9;
+
+            lblTrangThai.AutoSize = true;
+            lblTrangThai.Location = new Point(10, 218);
+            lblTrangThai.Text = "Trạng thái";
+            lblTrangThai.TabIndex = 10;
+
+            cboTrangThai.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cboTrangThai.FormattingEnabled = true;
+            cboTrangThai.Location = new Point(110, 214);
+            cboTrangThai.Size = new Size(180, 28);
+            cboTrangThai.TabIndex = 11;
+
+            // ──────────────────────────────────────────
             // gbTimKiem
-            // 
+            // ──────────────────────────────────────────
             gbTimKiem.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            gbTimKiem.Controls.Add(btnLamMoi);
-            gbTimKiem.Controls.Add(btnTimKiem);
-            gbTimKiem.Controls.Add(txtTimKiem);
-            gbTimKiem.Controls.Add(lblTimKiem);
-            gbTimKiem.Location = new Point(12, 174);
+            gbTimKiem.Location = new Point(0, 254);
             gbTimKiem.Name = "gbTimKiem";
-            gbTimKiem.Size = new Size(1069, 87);
-            gbTimKiem.TabIndex = 2;
+            gbTimKiem.Height = 160;
+            gbTimKiem.TabIndex = 1;
             gbTimKiem.TabStop = false;
             gbTimKiem.Text = "Tìm kiếm";
-            // 
-            // btnLamMoi
-            // 
-            btnLamMoi.Location = new Point(618, 31);
-            btnLamMoi.Name = "btnLamMoi";
-            btnLamMoi.Size = new Size(122, 36);
-            btnLamMoi.TabIndex = 3;
-            btnLamMoi.Text = "Làm mới";
-            btnLamMoi.UseVisualStyleBackColor = true;
-            // 
-            // btnTimKiem
-            // 
-            btnTimKiem.Location = new Point(490, 31);
-            btnTimKiem.Name = "btnTimKiem";
-            btnTimKiem.Size = new Size(122, 36);
-            btnTimKiem.TabIndex = 2;
-            btnTimKiem.Text = "Tìm kiếm";
-            btnTimKiem.UseVisualStyleBackColor = true;
-            // 
-            // txtTimKiem
-            // 
-            txtTimKiem.Location = new Point(245, 31);
-            txtTimKiem.Name = "txtTimKiem";
-            txtTimKiem.Size = new Size(207, 26);
-            txtTimKiem.TabIndex = 1;
-            // 
-            // lblTimKiem
-            // 
+            gbTimKiem.Controls.Add(lblTimKiem);
+            gbTimKiem.Controls.Add(txtTimKiem);
+            gbTimKiem.Controls.Add(btnTimKiem);
+            gbTimKiem.Controls.Add(btnLamMoi);
+
             lblTimKiem.AutoSize = true;
-            lblTimKiem.Location = new Point(6, 34);
-            lblTimKiem.Name = "lblTimKiem";
-            lblTimKiem.Size = new Size(216, 20);
-            lblTimKiem.TabIndex = 0;
+            lblTimKiem.Location = new Point(10, 30);
             lblTimKiem.Text = "Nhập Mã HV, Họ tên hoặc SĐT:";
-            // 
-            // pnlChucNang
-            // 
-            pnlChucNang.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            pnlChucNang.Controls.Add(btnDong);
-            pnlChucNang.Controls.Add(btnXuatFile);
-            pnlChucNang.Controls.Add(btnNapTien);
-            pnlChucNang.Controls.Add(btnNhapLai);
-            pnlChucNang.Controls.Add(btnXoa);
-            pnlChucNang.Controls.Add(btnSua);
-            pnlChucNang.Controls.Add(btnThem);
-            pnlChucNang.Location = new Point(12, 615);
-            pnlChucNang.Name = "pnlChucNang";
-            pnlChucNang.Size = new Size(1069, 61);
-            pnlChucNang.TabIndex = 3;
-            // 
-            // btnDong
-            // 
-            btnDong.Location = new Point(800, 3);
-            btnDong.Name = "btnDong";
-            btnDong.Size = new Size(99, 44);
-            btnDong.TabIndex = 6;
-            btnDong.Text = "Đóng";
-            btnDong.UseVisualStyleBackColor = true;
-            // 
-            // btnXuatFile
-            // 
-            btnXuatFile.Location = new Point(695, 3);
-            btnXuatFile.Name = "btnXuatFile";
-            btnXuatFile.Size = new Size(99, 44);
-            btnXuatFile.TabIndex = 5;
-            btnXuatFile.Text = "Xuất File";
-            btnXuatFile.UseVisualStyleBackColor = true;
-            // 
-            // btnNapTien
-            // 
-            btnNapTien.Location = new Point(590, 3);
-            btnNapTien.Name = "btnNapTien";
-            btnNapTien.Size = new Size(99, 44);
-            btnNapTien.TabIndex = 4;
-            btnNapTien.Text = "Nạp tiền";
-            btnNapTien.UseVisualStyleBackColor = true;
-            // 
-            // btnNhapLai
-            // 
-            btnNhapLai.Location = new Point(485, 3);
-            btnNhapLai.Name = "btnNhapLai";
-            btnNhapLai.Size = new Size(99, 44);
-            btnNhapLai.TabIndex = 3;
-            btnNhapLai.Text = "Nhập lại";
-            btnNhapLai.UseVisualStyleBackColor = true;
-            // 
-            // btnXoa
-            // 
-            btnXoa.Location = new Point(380, 3);
-            btnXoa.Name = "btnXoa";
-            btnXoa.Size = new Size(99, 44);
-            btnXoa.TabIndex = 2;
-            btnXoa.Text = "Xóa";
-            btnXoa.UseVisualStyleBackColor = true;
-            // 
-            // btnSua
-            // 
-            btnSua.Location = new Point(275, 3);
-            btnSua.Name = "btnSua";
-            btnSua.Size = new Size(99, 44);
-            btnSua.TabIndex = 1;
-            btnSua.Text = "Sửa";
-            btnSua.UseVisualStyleBackColor = true;
-            // 
-            // btnThem
-            // 
-            btnThem.Location = new Point(170, 3);
-            btnThem.Name = "btnThem";
-            btnThem.Size = new Size(99, 44);
-            btnThem.TabIndex = 0;
-            btnThem.Text = "Thêm";
-            btnThem.UseVisualStyleBackColor = true;
-            // 
-            // gbDanhSach
-            // 
-            gbDanhSach.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            gbDanhSach.Controls.Add(lblTongSoDu);
-            gbDanhSach.Controls.Add(lblTongSoHoiVien);
-            gbDanhSach.Controls.Add(dgvHoiVien);
-            gbDanhSach.Location = new Point(12, 267);
+            lblTimKiem.TabIndex = 0;
+
+            txtTimKiem.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtTimKiem.Location = new Point(10, 60);
+            txtTimKiem.Size = new Size(270, 27);
+            txtTimKiem.TabIndex = 1;
+
+            btnTimKiem.Location = new Point(10, 104);
+            btnTimKiem.Size = new Size(120, 40);
+            btnTimKiem.Text = "Tìm kiếm";
+            btnTimKiem.TabIndex = 2;
+            btnTimKiem.UseVisualStyleBackColor = true;
+
+            btnLamMoi.Location = new Point(140, 104);
+            btnLamMoi.Size = new Size(120, 40);
+            btnLamMoi.Text = "Làm mới";
+            btnLamMoi.TabIndex = 3;
+            btnLamMoi.UseVisualStyleBackColor = true;
+
+            // ──────────────────────────────────────────
+            // gbDanhSach — fill cột phải của tableMain
+            // ──────────────────────────────────────────
+            gbDanhSach.Dock = DockStyle.Fill;
             gbDanhSach.Name = "gbDanhSach";
-            gbDanhSach.Size = new Size(1069, 342);
-            gbDanhSach.TabIndex = 4;
+            gbDanhSach.TabIndex = 1;
             gbDanhSach.TabStop = false;
             gbDanhSach.Text = "Danh sách hội viên";
-            // 
-            // lblTongSoDu
-            // 
-            lblTongSoDu.AutoSize = true;
-            lblTongSoDu.Location = new Point(8, 310);
-            lblTongSoDu.Name = "lblTongSoDu";
-            lblTongSoDu.Size = new Size(134, 20);
-            lblTongSoDu.TabIndex = 2;
-            lblTongSoDu.Text = "Tổng số dư: 0 VNĐ";
-            // 
-            // lblTongSoHoiVien
-            // 
+            gbDanhSach.Controls.Add(dgvHoiVien);
+            gbDanhSach.Controls.Add(pnlSummary);
+
+            // pnlSummary — dock bottom trong gbDanhSach (không nhảy khi resize)
+            pnlSummary.Dock = DockStyle.Bottom;
+            pnlSummary.Height = 30;
+            pnlSummary.Name = "pnlSummary";
+            pnlSummary.Controls.Add(lblTongSoHoiVien);
+            pnlSummary.Controls.Add(lblTongSoDu);
+
             lblTongSoHoiVien.AutoSize = true;
-            lblTongSoHoiVien.Location = new Point(8, 279);
-            lblTongSoHoiVien.Name = "lblTongSoHoiVien";
-            lblTongSoHoiVien.Size = new Size(133, 20);
-            lblTongSoHoiVien.TabIndex = 1;
+            lblTongSoHoiVien.Location = new Point(10, 6);
             lblTongSoHoiVien.Text = "Tổng số: 0 hội viên";
-            // 
-            // dgvHoiVien
-            // 
+            lblTongSoHoiVien.Name = "lblTongSoHoiVien";
+            lblTongSoHoiVien.TabIndex = 0;
+
+            lblTongSoDu.AutoSize = true;
+            lblTongSoDu.Location = new Point(220, 6);
+            lblTongSoDu.Text = "Tổng số dư: 0 VNĐ";
+            lblTongSoDu.Name = "lblTongSoDu";
+            lblTongSoDu.TabIndex = 1;
+
+            // DataGridView fill phần còn lại
+            dgvHoiVien.Dock = DockStyle.Fill;
             dgvHoiVien.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvHoiVien.Location = new Point(6, 25);
             dgvHoiVien.Name = "dgvHoiVien";
             dgvHoiVien.RowHeadersWidth = 49;
-            dgvHoiVien.Size = new Size(1057, 241);
             dgvHoiVien.TabIndex = 0;
-            // 
+
+            // ──────────────────────────────────────────
             // frmQuanLyHoiVien
-            // 
-            AutoScaleDimensions = new SizeF(8F, 19F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1091, 703);
-            Controls.Add(gbDanhSach);
+            // ──────────────────────────────────────────
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new Size(882, 567);
+            Controls.Add(tableMain);
             Controls.Add(pnlChucNang);
-            Controls.Add(gbTimKiem);
-            Controls.Add(gbThongTin);
             Controls.Add(lblTieuDe);
             Name = "frmQuanLyHoiVien";
             Text = "Quản Lý Hội Viên";
+            Load += frmQuanLyHoiVien_Load;
+
+            tableMain.ResumeLayout(false);
+            pnlLeft.ResumeLayout(false);
             gbThongTin.ResumeLayout(false);
             gbThongTin.PerformLayout();
             gbTimKiem.ResumeLayout(false);
             gbTimKiem.PerformLayout();
-            pnlChucNang.ResumeLayout(false);
             gbDanhSach.ResumeLayout(false);
-            gbDanhSach.PerformLayout();
+            pnlSummary.ResumeLayout(false);
+            pnlSummary.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvHoiVien).EndInit();
+            pnlChucNang.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
         private Label lblTieuDe;
+        private TableLayoutPanel tableMain;
+        private Panel pnlLeft;
         private GroupBox gbThongTin;
-        private Label lblHoTen;
         private Label lblMaHoiVien;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
-        private TextBox txtHoTen;
         private TextBox txtMaHoiVien;
-        private TextBox txtDienThoai;
-        private Label lblDienThoai;
+        private Label lblHoTen;
+        private TextBox txtHoTen;
         private Label lblMatKhau;
         private TextBox txtMatKhau;
+        private Label lblDienThoai;
+        private TextBox txtDienThoai;
+        private Label lblSoDu;
         private TextBox txtSoDu;
         private Label lblTrangThai;
-        private Label lblSoDu;
         private ComboBox cboTrangThai;
         private GroupBox gbTimKiem;
         private Label lblTimKiem;
         private TextBox txtTimKiem;
-        private Button btnLamMoi;
         private Button btnTimKiem;
-        private Panel pnlChucNang;
-        private Button btnDong;
-        private Button btnXuatFile;
-        private Button btnNapTien;
-        private Button btnNhapLai;
-        private Button btnXoa;
-        private Button btnSua;
-        private Button btnThem;
+        private Button btnLamMoi;
         private GroupBox gbDanhSach;
-        private Label lblTongSoDu;
-        private Label lblTongSoHoiVien;
         private DataGridView dgvHoiVien;
+        private Panel pnlSummary;
+        private Label lblTongSoHoiVien;
+        private Label lblTongSoDu;
+        private Panel pnlChucNang;
+        private Button btnThem;
+        private Button btnSua;
+        private Button btnXoa;
+        private Button btnNhapLai;
+        private Button btnNapTien;
+        private Button btnXuatFile;
+        private Button btnDong;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
         private SaveFileDialog saveFileDialog;
     }
 }

@@ -14,5 +14,10 @@ namespace NPC.Server
         {
             InitializeComponent();
         }
+
+        private void frmQuanLyHoiVien_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
