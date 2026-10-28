@@ -72,8 +72,8 @@ namespace NPC.Server
         //Check Login
         protected bool Login(string tenDangNhap, string matkhau)
         {
-            string query = "SELECT MatKhau FROM NhanVien WHERE TenDangNhap = @TenDangNhap";
-            object result = SQLHelper.ExecuteScalar(query, new SqlParameter("@TenDangNhap", tenDangNhap));
+            string query = "SELECT PasswordHash FROM Employees WHERE Username = @Username";
+            object result = SQLHelper.ExecuteScalar(query, new SqlParameter("@Username", tenDangNhap));
 
             if (result != null && result != DBNull.Value)
             {
@@ -85,17 +85,11 @@ namespace NPC.Server
             return false;
         }
 
-        //test nhanh
-        string user = "admin";
-        string pass = "121212";
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             picLoading.Visible = true;
-            //string username = txtTenDangNhap.Text;
-            //string password = txtMatKhau.Text;
-
-            string username = user;
-            string password = pass;
+            string username = txtTenDangNhap.Text;
+            string password = txtMatKhau.Text;
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
