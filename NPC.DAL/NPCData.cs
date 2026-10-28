@@ -7,31 +7,20 @@ namespace NPC.DAL
 {
     public class NPCData
     {
-        private static readonly string DbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Database", "NPCData.mdf");
         public static SqlConnection Con;
         public static bool IsOK { get; private set; } = false;
 
         // Cho phép sửa ConnectionString nếu chuỗi mặc định không nối được
         public static string CustomConnectionString { get; set; }
 
-        public static string ConnectionString 
+        public static string ConnectionString
         {
             get
             {
                 if (!string.IsNullOrEmpty(CustomConnectionString))
                     return CustomConnectionString;
-
-                if (File.Exists(DbPath))
-                {
-                    return $@"Data Source=(LocalDB)\MSSQLLocalDB;" +
-                           $@"AttachDbFilename=""{DbPath}"";" +
-                           $@"Database=NPCData;" + 
-                           $@"Integrated Security=True;" +
-                           $@"Connect Timeout=30;";
-                }
-
-                return @"Data Source=(LocalDB)\MSSQLLocalDB;" +
-                       @"Database=NPCData;" + 
+                return @"Data Source=.;" +
+                       @"Initial Catalog=NPCData;" +
                        @"Integrated Security=True;" +
                        @"Connect Timeout=30;";
             }
@@ -57,7 +46,7 @@ namespace NPC.DAL
             {
                 IsOK = false;
                 LogToFile($"[ERROR] Kết nối DB thất bại: {ex.Message}");
-                
+
                 // Ném exception ra ngoài cho Form xử lý tiếp
                 throw new Exception("Không thể kết nối đến CSDL. Vui lòng kiểm tra lại cấu hình!", ex);
             }
