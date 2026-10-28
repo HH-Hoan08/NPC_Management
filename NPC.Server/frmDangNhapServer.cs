@@ -72,8 +72,8 @@ namespace NPC.Server
         //Check Login
         protected bool Login(string tenDangNhap, string matkhau)
         {
-            string query = "SELECT PasswordHash FROM Employees WHERE Username = @Username";
-            object result = SQLHelper.ExecuteScalar(query, new SqlParameter("@Username", tenDangNhap));
+            string query = "SELECT MatKhau FROM NhanVien WHERE TenDangNhap = @TenDangNhap";
+            object result = SQLHelper.ExecuteScalar(query, new SqlParameter("@TenDangNhap", tenDangNhap));
 
             if (result != null && result != DBNull.Value)
             {
