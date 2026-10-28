@@ -1,6 +1,7 @@
 -- ======================================================================================
 -- ĐỒ ÁN LẬP TRÌNH WINDOWS: HỆ THỐNG QUẢN LÝ QUÁN NÉT (NPC MANAGEMENT)
--- CƠ SỞ DỮ LIỆU CHUẨN 3NF: NPCData (TÊN BẢNG & CỘT THỰC THỂ TIẾNG VIỆT)
+-- CƠ SỞ DỮ LIỆU CHUẨN 3NF: NPCData
+-- CHUẨN HÓA 100% TIẾNG VIỆT: TÊN BẢNG, TÊN CỘT, DỮ LIỆU TRẠNG THÁI & HỆ THỐNG VIEWS
 -- Phụ trách thiết kế & Cài đặt: Phú
 -- Tương thích: Microsoft SQL Server 2019/2022 & SQL Server LocalDB
 -- ======================================================================================
@@ -25,6 +26,16 @@ GO
 -- ======================================================================================
 -- 1. XÓA CÁC ĐỐI TƯỢNG CŨ NẾU ĐÃ TỒN TẠI (ĐẢM BẢO CHẠY LẠI KHÔNG BỊ XUNG ĐỘT)
 -- ======================================================================================
+
+-- Xóa Views tiếng Việt
+IF OBJECT_ID('dbo.v_GiaoDich', 'V') IS NOT NULL DROP VIEW dbo.v_GiaoDich;
+IF OBJECT_ID('dbo.v_ChiTietDonHang', 'V') IS NOT NULL DROP VIEW dbo.v_ChiTietDonHang;
+IF OBJECT_ID('dbo.v_DonHang', 'V') IS NOT NULL DROP VIEW dbo.v_DonHang;
+IF OBJECT_ID('dbo.v_MonAn', 'V') IS NOT NULL DROP VIEW dbo.v_MonAn;
+IF OBJECT_ID('dbo.v_PhienChoi', 'V') IS NOT NULL DROP VIEW dbo.v_PhienChoi;
+IF OBJECT_ID('dbo.v_MayTram', 'V') IS NOT NULL DROP VIEW dbo.v_MayTram;
+IF OBJECT_ID('dbo.v_HoiVien', 'V') IS NOT NULL DROP VIEW dbo.v_HoiVien;
+IF OBJECT_ID('dbo.v_NhanVien', 'V') IS NOT NULL DROP VIEW dbo.v_NhanVien;
 
 -- Xóa Views tương thích tiếng Anh (nếu có)
 IF OBJECT_ID('dbo.Transactions', 'V') IS NOT NULL DROP VIEW dbo.Transactions;
@@ -82,7 +93,7 @@ IF OBJECT_ID('dbo.VaiTro', 'U') IS NOT NULL DROP TABLE dbo.VaiTro;
 GO
 
 -- ======================================================================================
--- 2. ĐỊNH NGHĨA 11 BẢNG THỰC THỂ TIẾNG VIỆT ĐẠT CHUẨN 3NF & CÁC RÀNG BUỘC TOÀN VẸN
+-- 2. ĐỊNH NGHĨA 11 BẢNG THỰC THỂ TIẾNG VIỆT ĐẠT CHUẨN 3NF & RÀNG BUỘC TOÀN VẸN
 -- ======================================================================================
 
 -- 2.1 Bảng VaiTro (Vai trò người dùng: Admin, Thu ngân, Kỹ thuật)
@@ -112,6 +123,7 @@ CREATE TABLE dbo.NhanVien
 GO
 
 -- 2.3 Bảng HoiVien (Khách hàng hội viên quán nét)
+-- Trạng thái: N'Hoạt động', N'Đang chơi', N'Bị khóa'
 CREATE TABLE dbo.HoiVien
 (
     MaHoiVien INT IDENTITY(1,1) NOT NULL,
@@ -121,7 +133,7 @@ CREATE TABLE dbo.HoiVien
     SoDu DECIMAL(18,2) NOT NULL CONSTRAINT DF_HoiVien_SoDu DEFAULT 0,
     TongThoiGianChoi INT NOT NULL CONSTRAINT DF_HoiVien_TongThoiGianChoi DEFAULT 0,
     NgayTao DATETIME NOT NULL CONSTRAINT DF_HoiVien_NgayTao DEFAULT GETDATE(),
-    TrangThai NVARCHAR(20) NOT NULL CONSTRAINT DF_HoiVien_TrangThai DEFAULT N'Hoạt động',
+    TrangThai NVARCHAR(30) NOT NULL CONSTRAINT DF_HoiVien_TrangThai DEFAULT N'Hoạt động',
     CONSTRAINT PK_HoiVien PRIMARY KEY CLUSTERED (MaHoiVien),
     CONSTRAINT UQ_HoiVien_TenDangNhap UNIQUE (TenDangNhap),
     CONSTRAINT CK_HoiVien_SoDu CHECK (SoDu >= 0),
@@ -142,6 +154,7 @@ CREATE TABLE dbo.KhuVucPhong
 GO
 
 -- 2.5 Bảng MayTram (Máy trạm phòng nét)
+-- Trạng thái full Tiếng Việt: N'Sẵn sàng' (Xanh), N'Đang dùng' (Đỏ), N'Bảo trì' (Vàng), N'Tắt máy' (Xám)
 CREATE TABLE dbo.MayTram
 (
     MaMay INT IDENTITY(1,1) NOT NULL,
@@ -149,7 +162,7 @@ CREATE TABLE dbo.MayTram
     DiaChiIP VARCHAR(45) NULL,
     DiaChiMAC VARCHAR(50) NULL,
     MaPhong INT NOT NULL,
-    TrangThai NVARCHAR(20) NOT NULL CONSTRAINT DF_MayTram_TrangThai DEFAULT N'Offline', -- 'Offline', 'Online', 'InUse', 'Locked'
+    TrangThai NVARCHAR(30) NOT NULL CONSTRAINT DF_MayTram_TrangThai DEFAULT N'Tắt máy',
     CONSTRAINT PK_MayTram PRIMARY KEY CLUSTERED (MaMay),
     CONSTRAINT UQ_MayTram_TenMay UNIQUE (TenMay),
     CONSTRAINT FK_MayTram_KhuVucPhong FOREIGN KEY (MaPhong) REFERENCES dbo.KhuVucPhong(MaPhong)
@@ -157,6 +170,7 @@ CREATE TABLE dbo.MayTram
 GO
 
 -- 2.6 Bảng PhienChoi (Phiên sử dụng máy trạm)
+-- Trạng thái phiên full Tiếng Việt: N'Đang chơi', N'Đã kết thúc'
 CREATE TABLE dbo.PhienChoi
 (
     MaPhienChoi BIGINT IDENTITY(1,1) NOT NULL,
@@ -167,7 +181,7 @@ CREATE TABLE dbo.PhienChoi
     TongPhutChoi INT NOT NULL CONSTRAINT DF_PhienChoi_TongPhutChoi DEFAULT 0,
     GiaGioApDung DECIMAL(18,2) NOT NULL, -- Giá giờ chốt tại thời điểm mở phiên (Snapshot Price)
     TienGio DECIMAL(18,2) NOT NULL CONSTRAINT DF_PhienChoi_TienGio DEFAULT 0,
-    TrangThaiPhien NVARCHAR(20) NOT NULL CONSTRAINT DF_PhienChoi_TrangThaiPhien DEFAULT N'Active', -- 'Active', 'Ended'
+    TrangThaiPhien NVARCHAR(30) NOT NULL CONSTRAINT DF_PhienChoi_TrangThaiPhien DEFAULT N'Đang chơi',
     CONSTRAINT PK_PhienChoi PRIMARY KEY CLUSTERED (MaPhienChoi),
     CONSTRAINT FK_PhienChoi_MayTram FOREIGN KEY (MaMay) REFERENCES dbo.MayTram(MaMay),
     CONSTRAINT FK_PhienChoi_HoiVien FOREIGN KEY (MaHoiVien) REFERENCES dbo.HoiVien(MaHoiVien),
@@ -204,6 +218,7 @@ CREATE TABLE dbo.MonAn
 GO
 
 -- 2.9 Bảng DonHang (Đơn đặt đồ ăn / dịch vụ từ máy trạm)
+-- Trạng thái đơn full Tiếng Việt: N'Chờ duyệt', N'Đang làm', N'Đã giao', N'Đã hủy'
 CREATE TABLE dbo.DonHang
 (
     MaDonHang BIGINT IDENTITY(1,1) NOT NULL,
@@ -211,7 +226,7 @@ CREATE TABLE dbo.DonHang
     MaMay INT NOT NULL,
     ThoiGianDat DATETIME NOT NULL CONSTRAINT DF_DonHang_ThoiGianDat DEFAULT GETDATE(),
     TongTien DECIMAL(18,2) NOT NULL CONSTRAINT DF_DonHang_TongTien DEFAULT 0,
-    TrangThai NVARCHAR(20) NOT NULL CONSTRAINT DF_DonHang_TrangThai DEFAULT N'Pending', -- 'Pending', 'Preparing', 'Delivered', 'Cancelled'
+    TrangThai NVARCHAR(30) NOT NULL CONSTRAINT DF_DonHang_TrangThai DEFAULT N'Chờ duyệt',
     CONSTRAINT PK_DonHang PRIMARY KEY CLUSTERED (MaDonHang),
     CONSTRAINT FK_DonHang_PhienChoi FOREIGN KEY (MaPhienChoi) REFERENCES dbo.PhienChoi(MaPhienChoi),
     CONSTRAINT FK_DonHang_MayTram FOREIGN KEY (MaMay) REFERENCES dbo.MayTram(MaMay),
@@ -304,7 +319,7 @@ GO
 -- 5. BỘ 4 TRIGGERS BẢO VỆ TOÀN VẸN DỮ LIỆU (FOOL-PROOF TRIGGERS)
 -- ======================================================================================
 
--- 5.1 Trigger chống mở trùng máy (ngăn 2 người mở cùng 1 máy trạm)
+-- 5.1 Trigger chống mở trùng máy (ngăn 2 người mở cùng 1 máy trạm khi đang dùng)
 CREATE TRIGGER dbo.trg_KiemTraTrangThaiMay
 ON dbo.PhienChoi
 AFTER INSERT
@@ -316,11 +331,11 @@ BEGIN
         SELECT 1
         FROM inserted i
         INNER JOIN dbo.MayTram m ON i.MaMay = m.MaMay
-        WHERE m.TrangThai = N'InUse'
+        WHERE m.TrangThai = N'Đang dùng'
           AND EXISTS (
               SELECT 1 FROM dbo.PhienChoi p 
               WHERE p.MaMay = i.MaMay 
-                AND p.TrangThaiPhien = N'Active' 
+                AND p.TrangThaiPhien = N'Đang chơi' 
                 AND p.MaPhienChoi <> i.MaPhienChoi
           )
     )
@@ -380,7 +395,7 @@ BEGIN
 END;
 GO
 
--- 5.4 Trigger tự động trừ tồn kho khi đơn hàng chuyển sang 'Delivered'
+-- 5.4 Trigger tự động trừ tồn kho khi đơn hàng chuyển sang 'Đã giao'
 CREATE TRIGGER dbo.trg_TruTonKhoKhiGiaoHang
 ON dbo.DonHang
 AFTER UPDATE
@@ -396,7 +411,7 @@ BEGIN
         INNER JOIN dbo.ChiTietDonHang ct ON m.MaMon = ct.MaMon
         INNER JOIN inserted i ON ct.MaDonHang = i.MaDonHang
         INNER JOIN deleted d ON i.MaDonHang = d.MaDonHang
-        WHERE i.TrangThai = N'Delivered' AND d.TrangThai <> N'Delivered';
+        WHERE i.TrangThai = N'Đã giao' AND d.TrangThai <> N'Đã giao';
     END
 END;
 GO
@@ -417,7 +432,7 @@ BEGIN
         BEGIN TRANSACTION;
         
         -- 1. Kiểm tra máy tồn tại và trạng thái
-        DECLARE @TrangThaiMay NVARCHAR(20), @DonGiaGio DECIMAL(18,2);
+        DECLARE @TrangThaiMay NVARCHAR(30), @DonGiaGio DECIMAL(18,2);
         SELECT @TrangThaiMay = m.TrangThai, @DonGiaGio = p.DonGiaGio
         FROM dbo.MayTram m
         INNER JOIN dbo.KhuVucPhong p ON m.MaPhong = p.MaPhong
@@ -430,9 +445,16 @@ BEGIN
             RETURN;
         END
         
-        IF @TrangThaiMay = N'InUse'
+        IF @TrangThaiMay = N'Đang dùng'
         BEGIN
             RAISERROR(N'Máy trạm hiện đang có người sử dụng!', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        IF @TrangThaiMay = N'Bảo trì'
+        BEGIN
+            RAISERROR(N'Máy trạm đang trong trạng thái bảo trì, không thể mở máy!', 16, 1);
             ROLLBACK TRANSACTION;
             RETURN;
         END
@@ -440,7 +462,7 @@ BEGIN
         -- 2. Nếu là hội viên, kiểm tra số dư và trạng thái
         IF @MaHoiVien IS NOT NULL
         BEGIN
-            DECLARE @SoDuHoiVien DECIMAL(18,2), @TrangThaiHoiVien NVARCHAR(20);
+            DECLARE @SoDuHoiVien DECIMAL(18,2), @TrangThaiHoiVien NVARCHAR(30);
             SELECT @SoDuHoiVien = SoDu, @TrangThaiHoiVien = TrangThai
             FROM dbo.HoiVien
             WHERE MaHoiVien = @MaHoiVien;
@@ -470,12 +492,12 @@ BEGIN
             UPDATE dbo.HoiVien SET TrangThai = N'Đang chơi' WHERE MaHoiVien = @MaHoiVien;
         END
         
-        -- 3. Cập nhật máy sang 'InUse'
-        UPDATE dbo.MayTram SET TrangThai = N'InUse' WHERE MaMay = @MaMay;
+        -- 3. Cập nhật máy sang 'Đang dùng'
+        UPDATE dbo.MayTram SET TrangThai = N'Đang dùng' WHERE MaMay = @MaMay;
         
         -- 4. Tạo bản ghi phiên chơi
         INSERT INTO dbo.PhienChoi (MaMay, MaHoiVien, ThoiGianBatDau, GiaGioApDung, TrangThaiPhien)
-        VALUES (@MaMay, @MaHoiVien, GETDATE(), @DonGiaGio, N'Active');
+        VALUES (@MaMay, @MaHoiVien, GETDATE(), @DonGiaGio, N'Đang chơi');
         
         SET @MaPhienChoiMoi = SCOPE_IDENTITY();
         
@@ -499,7 +521,7 @@ BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
         
-        DECLARE @MaMay INT, @MaHoiVien INT, @ThoiGianBatDau DATETIME, @GiaGioApDung DECIMAL(18,2), @TrangThaiPhien NVARCHAR(20);
+        DECLARE @MaMay INT, @MaHoiVien INT, @ThoiGianBatDau DATETIME, @GiaGioApDung DECIMAL(18,2), @TrangThaiPhien NVARCHAR(30);
         SELECT @MaMay = MaMay, 
                @MaHoiVien = MaHoiVien, 
                @ThoiGianBatDau = ThoiGianBatDau, 
@@ -515,7 +537,7 @@ BEGIN
             RETURN;
         END
         
-        IF @TrangThaiPhien = N'Ended'
+        IF @TrangThaiPhien = N'Đã kết thúc'
         BEGIN
             RAISERROR(N'Phiên chơi này đã kết thúc trước đó!', 16, 1);
             ROLLBACK TRANSACTION;
@@ -533,12 +555,12 @@ BEGIN
         SET ThoiGianKetThuc = @ThoiGianKetThuc,
             TongPhutChoi = @TongPhutChoi,
             TienGio = @TienGio,
-            TrangThaiPhien = N'Ended'
+            TrangThaiPhien = N'Đã kết thúc'
         WHERE MaPhienChoi = @MaPhienChoi;
         
-        -- Cập nhật máy về 'Online'
+        -- Cập nhật máy về 'Sẵn sàng'
         UPDATE dbo.MayTram
-        SET TrangThai = N'Online'
+        SET TrangThai = N'Sẵn sàng'
         WHERE MaMay = @MaMay;
         
         -- Nếu là hội viên: trừ số dư và cộng dồn thời gian chơi
@@ -642,7 +664,7 @@ BEGIN
         FROM dbo.PhienChoi p
         INNER JOIN dbo.MayTram m ON p.MaMay = m.MaMay
         INNER JOIN dbo.KhuVucPhong k ON m.MaPhong = k.MaPhong
-        WHERE p.TrangThaiPhien = N'Ended'
+        WHERE p.TrangThaiPhien = N'Đã kết thúc'
           AND p.ThoiGianBatDau >= @TuNgay AND p.ThoiGianBatDau <= @DenNgay
         GROUP BY CAST(p.ThoiGianBatDau AS DATE), k.TenPhong
         
@@ -659,7 +681,7 @@ BEGIN
         INNER JOIN dbo.ChiTietDonHang ct ON d.MaDonHang = ct.MaDonHang
         INNER JOIN dbo.MonAn m ON ct.MaMon = m.MaMon
         INNER JOIN dbo.DanhMuc dm ON m.MaDanhMuc = dm.MaDanhMuc
-        WHERE d.TrangThai = N'Delivered'
+        WHERE d.TrangThai = N'Đã giao'
           AND d.ThoiGianDat >= @TuNgay AND d.ThoiGianDat <= @DenNgay
         GROUP BY CAST(d.ThoiGianDat AS DATE), dm.TenDanhMuc
         
@@ -681,7 +703,7 @@ END;
 GO
 
 -- ======================================================================================
--- 7. CUNG CẤP CÁC PROCEDURES TƯƠNG THÍCH TÊN TIẾNG ANH (COMPATIBILITY WRAPPERS)
+-- 7. CÁC PROCEDURES TƯƠNG THÍCH TÊN TIẾNG ANH (COMPATIBILITY WRAPPERS)
 -- ======================================================================================
 CREATE PROCEDURE dbo.sp_StartSession
     @ComputerID INT,
@@ -723,75 +745,193 @@ END;
 GO
 
 -- ======================================================================================
--- 8. VIEW TƯƠNG THÍCH TÊN BẢNG TIẾNG ANH (COMPATIBILITY VIEWS CHO CODE TIẾNG ANH CỦA NHÓM)
+-- 8. HỆ THỐNG VIEWS NGHIỆP VỤ TIẾNG VIỆT (V_VIEWS)
 -- ======================================================================================
-CREATE VIEW dbo.Roles AS 
-SELECT MaVaiTro AS RoleID, TenVaiTro AS RoleName 
-FROM dbo.VaiTro;
+
+-- 8.1 View Nhân viên & Vai trò
+CREATE VIEW dbo.v_NhanVien AS
+SELECT 
+    nv.MaNhanVien,
+    nv.TenDangNhap,
+    nv.MatKhau,
+    nv.HoTen,
+    nv.SoDienThoai,
+    nv.MaVaiTro,
+    vt.TenVaiTro,
+    nv.TrangThai,
+    CASE WHEN nv.TrangThai = 1 THEN N'Đang làm việc' ELSE N'Nghỉ việc' END AS TenTrangThai
+FROM dbo.NhanVien nv
+INNER JOIN dbo.VaiTro vt ON nv.MaVaiTro = vt.MaVaiTro;
 GO
 
-CREATE VIEW dbo.Employees AS 
-SELECT MaNhanVien AS EmployeeID, TenDangNhap AS Username, MatKhau AS PasswordHash, HoTen AS FullName, SoDienThoai AS Phone, MaVaiTro AS RoleID, TrangThai AS IsActive 
-FROM dbo.NhanVien;
+-- 8.2 View Máy trạm & Khu vực phòng
+CREATE VIEW dbo.v_MayTram AS
+SELECT 
+    m.MaMay,
+    m.TenMay,
+    m.DiaChiIP,
+    m.DiaChiMAC,
+    m.MaPhong,
+    p.TenPhong,
+    p.DonGiaGio,
+    m.TrangThai
+FROM dbo.MayTram m
+INNER JOIN dbo.KhuVucPhong p ON m.MaPhong = p.MaPhong;
 GO
 
-CREATE VIEW dbo.Members AS 
-SELECT MaHoiVien AS MemberID, TenDangNhap AS Username, MatKhau AS PasswordHash, HoTen AS FullName, SoDu AS Balance, TongThoiGianChoi AS TotalPlayTimeMinutes, NgayTao AS CreatedAt, TrangThai AS Status 
+-- 8.3 View Danh sách Hội viên
+CREATE VIEW dbo.v_HoiVien AS
+SELECT 
+    MaHoiVien,
+    TenDangNhap,
+    MatKhau,
+    HoTen,
+    SoDu,
+    TongThoiGianChoi,
+    NgayTao,
+    TrangThai
 FROM dbo.HoiVien;
 GO
 
+-- 8.4 View Thực đơn Món ăn & Danh mục
+CREATE VIEW dbo.v_MonAn AS
+SELECT 
+    m.MaMon,
+    m.MaDanhMuc,
+    dm.TenDanhMuc,
+    m.TenMon,
+    m.DonGia,
+    m.SoLuongTon,
+    m.HinhAnh,
+    m.ConPhucVu,
+    CASE WHEN m.ConPhucVu = 1 AND m.SoLuongTon > 0 THEN N'Còn hàng' ELSE N'Hết hàng' END AS TinhTrang
+FROM dbo.MonAn m
+INNER JOIN dbo.DanhMuc dm ON m.MaDanhMuc = dm.MaDanhMuc;
+GO
+
+-- 8.5 View Danh sách Đơn hàng
+CREATE VIEW dbo.v_DonHang AS
+SELECT 
+    d.MaDonHang,
+    d.MaPhienChoi,
+    d.MaMay,
+    m.TenMay,
+    d.ThoiGianDat,
+    d.TongTien,
+    d.TrangThai
+FROM dbo.DonHang d
+INNER JOIN dbo.MayTram m ON d.MaMay = m.MaMay;
+GO
+
+-- 8.6 View Chi tiết Đơn hàng gọi món
+CREATE VIEW dbo.v_ChiTietDonHang AS
+SELECT 
+    ct.MaChiTiet,
+    ct.MaDonHang,
+    ct.MaMon,
+    m.TenMon,
+    ct.SoLuong,
+    ct.DonGia,
+    ct.ThanhTien
+FROM dbo.ChiTietDonHang ct
+INNER JOIN dbo.MonAn m ON ct.MaMon = m.MaMon;
+GO
+
+-- 8.7 View Lịch sử Phiên chơi
+CREATE VIEW dbo.v_PhienChoi AS
+SELECT 
+    p.MaPhienChoi,
+    p.MaMay,
+    m.TenMay,
+    p.MaHoiVien,
+    ISNULL(hv.HoTen, N'Khách vãng lai') AS TenKhachHang,
+    p.ThoiGianBatDau,
+    p.ThoiGianKetThuc,
+    p.TongPhutChoi,
+    p.GiaGioApDung,
+    p.TienGio,
+    p.TrangThaiPhien
+FROM dbo.PhienChoi p
+INNER JOIN dbo.MayTram m ON p.MaMay = m.MaMay
+LEFT JOIN dbo.HoiVien hv ON p.MaHoiVien = hv.MaHoiVien;
+GO
+
+-- 8.8 View Lịch sử Giao dịch Nạp tiền
+CREATE VIEW dbo.v_GiaoDich AS
+SELECT 
+    g.MaGiaoDich,
+    g.MaHoiVien,
+    ISNULL(hv.HoTen, N'Không xác định') AS TenHoiVien,
+    g.MaNhanVien,
+    nv.HoTen AS TenThuNgan,
+    g.SoTien,
+    g.HinhThucThanhToan,
+    g.NgayGiaoDich,
+    g.GhiChu
+FROM dbo.GiaoDich g
+INNER JOIN dbo.NhanVien nv ON g.MaNhanVien = nv.MaNhanVien
+LEFT JOIN dbo.HoiVien hv ON g.MaHoiVien = hv.MaHoiVien;
+GO
+
+-- ======================================================================================
+-- 9. VIEW PHỤ TRỢ TƯƠNG THÍCH TIẾNG ANH (COMPATIBILITY CHO CODE CỦA ĐỒNG ĐỘI)
+-- ======================================================================================
+CREATE VIEW dbo.Roles AS 
+SELECT MaVaiTro AS RoleID, TenVaiTro AS RoleName FROM dbo.VaiTro;
+GO
+
+CREATE VIEW dbo.Employees AS 
+SELECT MaNhanVien AS EmployeeID, TenDangNhap AS Username, MatKhau AS PasswordHash, HoTen AS FullName, SoDienThoai AS Phone, MaVaiTro AS RoleID, TrangThai AS IsActive FROM dbo.NhanVien;
+GO
+
+CREATE VIEW dbo.Members AS 
+SELECT MaHoiVien AS MemberID, TenDangNhap AS Username, MatKhau AS PasswordHash, HoTen AS FullName, SoDu AS Balance, TongThoiGianChoi AS TotalPlayTimeMinutes, NgayTao AS CreatedAt, TrangThai AS Status FROM dbo.HoiVien;
+GO
+
 CREATE VIEW dbo.ComputerRooms AS 
-SELECT MaPhong AS RoomID, TenPhong AS RoomName, DonGiaGio AS HourlyRate 
-FROM dbo.KhuVucPhong;
+SELECT MaPhong AS RoomID, TenPhong AS RoomName, DonGiaGio AS HourlyRate FROM dbo.KhuVucPhong;
 GO
 
 CREATE VIEW dbo.Computers AS 
-SELECT MaMay AS ComputerID, TenMay AS ComputerName, DiaChiIP AS IPAddress, DiaChiMAC AS MACAddress, MaPhong AS RoomID, TrangThai AS Status 
-FROM dbo.MayTram;
+SELECT MaMay AS ComputerID, TenMay AS ComputerName, DiaChiIP AS IPAddress, DiaChiMAC AS MACAddress, MaPhong AS RoomID, TrangThai AS Status FROM dbo.MayTram;
 GO
 
 CREATE VIEW dbo.Sessions AS 
-SELECT MaPhienChoi AS SessionID, MaMay AS ComputerID, MaHoiVien AS MemberID, ThoiGianBatDau AS StartTime, ThoiGianKetThuc AS EndTime, TongPhutChoi AS TotalMinutes, GiaGioApDung AS HourlyRateApplied, TienGio AS TotalPlayCost, TrangThaiPhien AS SessionStatus 
-FROM dbo.PhienChoi;
+SELECT MaPhienChoi AS SessionID, MaMay AS ComputerID, MaHoiVien AS MemberID, ThoiGianBatDau AS StartTime, ThoiGianKetThuc AS EndTime, TongPhutChoi AS TotalMinutes, GiaGioApDung AS HourlyRateApplied, TienGio AS TotalPlayCost, TrangThaiPhien AS SessionStatus FROM dbo.PhienChoi;
 GO
 
 CREATE VIEW dbo.Categories AS 
-SELECT MaDanhMuc AS CategoryID, TenDanhMuc AS CategoryName 
-FROM dbo.DanhMuc;
+SELECT MaDanhMuc AS CategoryID, TenDanhMuc AS CategoryName FROM dbo.DanhMuc;
 GO
 
 CREATE VIEW dbo.Products AS 
-SELECT MaMon AS ProductID, MaDanhMuc AS CategoryID, TenMon AS ProductName, DonGia AS UnitPrice, SoLuongTon AS StockQuantity, HinhAnh AS ImageUrl, ConPhucVu AS IsAvailable 
-FROM dbo.MonAn;
+SELECT MaMon AS ProductID, MaDanhMuc AS CategoryID, TenMon AS ProductName, DonGia AS UnitPrice, SoLuongTon AS StockQuantity, HinhAnh AS ImageUrl, ConPhucVu AS IsAvailable FROM dbo.MonAn;
 GO
 
 CREATE VIEW dbo.Orders AS 
-SELECT MaDonHang AS OrderID, MaPhienChoi AS SessionID, MaMay AS ComputerID, ThoiGianDat AS OrderTime, TongTien AS TotalAmount, TrangThai AS Status 
-FROM dbo.DonHang;
+SELECT MaDonHang AS OrderID, MaPhienChoi AS SessionID, MaMay AS ComputerID, ThoiGianDat AS OrderTime, TongTien AS TotalAmount, TrangThai AS Status FROM dbo.DonHang;
 GO
 
 CREATE VIEW dbo.OrderDetails AS 
-SELECT MaChiTiet AS OrderDetailID, MaDonHang AS OrderID, MaMon AS ProductID, SoLuong AS Quantity, DonGia AS UnitPrice, ThanhTien AS SubTotal 
-FROM dbo.ChiTietDonHang;
+SELECT MaChiTiet AS OrderDetailID, MaDonHang AS OrderID, MaMon AS ProductID, SoLuong AS Quantity, DonGia AS UnitPrice, ThanhTien AS SubTotal FROM dbo.ChiTietDonHang;
 GO
 
 CREATE VIEW dbo.Transactions AS 
-SELECT MaGiaoDich AS TransactionID, MaHoiVien AS MemberID, MaNhanVien AS EmployeeID, SoTien AS Amount, HinhThucThanhToan AS PaymentMethod, NgayGiaoDich AS TransactionDate, GhiChu AS Notes 
-FROM dbo.GiaoDich;
+SELECT MaGiaoDich AS TransactionID, MaHoiVien AS MemberID, MaNhanVien AS EmployeeID, SoTien AS Amount, HinhThucThanhToan AS PaymentMethod, NgayGiaoDich AS TransactionDate, GhiChu AS Notes FROM dbo.GiaoDich;
 GO
 
 -- ======================================================================================
--- 9. NẠP BỘ DỮ LIỆU MẪU KHỞI TẠO (SEED DATA)
+-- 10. NẠP BỘ DỮ LIỆU MẪU KHỞI TẠO FULL TIẾNG VIỆT (SEED DATA)
 -- ======================================================================================
 
--- 9.1 Nạp Vai trò (VaiTro)
+-- 10.1 Nạp Vai trò (VaiTro)
 INSERT INTO dbo.VaiTro (TenVaiTro) VALUES 
 (N'Quản trị viên (Admin)'),
 (N'Thu ngân'),
 (N'Kỹ thuật');
 GO
 
--- 9.2 Nạp Tài khoản Nhân viên Quản trị (NhanVien)
+-- 10.2 Nạp Tài khoản Nhân viên Quản trị (NhanVien)
 -- Mật khẩu của tài khoản 'admin' là '121212' (tương thích trực tiếp với frmDangNhapServer.cs)
 INSERT INTO dbo.NhanVien (TenDangNhap, MatKhau, HoTen, SoDienThoai, MaVaiTro, TrangThai) VALUES 
 ('admin', '121212', N'Quản trị viên Hệ thống', '0901234567', 1, 1),
@@ -799,7 +939,7 @@ INSERT INTO dbo.NhanVien (TenDangNhap, MatKhau, HoTen, SoDienThoai, MaVaiTro, Tr
 ('kythuat01', '123456', N'Trần Kỹ Thuật', '0923456789', 3, 1);
 GO
 
--- 9.3 Nạp Khu vực / Phòng máy (KhuVucPhong)
+-- 10.3 Nạp Khu vực / Phòng máy (KhuVucPhong)
 INSERT INTO dbo.KhuVucPhong (TenPhong, DonGiaGio) VALUES 
 (N'Phòng Thường', 8000.00),
 (N'Phòng VIP', 12000.00),
@@ -807,21 +947,22 @@ INSERT INTO dbo.KhuVucPhong (TenPhong, DonGiaGio) VALUES
 (N'Phòng Couple (Đôi)', 14000.00);
 GO
 
--- 9.4 Nạp Danh sách Máy trạm (MayTram)
+-- 10.4 Nạp Danh sách Máy trạm (MayTram)
+-- Trạng thái: N'Sẵn sàng' (Xanh), N'Tắt máy' (Xám), N'Bảo trì' (Vàng)
 INSERT INTO dbo.MayTram (TenMay, DiaChiIP, DiaChiMAC, MaPhong, TrangThai) VALUES 
-(N'MAY-01', '192.168.1.101', '00-14-22-01-23-45', 1, N'Online'),
-(N'MAY-02', '192.168.1.102', '00-14-22-01-23-46', 1, N'Online'),
-(N'MAY-03', '192.168.1.103', '00-14-22-01-23-47', 1, N'Online'),
-(N'MAY-04', '192.168.1.104', '00-14-22-01-23-48', 1, N'Offline'),
-(N'MAY-05', '192.168.1.105', '00-14-22-01-23-49', 2, N'Online'),
-(N'MAY-06', '192.168.1.106', '00-14-22-01-23-50', 2, N'Online'),
-(N'MAY-07', '192.168.1.107', '00-14-22-01-23-51', 2, N'Online'),
-(N'MAY-08', '192.168.1.108', '00-14-22-01-23-52', 3, N'Online'),
-(N'MAY-09', '192.168.1.109', '00-14-22-01-23-53', 3, N'Online'),
-(N'MAY-10', '192.168.1.110', '00-14-22-01-23-54', 4, N'Online');
+(N'MAY-01', '192.168.1.101', '00-14-22-01-23-45', 1, N'Sẵn sàng'),
+(N'MAY-02', '192.168.1.102', '00-14-22-01-23-46', 1, N'Sẵn sàng'),
+(N'MAY-03', '192.168.1.103', '00-14-22-01-23-47', 1, N'Sẵn sàng'),
+(N'MAY-04', '192.168.1.104', '00-14-22-01-23-48', 1, N'Tắt máy'),
+(N'MAY-05', '192.168.1.105', '00-14-22-01-23-49', 2, N'Sẵn sàng'),
+(N'MAY-06', '192.168.1.106', '00-14-22-01-23-50', 2, N'Sẵn sàng'),
+(N'MAY-07', '192.168.1.107', '00-14-22-01-23-51', 2, N'Sẵn sàng'),
+(N'MAY-08', '192.168.1.108', '00-14-22-01-23-52', 3, N'Sẵn sàng'),
+(N'MAY-09', '192.168.1.109', '00-14-22-01-23-53', 3, N'Bảo trì'),
+(N'MAY-10', '192.168.1.110', '00-14-22-01-23-54', 4, N'Sẵn sàng');
 GO
 
--- 9.5 Nạp Danh mục món (DanhMuc)
+-- 10.5 Nạp Danh mục món (DanhMuc)
 INSERT INTO dbo.DanhMuc (TenDanhMuc) VALUES 
 (N'Nước giải khát'),
 (N'Mì & Bún'),
@@ -829,7 +970,7 @@ INSERT INTO dbo.DanhMuc (TenDanhMuc) VALUES
 (N'Thẻ Game & Khác');
 GO
 
--- 9.6 Nạp Thực đơn & Kho hàng (MonAn)
+-- 10.6 Nạp Thực đơn & Kho hàng (MonAn)
 INSERT INTO dbo.MonAn (MaDanhMuc, TenMon, DonGia, SoLuongTon, HinhAnh, ConPhucVu) VALUES 
 (1, N'Nước tăng lực Sting dâu', 12000.00, 50, 'Images/Products/sting.png', 1),
 (1, N'Coca Cola lon 330ml', 12000.00, 45, 'Images/Products/cocacola.png', 1),
@@ -845,7 +986,8 @@ INSERT INTO dbo.MonAn (MaDanhMuc, TenMon, DonGia, SoLuongTon, HinhAnh, ConPhucVu
 (4, N'Thẻ Zing 50K', 50000.00, 20, 'Images/Products/thezing.png', 1);
 GO
 
--- 9.7 Nạp Danh sách Hội viên mẫu (HoiVien)
+-- 10.7 Nạp Danh sách Hội viên mẫu (HoiVien)
+-- Trạng thái: N'Hoạt động', N'Bị khóa'
 INSERT INTO dbo.HoiVien (TenDangNhap, MatKhau, HoTen, SoDu, TongThoiGianChoi, NgayTao, TrangThai) VALUES 
 ('hoivien01', '123456', N'Nguyễn Hoàng Dũng', 50000.00, 120, GETDATE(), N'Hoạt động'),
 ('hoivien02', '123456', N'Trần Thị Mai', 100000.00, 240, GETDATE(), N'Hoạt động'),
@@ -853,12 +995,12 @@ INSERT INTO dbo.HoiVien (TenDangNhap, MatKhau, HoTen, SoDu, TongThoiGianChoi, Ng
 ('hoivien_khoa', '123456', N'Phạm Văn Cấm', 20000.00, 10, GETDATE(), N'Bị khóa');
 GO
 
--- 9.8 Nạp Giao dịch nạp tiền ban đầu (GiaoDich)
+-- 10.8 Nạp Giao dịch nạp tiền ban đầu (GiaoDich)
 INSERT INTO dbo.GiaoDich (MaHoiVien, MaNhanVien, SoTien, HinhThucThanhToan, NgayGiaoDich, GhiChu) VALUES 
 (1, 2, 50000.00, N'Tiền mặt', DATEADD(HOUR, -3, GETDATE()), N'Nạp tiền tại quầy thu ngân'),
 (2, 2, 100000.00, N'Chuyển khoản VietQR', DATEADD(HOUR, -2, GETDATE()), N'Nạp tiền qua VietQR'),
 (4, 2, 20000.00, N'Tiền mặt', DATEADD(DAY, -1, GETDATE()), N'Nạp tiền trước khi vi phạm');
 GO
 
-PRINT N'>>> CÀI ĐẶT CƠ SỞ DỮ LIỆU NPCData (TIẾNG VIỆT 3NF & COMPATIBILITY VIEWS) HOÀN TẤT THÀNH CÔNG! <<<';
+PRINT N'>>> CÀI ĐẶT CƠ SỞ DỮ LIỆU NPCData (FULL TIẾNG VIỆT 3NF & HỆ THỐNG V_VIEWS) HOÀN TẤT THÀNH CÔNG! <<<';
 GO
