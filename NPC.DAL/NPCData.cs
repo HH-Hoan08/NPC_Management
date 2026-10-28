@@ -21,11 +21,19 @@ namespace NPC.DAL
                 if (!string.IsNullOrEmpty(CustomConnectionString))
                     return CustomConnectionString;
 
-                return $@"Data Source=(LocalDB)\MSSQLLocalDB;" +
-               $@"AttachDbFilename=""{DbPath}"";" +
-               $@"Database=NPCData;" + 
-               $@"Integrated Security=True;" +
-               $@"Connect Timeout=30;";
+                if (File.Exists(DbPath))
+                {
+                    return $@"Data Source=(LocalDB)\MSSQLLocalDB;" +
+                           $@"AttachDbFilename=""{DbPath}"";" +
+                           $@"Database=NPCData;" + 
+                           $@"Integrated Security=True;" +
+                           $@"Connect Timeout=30;";
+                }
+
+                return @"Data Source=(LocalDB)\MSSQLLocalDB;" +
+                       @"Database=NPCData;" + 
+                       @"Integrated Security=True;" +
+                       @"Connect Timeout=30;";
             }
         }
 
