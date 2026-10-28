@@ -26,7 +26,21 @@ GO
 -- 1. XÓA CÁC ĐỐI TƯỢNG CŨ NẾU ĐÃ TỒN TẠI (ĐẢM BẢO CHẠY LẠI KHÔNG BỊ XUNG ĐỘT)
 -- ======================================================================================
 
--- Xóa Triggers tiếng Việt & tiếng Anh cũ (nếu có)
+-- Xóa Views tương thích tiếng Anh (nếu có)
+IF OBJECT_ID('dbo.Transactions', 'V') IS NOT NULL DROP VIEW dbo.Transactions;
+IF OBJECT_ID('dbo.OrderDetails', 'V') IS NOT NULL DROP VIEW dbo.OrderDetails;
+IF OBJECT_ID('dbo.Orders', 'V') IS NOT NULL DROP VIEW dbo.Orders;
+IF OBJECT_ID('dbo.Products', 'V') IS NOT NULL DROP VIEW dbo.Products;
+IF OBJECT_ID('dbo.Categories', 'V') IS NOT NULL DROP VIEW dbo.Categories;
+IF OBJECT_ID('dbo.Sessions', 'V') IS NOT NULL DROP VIEW dbo.Sessions;
+IF OBJECT_ID('dbo.Computers', 'V') IS NOT NULL DROP VIEW dbo.Computers;
+IF OBJECT_ID('dbo.ComputerRooms', 'V') IS NOT NULL DROP VIEW dbo.ComputerRooms;
+IF OBJECT_ID('dbo.Members', 'V') IS NOT NULL DROP VIEW dbo.Members;
+IF OBJECT_ID('dbo.Employees', 'V') IS NOT NULL DROP VIEW dbo.Employees;
+IF OBJECT_ID('dbo.Roles', 'V') IS NOT NULL DROP VIEW dbo.Roles;
+GO
+
+-- Xóa Triggers
 IF OBJECT_ID('dbo.trg_TruTonKhoKhiGiaoHang', 'TR') IS NOT NULL DROP TRIGGER dbo.trg_TruTonKhoKhiGiaoHang;
 IF OBJECT_ID('dbo.trg_CapNhatTongTienDonHang', 'TR') IS NOT NULL DROP TRIGGER dbo.trg_CapNhatTongTienDonHang;
 IF OBJECT_ID('dbo.trg_ChongXuatAmKho', 'TR') IS NOT NULL DROP TRIGGER dbo.trg_ChongXuatAmKho;
@@ -37,7 +51,7 @@ IF OBJECT_ID('dbo.trg_PreventNegativeStock', 'TR') IS NOT NULL DROP TRIGGER dbo.
 IF OBJECT_ID('dbo.trg_CheckComputerStatus', 'TR') IS NOT NULL DROP TRIGGER dbo.trg_CheckComputerStatus;
 GO
 
--- Xóa Stored Procedures tiếng Việt & tiếng Anh cũ
+-- Xóa Stored Procedures
 IF OBJECT_ID('dbo.sp_BaoCaoDoanhThu', 'P') IS NOT NULL DROP PROCEDURE dbo.sp_BaoCaoDoanhThu;
 IF OBJECT_ID('dbo.sp_NapTienHoiVien', 'P') IS NOT NULL DROP PROCEDURE dbo.sp_NapTienHoiVien;
 IF OBJECT_ID('dbo.sp_KetThucPhienChoi', 'P') IS NOT NULL DROP PROCEDURE dbo.sp_KetThucPhienChoi;
@@ -65,19 +79,6 @@ IF OBJECT_ID('dbo.KhuVucPhong', 'U') IS NOT NULL DROP TABLE dbo.KhuVucPhong;
 IF OBJECT_ID('dbo.HoiVien', 'U') IS NOT NULL DROP TABLE dbo.HoiVien;
 IF OBJECT_ID('dbo.NhanVien', 'U') IS NOT NULL DROP TABLE dbo.NhanVien;
 IF OBJECT_ID('dbo.VaiTro', 'U') IS NOT NULL DROP TABLE dbo.VaiTro;
-
--- Xóa Bảng Tiếng Anh cũ (nếu còn sót lại)
-IF OBJECT_ID('dbo.Transactions', 'U') IS NOT NULL DROP TABLE dbo.Transactions;
-IF OBJECT_ID('dbo.OrderDetails', 'U') IS NOT NULL DROP TABLE dbo.OrderDetails;
-IF OBJECT_ID('dbo.Orders', 'U') IS NOT NULL DROP TABLE dbo.Orders;
-IF OBJECT_ID('dbo.Products', 'U') IS NOT NULL DROP TABLE dbo.Products;
-IF OBJECT_ID('dbo.Categories', 'U') IS NOT NULL DROP TABLE dbo.Categories;
-IF OBJECT_ID('dbo.Sessions', 'U') IS NOT NULL DROP TABLE dbo.Sessions;
-IF OBJECT_ID('dbo.Computers', 'U') IS NOT NULL DROP TABLE dbo.Computers;
-IF OBJECT_ID('dbo.ComputerRooms', 'U') IS NOT NULL DROP TABLE dbo.ComputerRooms;
-IF OBJECT_ID('dbo.Members', 'U') IS NOT NULL DROP TABLE dbo.Members;
-IF OBJECT_ID('dbo.Employees', 'U') IS NOT NULL DROP TABLE dbo.Employees;
-IF OBJECT_ID('dbo.Roles', 'U') IS NOT NULL DROP TABLE dbo.Roles;
 GO
 
 -- ======================================================================================
@@ -286,7 +287,6 @@ BEGIN
 END;
 GO
 
--- Tạo bí danh (alias) tương thích nếu cần
 CREATE FUNCTION dbo.fn_CalculateSessionCost
 (
     @StartTime DATETIME,
@@ -723,25 +723,83 @@ END;
 GO
 
 -- ======================================================================================
--- 8. NẠP BỘ DỮ LIỆU MẪU KHỞI TẠO (SEED DATA)
+-- 8. VIEW TƯƠNG THÍCH TÊN BẢNG TIẾNG ANH (COMPATIBILITY VIEWS CHO CODE TIẾNG ANH CỦA NHÓM)
+-- ======================================================================================
+CREATE VIEW dbo.Roles AS 
+SELECT MaVaiTro AS RoleID, TenVaiTro AS RoleName 
+FROM dbo.VaiTro;
+GO
+
+CREATE VIEW dbo.Employees AS 
+SELECT MaNhanVien AS EmployeeID, TenDangNhap AS Username, MatKhau AS PasswordHash, HoTen AS FullName, SoDienThoai AS Phone, MaVaiTro AS RoleID, TrangThai AS IsActive 
+FROM dbo.NhanVien;
+GO
+
+CREATE VIEW dbo.Members AS 
+SELECT MaHoiVien AS MemberID, TenDangNhap AS Username, MatKhau AS PasswordHash, HoTen AS FullName, SoDu AS Balance, TongThoiGianChoi AS TotalPlayTimeMinutes, NgayTao AS CreatedAt, TrangThai AS Status 
+FROM dbo.HoiVien;
+GO
+
+CREATE VIEW dbo.ComputerRooms AS 
+SELECT MaPhong AS RoomID, TenPhong AS RoomName, DonGiaGio AS HourlyRate 
+FROM dbo.KhuVucPhong;
+GO
+
+CREATE VIEW dbo.Computers AS 
+SELECT MaMay AS ComputerID, TenMay AS ComputerName, DiaChiIP AS IPAddress, DiaChiMAC AS MACAddress, MaPhong AS RoomID, TrangThai AS Status 
+FROM dbo.MayTram;
+GO
+
+CREATE VIEW dbo.Sessions AS 
+SELECT MaPhienChoi AS SessionID, MaMay AS ComputerID, MaHoiVien AS MemberID, ThoiGianBatDau AS StartTime, ThoiGianKetThuc AS EndTime, TongPhutChoi AS TotalMinutes, GiaGioApDung AS HourlyRateApplied, TienGio AS TotalPlayCost, TrangThaiPhien AS SessionStatus 
+FROM dbo.PhienChoi;
+GO
+
+CREATE VIEW dbo.Categories AS 
+SELECT MaDanhMuc AS CategoryID, TenDanhMuc AS CategoryName 
+FROM dbo.DanhMuc;
+GO
+
+CREATE VIEW dbo.Products AS 
+SELECT MaMon AS ProductID, MaDanhMuc AS CategoryID, TenMon AS ProductName, DonGia AS UnitPrice, SoLuongTon AS StockQuantity, HinhAnh AS ImageUrl, ConPhucVu AS IsAvailable 
+FROM dbo.MonAn;
+GO
+
+CREATE VIEW dbo.Orders AS 
+SELECT MaDonHang AS OrderID, MaPhienChoi AS SessionID, MaMay AS ComputerID, ThoiGianDat AS OrderTime, TongTien AS TotalAmount, TrangThai AS Status 
+FROM dbo.DonHang;
+GO
+
+CREATE VIEW dbo.OrderDetails AS 
+SELECT MaChiTiet AS OrderDetailID, MaDonHang AS OrderID, MaMon AS ProductID, SoLuong AS Quantity, DonGia AS UnitPrice, ThanhTien AS SubTotal 
+FROM dbo.ChiTietDonHang;
+GO
+
+CREATE VIEW dbo.Transactions AS 
+SELECT MaGiaoDich AS TransactionID, MaHoiVien AS MemberID, MaNhanVien AS EmployeeID, SoTien AS Amount, HinhThucThanhToan AS PaymentMethod, NgayGiaoDich AS TransactionDate, GhiChu AS Notes 
+FROM dbo.GiaoDich;
+GO
+
+-- ======================================================================================
+-- 9. NẠP BỘ DỮ LIỆU MẪU KHỞI TẠO (SEED DATA)
 -- ======================================================================================
 
--- 8.1 Nạp Vai trò (VaiTro)
+-- 9.1 Nạp Vai trò (VaiTro)
 INSERT INTO dbo.VaiTro (TenVaiTro) VALUES 
 (N'Quản trị viên (Admin)'),
 (N'Thu ngân'),
 (N'Kỹ thuật');
 GO
 
--- 8.2 Nạp Tài khoản Nhân viên Quản trị (NhanVien)
--- Lưu ý: Mật khẩu của tài khoản 'admin' là '121212' (tương thích trực tiếp với frmDangNhapServer.cs)
+-- 9.2 Nạp Tài khoản Nhân viên Quản trị (NhanVien)
+-- Mật khẩu của tài khoản 'admin' là '121212' (tương thích trực tiếp với frmDangNhapServer.cs)
 INSERT INTO dbo.NhanVien (TenDangNhap, MatKhau, HoTen, SoDienThoai, MaVaiTro, TrangThai) VALUES 
 ('admin', '121212', N'Quản trị viên Hệ thống', '0901234567', 1, 1),
 ('thungan01', '123456', N'Nguyễn Văn Thu Ngân', '0912345678', 2, 1),
 ('kythuat01', '123456', N'Trần Kỹ Thuật', '0923456789', 3, 1);
 GO
 
--- 8.3 Nạp Khu vực / Phòng máy (KhuVucPhong)
+-- 9.3 Nạp Khu vực / Phòng máy (KhuVucPhong)
 INSERT INTO dbo.KhuVucPhong (TenPhong, DonGiaGio) VALUES 
 (N'Phòng Thường', 8000.00),
 (N'Phòng VIP', 12000.00),
@@ -749,7 +807,7 @@ INSERT INTO dbo.KhuVucPhong (TenPhong, DonGiaGio) VALUES
 (N'Phòng Couple (Đôi)', 14000.00);
 GO
 
--- 8.4 Nạp Danh sách Máy trạm (MayTram)
+-- 9.4 Nạp Danh sách Máy trạm (MayTram)
 INSERT INTO dbo.MayTram (TenMay, DiaChiIP, DiaChiMAC, MaPhong, TrangThai) VALUES 
 (N'MAY-01', '192.168.1.101', '00-14-22-01-23-45', 1, N'Online'),
 (N'MAY-02', '192.168.1.102', '00-14-22-01-23-46', 1, N'Online'),
@@ -763,7 +821,7 @@ INSERT INTO dbo.MayTram (TenMay, DiaChiIP, DiaChiMAC, MaPhong, TrangThai) VALUES
 (N'MAY-10', '192.168.1.110', '00-14-22-01-23-54', 4, N'Online');
 GO
 
--- 8.5 Nạp Danh mục món (DanhMuc)
+-- 9.5 Nạp Danh mục món (DanhMuc)
 INSERT INTO dbo.DanhMuc (TenDanhMuc) VALUES 
 (N'Nước giải khát'),
 (N'Mì & Bún'),
@@ -771,7 +829,7 @@ INSERT INTO dbo.DanhMuc (TenDanhMuc) VALUES
 (N'Thẻ Game & Khác');
 GO
 
--- 8.6 Nạp Thực đơn & Kho hàng (MonAn)
+-- 9.6 Nạp Thực đơn & Kho hàng (MonAn)
 INSERT INTO dbo.MonAn (MaDanhMuc, TenMon, DonGia, SoLuongTon, HinhAnh, ConPhucVu) VALUES 
 (1, N'Nước tăng lực Sting dâu', 12000.00, 50, 'Images/Products/sting.png', 1),
 (1, N'Coca Cola lon 330ml', 12000.00, 45, 'Images/Products/cocacola.png', 1),
@@ -787,7 +845,7 @@ INSERT INTO dbo.MonAn (MaDanhMuc, TenMon, DonGia, SoLuongTon, HinhAnh, ConPhucVu
 (4, N'Thẻ Zing 50K', 50000.00, 20, 'Images/Products/thezing.png', 1);
 GO
 
--- 8.7 Nạp Danh sách Hội viên mẫu (HoiVien)
+-- 9.7 Nạp Danh sách Hội viên mẫu (HoiVien)
 INSERT INTO dbo.HoiVien (TenDangNhap, MatKhau, HoTen, SoDu, TongThoiGianChoi, NgayTao, TrangThai) VALUES 
 ('hoivien01', '123456', N'Nguyễn Hoàng Dũng', 50000.00, 120, GETDATE(), N'Hoạt động'),
 ('hoivien02', '123456', N'Trần Thị Mai', 100000.00, 240, GETDATE(), N'Hoạt động'),
@@ -795,14 +853,12 @@ INSERT INTO dbo.HoiVien (TenDangNhap, MatKhau, HoTen, SoDu, TongThoiGianChoi, Ng
 ('hoivien_khoa', '123456', N'Phạm Văn Cấm', 20000.00, 10, GETDATE(), N'Bị khóa');
 GO
 
--- 8.8 Nạp Giao dịch nạp tiền ban đầu (GiaoDich)
+-- 9.8 Nạp Giao dịch nạp tiền ban đầu (GiaoDich)
 INSERT INTO dbo.GiaoDich (MaHoiVien, MaNhanVien, SoTien, HinhThucThanhToan, NgayGiaoDich, GhiChu) VALUES 
 (1, 2, 50000.00, N'Tiền mặt', DATEADD(HOUR, -3, GETDATE()), N'Nạp tiền tại quầy thu ngân'),
 (2, 2, 100000.00, N'Chuyển khoản VietQR', DATEADD(HOUR, -2, GETDATE()), N'Nạp tiền qua VietQR'),
 (4, 2, 20000.00, N'Tiền mặt', DATEADD(DAY, -1, GETDATE()), N'Nạp tiền trước khi vi phạm');
 GO
 
-PRINT N'>>> CÀI ĐẶT CƠ SỞ DỮ LIỆU NPCData (TIẾNG VIỆT 3NF) HOÀN TẤT THÀNH CÔNG! <<<';
-GO
-
+PRINT N'>>> CÀI ĐẶT CƠ SỞ DỮ LIỆU NPCData (TIẾNG VIỆT 3NF & COMPATIBILITY VIEWS) HOÀN TẤT THÀNH CÔNG! <<<';
 GO
