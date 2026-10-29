@@ -35,5 +35,24 @@ namespace NPC.Server
         {
 
         }
+
+        private void btnDong_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnNhapLai_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnNhapKho_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void btnThem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
