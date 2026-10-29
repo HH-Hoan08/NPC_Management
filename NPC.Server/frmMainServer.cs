@@ -14,26 +14,30 @@ namespace NPC.Server
         public frmMainServer()
         {
             InitializeComponent();
-            FormScaler.EnableAutoScaling(this);
         }
 
         private void OpenMdiChildForm<T>() where T : Form, new()
         {
-            // Kiểm tra xem Form đã mở chưa
             T checkForm = Application.OpenForms.OfType<T>().FirstOrDefault();
 
             if (checkForm != null)
             {
+                checkForm.WindowState = FormWindowState.Maximized;
                 checkForm.BringToFront();
                 checkForm.Activate();
+                return;
             }
-            else
+            foreach (Form child in this.MdiChildren.ToList())
             {
-                T fm = new T();
-                fm.MdiParent = this; // Gán Form cha
-                fm.WindowState = FormWindowState.Maximized; // Phóng to tối đa phủ kín Form cha
-                fm.Show();
+                child.Close();
             }
+            T fm = new T();
+            fm.MdiParent = this; 
+
+            fm.WindowState = FormWindowState.Maximized;
+
+            fm.Show();
+            
         }
 
         private void frmMainServer_Load(object sender, EventArgs e)
@@ -41,6 +45,7 @@ namespace NPC.Server
             string sql;
             sql = "select * from tblMay";
         }
+
         private void tsmiThoat_Click(object sender, EventArgs e)
         {
             Application.Exit();

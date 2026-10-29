@@ -89,8 +89,8 @@ namespace NPC.Server
             // tableMain
             // 
             tableMain.ColumnCount = 2;
-            tableMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableMain.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 480F));
+            tableMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableMain.Controls.Add(pnlLeft, 0, 0);
             tableMain.Controls.Add(gbXemTruoc, 1, 0);
             tableMain.Dock = DockStyle.Fill;
@@ -146,14 +146,14 @@ namespace NPC.Server
             // pnlMauTrong
             // 
             pnlMauTrong.BorderStyle = BorderStyle.FixedSingle;
-            pnlMauTrong.Location = new Point(189, 22);
+            pnlMauTrong.Location = new Point(190, 22);
             pnlMauTrong.Name = "pnlMauTrong";
             pnlMauTrong.Size = new Size(45, 26);
             pnlMauTrong.TabIndex = 1;
             // 
             // btnDoiMauTrong
             // 
-            btnDoiMauTrong.Location = new Point(249, 20);
+            btnDoiMauTrong.Location = new Point(261, 20);
             btnDoiMauTrong.Name = "btnDoiMauTrong";
             btnDoiMauTrong.Size = new Size(100, 30);
             btnDoiMauTrong.TabIndex = 2;
@@ -172,14 +172,14 @@ namespace NPC.Server
             // pnlMauDangChoi
             // 
             pnlMauDangChoi.BorderStyle = BorderStyle.FixedSingle;
-            pnlMauDangChoi.Location = new Point(189, 58);
+            pnlMauDangChoi.Location = new Point(190, 58);
             pnlMauDangChoi.Name = "pnlMauDangChoi";
             pnlMauDangChoi.Size = new Size(45, 26);
             pnlMauDangChoi.TabIndex = 4;
             // 
             // btnDoiMauDangChoi
             // 
-            btnDoiMauDangChoi.Location = new Point(249, 56);
+            btnDoiMauDangChoi.Location = new Point(261, 56);
             btnDoiMauDangChoi.Name = "btnDoiMauDangChoi";
             btnDoiMauDangChoi.Size = new Size(100, 30);
             btnDoiMauDangChoi.TabIndex = 5;
@@ -198,14 +198,14 @@ namespace NPC.Server
             // pnlMauBaoTri
             // 
             pnlMauBaoTri.BorderStyle = BorderStyle.FixedSingle;
-            pnlMauBaoTri.Location = new Point(189, 94);
+            pnlMauBaoTri.Location = new Point(190, 94);
             pnlMauBaoTri.Name = "pnlMauBaoTri";
             pnlMauBaoTri.Size = new Size(45, 26);
             pnlMauBaoTri.TabIndex = 7;
             // 
             // btnDoiMauBaoTri
             // 
-            btnDoiMauBaoTri.Location = new Point(249, 92);
+            btnDoiMauBaoTri.Location = new Point(261, 92);
             btnDoiMauBaoTri.Name = "btnDoiMauBaoTri";
             btnDoiMauBaoTri.Size = new Size(100, 30);
             btnDoiMauBaoTri.TabIndex = 8;
