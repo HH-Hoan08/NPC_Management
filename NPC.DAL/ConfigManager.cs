@@ -9,7 +9,7 @@ namespace NPC.DAL
 {
     public static class ConfigManager
     {
-        private static readonly string ConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini");
+        private static readonly string ConfigPath = AppPaths.ConfigPath;
         private const string DefaultConnectionString = @"Data Source=.;" +
                                                        @"Initial Catalog=NPCData;" +
                                                        @"Integrated Security=True;" +
@@ -46,6 +46,12 @@ namespace NPC.DAL
         {
             try
             {
+                string dir = AppPaths.DebugDirectory;
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
                 string encoded = EncryptBase64(raw);
                 using (StreamWriter sw = new StreamWriter(ConfigPath, false, Encoding.UTF8))
                 {
@@ -62,6 +68,7 @@ namespace NPC.DAL
                 throw;
             }
         }
+
         public static string ReadConnString()
         {
             try
@@ -91,13 +98,13 @@ namespace NPC.DAL
 
                 SaveConnectionString(DefaultConnectionString);
                 return DefaultConnectionString;
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError("Lỗi khi đọc file cấu hình config.ini", ex);
-                    return DefaultConnectionString;
-                }
             }
+            catch (Exception ex)
+            {
+                Logger.LogError("Lỗi khi đọc file cấu hình config.ini", ex);
+                return DefaultConnectionString;
+            }
+        }
         #endregion
     }
 }

@@ -53,14 +53,17 @@ namespace NPC.Server
         //Check Login
         protected bool Login(string tenDangNhap, string matkhau)
         {
-            string query = "SELECT MatKhau FROM NhanVien WHERE TenDangNhap = @Username";
-            object result = SQLHelper.ExecuteScalar(query, new SqlParameter("@Username", tenDangNhap));
+            string getMatKhauQuery = "SELECT MatKhau FROM NhanVien WHERE TenDangNhap = @Username";
+            object getMatKhau = SQLHelper.ExecuteScalar(getMatKhauQuery, new SqlParameter("@Username", tenDangNhap));
 
-            if (result != null && result != DBNull.Value)
+            if (getMatKhau != null && getMatKhau != DBNull.Value)
             {
-                string pass = result.ToString();
+                string getStringMatKhau = getMatKhau.ToString();
+                string getHoTenQuery =  "SELECT HoTen FROM NhanVien WHERE TenDangNhap = @Username";
+                string getHoTen = SQLHelper.ExecuteScalar(getHoTenQuery, new SqlParameter("@Username", tenDangNhap)).ToString();
 
-                string storedHash = BCrypt.Net.BCrypt.HashPassword(result.ToString());
+                Logger.LogBusiness(getHoTen, "Đăng nhập vào quản lý máy thành công!");
+                string storedHash = BCrypt.Net.BCrypt.HashPassword(getStringMatKhau.ToString());
                 return BCrypt.Net.BCrypt.Verify(matkhau, storedHash);
             }
             return false;
@@ -69,20 +72,21 @@ namespace NPC.Server
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             picLoading.Visible = true;
-            string username = txtTenDangNhap.Text;
-            string password = txtMatKhau.Text;
+            string tenDangNhap = txtTenDangNhap.Text;
+            string MatKhau = txtMatKhau.Text;
 
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(tenDangNhap) || string.IsNullOrEmpty(MatKhau))
             {
                 MessageBox.Show("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
 
-            if (Login(username, password))
+            if (Login(tenDangNhap, MatKhau))
             {
                 Hide();
                 MessageBox.Show("Đăng nhập thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
                 NPCData.Disconnect();
             
 
