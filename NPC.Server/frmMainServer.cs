@@ -1,4 +1,4 @@
-﻿using NPC.DAL;
+using NPC.DAL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,7 +37,6 @@ namespace NPC.Server
             fm.WindowState = FormWindowState.Maximized;
 
             fm.Show();
-            
         }
 
         private void frmMainServer_Load(object sender, EventArgs e)
@@ -48,21 +47,21 @@ namespace NPC.Server
 
         private void tsmiThoat_Click(object sender, EventArgs e)
         {
+            string user = !string.IsNullOrEmpty(frmDangNhapServer.CurrentUser) ? frmDangNhapServer.CurrentUser : "admin";
+            Logger.LogBusiness(user, "Thoát hệ thống", "Người dùng đã đóng ứng dụng Server.");
             Application.Exit();
         }
 
         private void tsmiDangXuat_Click(object sender, EventArgs e)
         {
+            string user = !string.IsNullOrEmpty(frmDangNhapServer.CurrentUser) ? frmDangNhapServer.CurrentUser : "admin";
+            Logger.LogBusiness(user, "Đăng xuất", "Đăng xuất khỏi hệ thống Server.");
+
             Hide();
             NPCData.Disconnect();
             frmDangNhapServer fm = new frmDangNhapServer();
             fm.ShowDialog();
             Close();
-        }
-
-        private void tsmiCaiDatGiaoDien_Click(object sender, EventArgs e)
-        {
-            OpenMdiChildForm<frmCaiDatGiaoDien>();
         }
 
         private void tsmiHoiVien_Click(object sender, EventArgs e)
@@ -73,6 +72,11 @@ namespace NPC.Server
         private void tsmiMonAn_Click(object sender, EventArgs e)
         {
             OpenMdiChildForm<frmQuanLyMonAn>();
+        }
+
+        private void tsmiCaiDatGiaoDien_Click(object sender, EventArgs e)
+        {
+            OpenMdiChildForm<frmCaiDatGiaoDien>();
         }
     }
 }

@@ -934,7 +934,7 @@ GO
 -- 10.2 Nạp Tài khoản Nhân viên Quản trị (NhanVien)
 -- Mật khẩu của tài khoản 'admin' là '121212' (tương thích trực tiếp với frmDangNhapServer.cs)
 INSERT INTO dbo.NhanVien (TenDangNhap, MatKhau, HoTen, SoDienThoai, MaVaiTro, TrangThai) VALUES 
-('admin', '121212', N'Quản trị viên Hệ thống', '0901234567', 1, 1),
+('admin', '$2a$11$PsurN8TwsyjR3R/QJ/nOzOqu.KBueNRZABhxDgDDmKg6iqJEWpbWu', N'Quản trị viên Hệ thống', '0901234567', 1, 1),
 ('thungan01', '123456', N'Nguyễn Văn Thu Ngân', '0912345678', 2, 1),
 ('kythuat01', '123456', N'Trần Kỹ Thuật', '0923456789', 3, 1);
 GO
