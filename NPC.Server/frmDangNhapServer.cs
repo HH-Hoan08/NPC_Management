@@ -46,27 +46,8 @@ namespace NPC.Server
                                 "Lỗi kết nối CSDL",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
-                OpenConfigDatabaseForm();
             }
             return false;
-        }
-
-        private void OpenConfigDatabaseForm()
-        {
-            // Mở form cấu hình chuỗi kết nối dưới dạng Dialog (Giả sử tên form là frmCauHinhDB)
-            // using (frmCauHinhDB frm = new frmCauHinhDB())
-            // {
-            //     if (frm.ShowDialog() == DialogResult.OK)
-            //     {
-            //         // Sau khi người dùng điền và lưu ConnectionString mới, thử kết nối lại
-            //         KiemTraKetNoiDatabase();
-            //     }
-            //     else
-            //     {
-            //         // Nếu người dùng đóng form cấu hình mà không sửa -> Thoát ứng dụng
-            //         Application.Exit();
-            //     }
-            // }
         }
 
         //Check Login
