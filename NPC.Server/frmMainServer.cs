@@ -1,4 +1,4 @@
-﻿using NPC.DAL;
+﻿﻿using NPC.DAL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,8 +42,7 @@ namespace NPC.Server
 
         private void frmMainServer_Load(object sender, EventArgs e)
         {
-            string sql;
-            sql = "select * from tblMay";
+            OpenMdiChildForm<frmSoDoPhongMay>();
         }
 
         private void tsmiThoat_Click(object sender, EventArgs e)
@@ -68,6 +67,11 @@ namespace NPC.Server
         private void tsmiHoiVien_Click(object sender, EventArgs e)
         {
             OpenMdiChildForm<frmQuanLyHoiVien>();
+        }
+
+        private void tsmiSoDoPhongMay_Click(object sender, EventArgs e)
+        {
+            OpenMdiChildForm<frmSoDoPhongMay>();
         }
 
         private void tsmiMonAn_Click(object sender, EventArgs e)

@@ -10,7 +10,7 @@ namespace NPC.DAL
         //Thực thi INSERT, UPDATE, DELETE
         public static int ExecuteNonQuery(string query, params SqlParameter[] parameters)
         {
-            if (NPCData.IsOK == true)
+            if (!NPCData.IsOK) NPCData.Connect();
             {
                 using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))
                 {
@@ -31,7 +31,7 @@ namespace NPC.DAL
         //Thực thi lấy 1 giá trị (COUNT, MAX, IDENTITY...)
         public static object ExecuteScalar(string query, params SqlParameter[] parameters)
         {
-            if (NPCData.IsOK == true)
+            if (!NPCData.IsOK) NPCData.Connect();
             {
                 using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))
                 {
@@ -53,7 +53,7 @@ namespace NPC.DAL
         public static DataTable ExecuteQuery(string query, params SqlParameter[] parameters)
         {
             DataTable dt = new DataTable();
-            if (NPCData.IsOK == true)
+            if (!NPCData.IsOK) NPCData.Connect();
             {
                 using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))
                 {

@@ -1,4 +1,4 @@
-using NPC.DAL;
+﻿using NPC.DAL;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -27,13 +27,11 @@ namespace NPC.Server
         {
             try
             {
-                // Thử kết nối CSDL
                 NPCData.Connect();
-                // Nếu kết nối thành công
                 if (NPCData.IsOK)
                 {
 
-                    MessageBox.Show("Đăng nhập vào CSDL thành công!",
+                    MessageBox.Show("Đăng nhập vào CSDL thành công",
                         "Thông báo",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information);
@@ -42,33 +40,13 @@ namespace NPC.Server
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{ex.Message}\nChi tiết lỗi đã được ghi vào file log.",
+                MessageBox.Show($"{ex.Message}\nChi tiết lỗi ghi vào file log.",
                                 "Lỗi kết nối CSDL",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
-                OpenConfigDatabaseForm();
             }
             return false;
         }
-
-        private void OpenConfigDatabaseForm()
-        {
-            // Mở form cấu hình chuỗi kết nối dưới dạng Dialog (Giả sử tên form là frmCauHinhDB)
-            // using (frmCauHinhDB frm = new frmCauHinhDB())
-            // {
-            //     if (frm.ShowDialog() == DialogResult.OK)
-            //     {
-            //         // Sau khi người dùng điền và lưu ConnectionString mới, thử kết nối lại
-            //         KiemTraKetNoiDatabase();
-            //     }
-            //     else
-            //     {
-            //         // Nếu người dùng đóng form cấu hình mà không sửa -> Thoát ứng dụng
-            //         Application.Exit();
-            //     }
-            // }
-        }
-
         //Check Login
         protected bool Login(string tenDangNhap, string matkhau)
         {
@@ -93,7 +71,7 @@ namespace NPC.Server
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -101,8 +79,8 @@ namespace NPC.Server
             if (Login(username, password))
             {
                 Hide();
-                MessageBox.Show("Đăng nhập thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                NPCData.Disconnect();
+                MessageBox.Show("Đăng nhập thành công", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // NPCData.Disconnect();
             
 
                 frmMainServer fm = new frmMainServer();

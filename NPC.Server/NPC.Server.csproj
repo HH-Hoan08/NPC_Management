@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NPC.DAL\NPC.DAL.csproj" />
+    <ProjectReference Include="..\NPC.DTO\NPC.DTO.csproj" />
   </ItemGroup>
 
   <ItemGroup>
