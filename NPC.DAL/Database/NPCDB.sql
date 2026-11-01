@@ -1,11 +1,3 @@
--- ======================================================================================
--- ĐỒ ÁN LẬP TRÌNH WINDOWS: HỆ THỐNG QUẢN LÝ QUÁN NÉT (NPC MANAGEMENT)
--- CƠ SỞ DỮ LIỆU CHUẨN 3NF: NPCData
--- CHUẨN HÓA 100% TIẾNG VIỆT: TÊN BẢNG, TÊN CỘT, DỮ LIỆU TRẠNG THÁI & HỆ THỐNG VIEWS
--- Phụ trách thiết kế & Cài đặt: Phú
--- Tương thích: Microsoft SQL Server 2019/2022 & SQL Server LocalDB
--- ======================================================================================
-
 USE master;
 GO
 
