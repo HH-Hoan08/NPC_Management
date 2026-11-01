@@ -1,4 +1,5 @@
 using NPC.DAL;
+using NPC.BLL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -58,7 +59,7 @@ namespace NPC.Server
             Logger.LogBusiness(user, "Đăng xuất", "Đăng xuất khỏi hệ thống Server.");
 
             Hide();
-            NPCData.Disconnect();
+            HeThongBLL.DatLaiKetNoi();
             frmDangNhapServer fm = new frmDangNhapServer();
             fm.ShowDialog();
             Close();

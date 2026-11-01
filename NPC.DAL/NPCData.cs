@@ -4,10 +4,18 @@ using System.Data.SqlClient;
 
 namespace NPC.DAL
 {
-    public class NPCData
+    /// <summary>
+    /// Quản lý chuỗi kết nối và khởi tạo SqlConnection đến CSDL SQL Server.
+    /// </summary>
+    public static class NPCData
     {
-        public static SqlConnection Con;
-        public static bool IsOK { get; private set; } = false;
+        private static bool _isOK = false;
+
+        public static bool IsOK
+        {
+            get => _isOK;
+            set => _isOK = value;
+        }
 
         public static string ConnectionString
         {
@@ -23,41 +31,45 @@ namespace NPC.DAL
             }
         }
 
-        public static void Connect()
+        public static SqlConnection CreateConnection()
         {
+            return new SqlConnection(ConnectionString);
+        }
+
+        public static bool TestConnection(out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            string connStr = ConnectionString;
+            if (string.IsNullOrEmpty(connStr))
+            {
+                errorMessage = "Chuỗi kết nối rỗng hoặc không tồn tại trong config.ini.";
+                _isOK = false;
+                return false;
+            }
+
             try
             {
-                if (Con == null)
-                    Con = new SqlConnection(ConnectionString);
-                else
-                    Con.ConnectionString = ConnectionString;
-
-                if (Con.State != ConnectionState.Open)
+                using (var conn = new SqlConnection(connStr))
                 {
-                    Con.Open();
+                    conn.Open();
+                    _isOK = true;
+                    Logger.LogInfo("Kiểm tra kết nối CSDL thành công.");
+                    return true;
                 }
-
-                IsOK = true;
-                Logger.LogInfo("Kết nối CSDL thành công.");
             }
             catch (Exception ex)
             {
-                IsOK = false;
-                Logger.LogError("Kết nối CSDL thất bại!", ex);
-                throw new Exception("Không thể kết nối đến CSDL. Vui lòng kiểm tra lại cấu hình!", ex);
+                _isOK = false;
+                errorMessage = ex.Message;
+                Logger.LogError("Kiểm tra kết nối CSDL thất bại!", ex);
+                return false;
             }
         }
 
         public static void Disconnect()
         {
-            if (Con != null && Con.State != ConnectionState.Closed)
-            {
-                Con.Close();
-                Con.Dispose();
-                Con = null;
-            }
-            IsOK = false;
-            Logger.LogInfo("Đã ngắt kết nối CSDL.");
+            _isOK = false;
+            Logger.LogInfo("Đã đặt lại trạng thái kết nối CSDL.");
         }
     }
 }
