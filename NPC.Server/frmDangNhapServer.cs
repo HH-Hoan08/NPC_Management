@@ -125,7 +125,11 @@ namespace NPC.Server
         //Check Login
         protected bool Login(string tenDangNhap, string matkhau)
         {
+<<<<<<< Updated upstream
             string query = "SELECT PasswordHash FROM Employees WHERE Username = @Username";
+=======
+            string query = "SELECT MatKhau FROM NhanVien WHERE TenDangNhap = @Username";
+>>>>>>> Stashed changes
             object result = SQLHelper.ExecuteScalar(query, new SqlParameter("@Username", tenDangNhap));
 
             if (result != null && result != DBNull.Value)
