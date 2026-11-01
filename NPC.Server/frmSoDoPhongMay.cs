@@ -1,17 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using NPC.DAL;
+using NPC.BLL;
 using NPC.DTO;
 
 namespace NPC.Server
 {
     public partial class frmSoDoPhongMay : Form
     {
-        private MayTramDAL _mayTramDAL = new MayTramDAL();
         private System.Windows.Forms.Timer _timerDemGio;
 
         public frmSoDoPhongMay()
@@ -23,7 +21,7 @@ namespace NPC.Server
         private void KhoiTaoTimer()
         {
             _timerDemGio = new System.Windows.Forms.Timer();
-            _timerDemGio.Interval = 1000; // Mỗi giây cập nhật thời gian 1 lần
+            _timerDemGio.Interval = 1000;
             _timerDemGio.Tick += (s, e) =>
             {
                 foreach (Control ctrl in flpDanhSachMay.Controls)
@@ -48,17 +46,12 @@ namespace NPC.Server
         {
             try
             {
-                string query = "SELECT MaPhong, TenPhong FROM dbo.KhuVucPhong";
-                DataTable dt = SQLHelper.ExecuteQuery(query);
-
-                DataRow row = dt.NewRow();
-                row["MaPhong"] = 0;
-                row["TenPhong"] = "--- Tất cả khu vực ---";
-                dt.Rows.InsertAt(row, 0);
+                List<KhuVucPhongDTO> dsKhuVuc = MayTramBLL.LayDanhSachKhuVuc();
+                dsKhuVuc.Insert(0, new KhuVucPhongDTO { MaPhong = 0, TenPhong = "--- Tất cả khu vực ---" });
 
                 cboKhuVuc.DisplayMember = "TenPhong";
                 cboKhuVuc.ValueMember = "MaPhong";
-                cboKhuVuc.DataSource = dt;
+                cboKhuVuc.DataSource = dsKhuVuc;
                 cboKhuVuc.SelectedIndex = 0;
                 cboKhuVuc.SelectedIndexChanged += (s, e) => LoadDanhSachMay();
             }
@@ -98,22 +91,20 @@ namespace NPC.Server
                     maPhong = p;
                 }
 
-                string trangThai = cboTrangThai.SelectedItem?.ToString();
+                string? trangThai = cboTrangThai.SelectedItem?.ToString();
                 if (trangThai == "Tất cả") trangThai = null;
 
-                List<MayTramDTO> listMay = _mayTramDAL.GetDanhSachMayTram(maPhong, trangThai);
+                List<MayTramDTO> listMay = MayTramBLL.LayDanhSachMayTram(maPhong, trangThai);
 
-                // Cập nhật thống kê
                 CapNhatThongKe(listMay);
 
-                // Render danh sách máy lên FlowLayoutPanel
                 flpDanhSachMay.SuspendLayout();
                 flpDanhSachMay.Controls.Clear();
 
                 foreach (var may in listMay)
                 {
                     ucMayTram uc = new ucMayTram();
-                    uc.Size = new Size(160, 185); // Kích thước gọn gàng hiển thị dạng Grid
+                    uc.Size = new Size(160, 185);
                     uc.BindingData(may);
                     uc.ActionTriggered += Uc_ActionTriggered;
 
@@ -187,28 +178,32 @@ namespace NPC.Server
             DialogResult dr = MessageBox.Show($"Bạn có muốn mở máy {may.TenMay} cho Khách Vãng Lai không?", "Xác nhận mở máy", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dr == DialogResult.Yes)
             {
-                if (_mayTramDAL.MoMayVangLai(may.MaMay, out long maPhien, out string err))
+                try
                 {
+                    string nguoiThaoTac = !string.IsNullOrEmpty(frmDangNhapServer.CurrentUser) ? frmDangNhapServer.CurrentUser : "Thu ngân";
+                    long maPhien = MayTramBLL.MoMayVangLai(may.MaMay, may.TenMay, nguoiThaoTac);
+
                     MessageBox.Show($"Mở máy {may.TenMay} thành công! Mã phiên: {maPhien}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadDanhSachMay();
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Mở máy thất bại: " + err, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Mở máy thất bại: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void XuLyKhoaMay(MayTramDTO may)
         {
-            string ttMoi = (may.TrangThai == "Đang khóa") ? "Đang dùng" : "Đang khóa";
-            if (_mayTramDAL.CapNhatTrangThaiMay(may.MaMay, ttMoi, out string err))
+            try
             {
+                string nguoiThaoTac = !string.IsNullOrEmpty(frmDangNhapServer.CurrentUser) ? frmDangNhapServer.CurrentUser : "Thu ngân";
+                MayTramBLL.ChuyenDoiKhoaMay(may.MaMay, may.TenMay, may.TrangThai, nguoiThaoTac);
                 LoadDanhSachMay();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Thao tác thất bại: " + err, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Thao tác thất bại: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -223,30 +218,31 @@ namespace NPC.Server
             DialogResult dr = MessageBox.Show($"Xác nhận thanh toán và trả máy cho {may.TenMay}?", "Xác nhận thanh toán", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dr == DialogResult.Yes)
             {
-                if (_mayTramDAL.ThanhToanMay(may.MaPhienChoi.Value, out string err))
+                try
                 {
-                    MessageBox.Show($"Đã kết thúc phiên chơi và thanh toán {may.TenMay} thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    KetQuaTraMayDTO kq = MayTramBLL.ThanhToanVaTraMay(may.MaPhienChoi.Value, may.TenMay, 1, "Tiền mặt");
+                    MessageBox.Show($"Đã kết thúc phiên chơi và thanh toán {may.TenMay} thành công!\nTổng thu: {kq.TongTienThanhToan:N0} VND", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadDanhSachMay();
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Thanh toán thất bại: " + err, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Thanh toán thất bại: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void XuLyBaoTri(MayTramDTO may)
         {
-            string ttMoi = (may.TrangThai == "Bảo trì") ? "Sẵn sàng" : "Bảo trì";
-            if (_mayTramDAL.CapNhatTrangThaiMay(may.MaMay, ttMoi, out string err))
+            try
             {
+                string nguoiThaoTac = !string.IsNullOrEmpty(frmDangNhapServer.CurrentUser) ? frmDangNhapServer.CurrentUser : "Thu ngân";
+                MayTramBLL.ChuyenDoiBaoTri(may.MaMay, may.TenMay, may.TrangThai, nguoiThaoTac);
                 LoadDanhSachMay();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Cập nhật bảo trì thất bại: " + err, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Cập nhật bảo trì thất bại: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
     }
 }

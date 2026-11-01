@@ -46,6 +46,7 @@
             tsmiNhatKyHV = new ToolStripMenuItem();
             tsmiThongKe = new ToolStripMenuItem();
             tsmiNhatKyHT = new ToolStripMenuItem();
+            tsmiSoDoPhongMay = new ToolStripMenuItem();
             tsmiDoanhThu = new ToolStripMenuItem();
             msMenuChinh.SuspendLayout();
             SuspendLayout();
@@ -59,7 +60,6 @@
             // msMenuChinh
             // 
             msMenuChinh.ImageScalingSize = new Size(20, 20);
-            tsmiSoDoPhongMay = new ToolStripMenuItem();
             msMenuChinh.Items.AddRange(new ToolStripItem[] { tsmiHeThong, tsmiSoDoPhongMay, tsmiQuanLy, tsmiTroGiup, tsmiBaoCao });
             msMenuChinh.Location = new Point(0, 0);
             msMenuChinh.Name = "msMenuChinh";
@@ -113,7 +113,7 @@
             tsmiSoDoPhongMay.Size = new Size(137, 24);
             tsmiSoDoPhongMay.Text = "Sơ đồ phòng máy";
             tsmiSoDoPhongMay.Click += tsmiSoDoPhongMay_Click;
-            //             // 
+            //
             // tsmiQuanLy
             // 
             tsmiQuanLy.DropDownItems.AddRange(new ToolStripItem[] { tsmiHoiVien, tsmiMonAn });

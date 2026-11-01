@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -63,6 +63,14 @@ namespace NPC.DAL
                 errorMessage = ex.Message;
                 Logger.LogError("Kiểm tra kết nối CSDL thất bại!", ex);
                 return false;
+            }
+        }
+
+        public static void Connect()
+        {
+            if (!_isOK)
+            {
+                TestConnection(out _);
             }
         }
 
