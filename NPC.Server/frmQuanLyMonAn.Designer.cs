@@ -91,7 +91,7 @@ namespace NPC.Server
             lblTieuDe.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             lblTieuDe.Location = new Point(0, 0);
             lblTieuDe.Name = "lblTieuDe";
-            lblTieuDe.Size = new Size(1000, 43);
+            lblTieuDe.Size = new Size(1060, 45);
             lblTieuDe.TabIndex = 0;
             lblTieuDe.Text = "QUẢN LÝ THỰC ĐƠN VÀ KIỂM KÊ KHO HÀNG";
             lblTieuDe.TextAlign = ContentAlignment.MiddleCenter;
@@ -104,11 +104,11 @@ namespace NPC.Server
             tableMain.Controls.Add(pnlLeft, 0, 0);
             tableMain.Controls.Add(gbDanhSach, 1, 0);
             tableMain.Dock = DockStyle.Fill;
-            tableMain.Location = new Point(0, 43);
+            tableMain.Location = new Point(0, 45);
             tableMain.Name = "tableMain";
             tableMain.RowCount = 1;
             tableMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableMain.Size = new Size(1000, 447);
+            tableMain.Size = new Size(1060, 580);
             tableMain.TabIndex = 1;
             // 
             // pnlLeft
@@ -120,7 +120,7 @@ namespace NPC.Server
             pnlLeft.Dock = DockStyle.Fill;
             pnlLeft.Location = new Point(3, 3);
             pnlLeft.Name = "pnlLeft";
-            pnlLeft.Size = new Size(484, 441);
+            pnlLeft.Size = new Size(484, 574);
             pnlLeft.TabIndex = 0;
             // 
             // gbThongTin
@@ -144,7 +144,7 @@ namespace NPC.Server
             gbThongTin.Controls.Add(cboTrangThai);
             gbThongTin.Location = new Point(5, 5);
             gbThongTin.Name = "gbThongTin";
-            gbThongTin.Size = new Size(450, 204);
+            gbThongTin.Size = new Size(470, 215);
             gbThongTin.TabIndex = 0;
             gbThongTin.TabStop = false;
             gbThongTin.Text = "Thông tin món ăn và kho";
@@ -152,7 +152,7 @@ namespace NPC.Server
             // lblMaMon
             // 
             lblMaMon.AutoSize = true;
-            lblMaMon.Location = new Point(12, 27);
+            lblMaMon.Location = new Point(12, 28);
             lblMaMon.Name = "lblMaMon";
             lblMaMon.Size = new Size(64, 20);
             lblMaMon.TabIndex = 0;
@@ -160,16 +160,16 @@ namespace NPC.Server
             // 
             // txtMaMon
             // 
-            txtMaMon.Location = new Point(85, 23);
+            txtMaMon.Location = new Point(85, 24);
             txtMaMon.Name = "txtMaMon";
-            txtMaMon.Size = new Size(130, 26);
+            txtMaMon.Size = new Size(130, 27);
             txtMaMon.TabIndex = 1;
             txtMaMon.TextChanged += txtMaMon_TextChanged;
             // 
             // lblTenMon
             // 
             lblTenMon.AutoSize = true;
-            lblTenMon.Location = new Point(12, 62);
+            lblTenMon.Location = new Point(12, 65);
             lblTenMon.Name = "lblTenMon";
             lblTenMon.Size = new Size(66, 20);
             lblTenMon.TabIndex = 2;
@@ -177,15 +177,15 @@ namespace NPC.Server
             // 
             // txtTenMon
             // 
-            txtTenMon.Location = new Point(85, 58);
+            txtTenMon.Location = new Point(85, 61);
             txtTenMon.Name = "txtTenMon";
-            txtTenMon.Size = new Size(130, 26);
+            txtTenMon.Size = new Size(130, 27);
             txtTenMon.TabIndex = 3;
             // 
             // lblLoaiMon
             // 
             lblLoaiMon.AutoSize = true;
-            lblLoaiMon.Location = new Point(12, 97);
+            lblLoaiMon.Location = new Point(12, 102);
             lblLoaiMon.Name = "lblLoaiMon";
             lblLoaiMon.Size = new Size(71, 20);
             lblLoaiMon.TabIndex = 4;
@@ -194,15 +194,15 @@ namespace NPC.Server
             // cboLoaiMon
             // 
             cboLoaiMon.FormattingEnabled = true;
-            cboLoaiMon.Location = new Point(85, 93);
+            cboLoaiMon.Location = new Point(85, 98);
             cboLoaiMon.Name = "cboLoaiMon";
-            cboLoaiMon.Size = new Size(130, 27);
+            cboLoaiMon.Size = new Size(130, 28);
             cboLoaiMon.TabIndex = 5;
             // 
             // lblGiaBan
             // 
             lblGiaBan.AutoSize = true;
-            lblGiaBan.Location = new Point(230, 27);
+            lblGiaBan.Location = new Point(230, 28);
             lblGiaBan.Name = "lblGiaBan";
             lblGiaBan.Size = new Size(60, 20);
             lblGiaBan.TabIndex = 6;
@@ -210,15 +210,15 @@ namespace NPC.Server
             // 
             // txtGiaBan
             // 
-            txtGiaBan.Location = new Point(325, 23);
+            txtGiaBan.Location = new Point(325, 24);
             txtGiaBan.Name = "txtGiaBan";
-            txtGiaBan.Size = new Size(135, 26);
+            txtGiaBan.Size = new Size(135, 27);
             txtGiaBan.TabIndex = 7;
             // 
             // lblGiaNhap
             // 
             lblGiaNhap.AutoSize = true;
-            lblGiaNhap.Location = new Point(230, 62);
+            lblGiaNhap.Location = new Point(230, 65);
             lblGiaNhap.Name = "lblGiaNhap";
             lblGiaNhap.Size = new Size(68, 20);
             lblGiaNhap.TabIndex = 8;
@@ -226,15 +226,15 @@ namespace NPC.Server
             // 
             // txtGiaNhap
             // 
-            txtGiaNhap.Location = new Point(325, 58);
+            txtGiaNhap.Location = new Point(325, 61);
             txtGiaNhap.Name = "txtGiaNhap";
-            txtGiaNhap.Size = new Size(135, 26);
+            txtGiaNhap.Size = new Size(135, 27);
             txtGiaNhap.TabIndex = 9;
             // 
             // lblSoLuongTon
             // 
             lblSoLuongTon.AutoSize = true;
-            lblSoLuongTon.Location = new Point(230, 97);
+            lblSoLuongTon.Location = new Point(230, 102);
             lblSoLuongTon.Name = "lblSoLuongTon";
             lblSoLuongTon.Size = new Size(50, 20);
             lblSoLuongTon.TabIndex = 10;
@@ -242,16 +242,16 @@ namespace NPC.Server
             // 
             // txtSoLuongTon
             // 
-            txtSoLuongTon.Location = new Point(325, 93);
+            txtSoLuongTon.Location = new Point(325, 98);
             txtSoLuongTon.Name = "txtSoLuongTon";
-            txtSoLuongTon.Size = new Size(135, 26);
+            txtSoLuongTon.Size = new Size(135, 27);
             txtSoLuongTon.TabIndex = 11;
             txtSoLuongTon.TextChanged += txtSoLuongTon_TextChanged;
             // 
             // lblDonViTinh
             // 
             lblDonViTinh.AutoSize = true;
-            lblDonViTinh.Location = new Point(230, 132);
+            lblDonViTinh.Location = new Point(230, 139);
             lblDonViTinh.Name = "lblDonViTinh";
             lblDonViTinh.Size = new Size(81, 20);
             lblDonViTinh.TabIndex = 12;
@@ -260,15 +260,15 @@ namespace NPC.Server
             // cboDonViTinh
             // 
             cboDonViTinh.FormattingEnabled = true;
-            cboDonViTinh.Location = new Point(325, 128);
+            cboDonViTinh.Location = new Point(325, 135);
             cboDonViTinh.Name = "cboDonViTinh";
-            cboDonViTinh.Size = new Size(135, 27);
+            cboDonViTinh.Size = new Size(135, 28);
             cboDonViTinh.TabIndex = 13;
             // 
             // lblTrangThai
             // 
             lblTrangThai.AutoSize = true;
-            lblTrangThai.Location = new Point(230, 167);
+            lblTrangThai.Location = new Point(230, 176);
             lblTrangThai.Name = "lblTrangThai";
             lblTrangThai.Size = new Size(75, 20);
             lblTrangThai.TabIndex = 14;
@@ -277,9 +277,9 @@ namespace NPC.Server
             // cboTrangThai
             // 
             cboTrangThai.FormattingEnabled = true;
-            cboTrangThai.Location = new Point(325, 163);
+            cboTrangThai.Location = new Point(325, 172);
             cboTrangThai.Name = "cboTrangThai";
-            cboTrangThai.Size = new Size(135, 27);
+            cboTrangThai.Size = new Size(135, 28);
             cboTrangThai.TabIndex = 15;
             // 
             // gbHinhAnh
@@ -288,9 +288,9 @@ namespace NPC.Server
             gbHinhAnh.Controls.Add(picHinhAnh);
             gbHinhAnh.Controls.Add(btnChonAnh);
             gbHinhAnh.Controls.Add(btnXoaAnh);
-            gbHinhAnh.Location = new Point(5, 214);
+            gbHinhAnh.Location = new Point(5, 225);
             gbHinhAnh.Name = "gbHinhAnh";
-            gbHinhAnh.Size = new Size(450, 119);
+            gbHinhAnh.Size = new Size(470, 125);
             gbHinhAnh.TabIndex = 1;
             gbHinhAnh.TabStop = false;
             gbHinhAnh.Text = "Hình ảnh món";
@@ -299,9 +299,9 @@ namespace NPC.Server
             // 
             picHinhAnh.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             picHinhAnh.BorderStyle = BorderStyle.FixedSingle;
-            picHinhAnh.Location = new Point(15, 23);
+            picHinhAnh.Location = new Point(15, 24);
             picHinhAnh.Name = "picHinhAnh";
-            picHinhAnh.Size = new Size(295, 86);
+            picHinhAnh.Size = new Size(315, 90);
             picHinhAnh.SizeMode = PictureBoxSizeMode.Zoom;
             picHinhAnh.TabIndex = 0;
             picHinhAnh.TabStop = false;
@@ -309,24 +309,22 @@ namespace NPC.Server
             // btnChonAnh
             // 
             btnChonAnh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnChonAnh.Location = new Point(325, 23);
+            btnChonAnh.Location = new Point(345, 24);
             btnChonAnh.Name = "btnChonAnh";
-            btnChonAnh.Size = new Size(110, 38);
+            btnChonAnh.Size = new Size(110, 40);
             btnChonAnh.TabIndex = 1;
             btnChonAnh.Text = "Chọn ảnh";
             btnChonAnh.UseVisualStyleBackColor = true;
-            btnChonAnh.Click += btnChonAnh_Click;
             // 
             // btnXoaAnh
             // 
             btnXoaAnh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnXoaAnh.Location = new Point(325, 68);
+            btnXoaAnh.Location = new Point(345, 72);
             btnXoaAnh.Name = "btnXoaAnh";
-            btnXoaAnh.Size = new Size(110, 38);
+            btnXoaAnh.Size = new Size(110, 40);
             btnXoaAnh.TabIndex = 2;
             btnXoaAnh.Text = "Xóa ảnh";
             btnXoaAnh.UseVisualStyleBackColor = true;
-            btnXoaAnh.Click += btnXoaAnh_Click;
             // 
             // gbTimKiem
             // 
@@ -337,9 +335,9 @@ namespace NPC.Server
             gbTimKiem.Controls.Add(cboTimKiemLoai);
             gbTimKiem.Controls.Add(chkTonKhoThap);
             gbTimKiem.Controls.Add(btnLamMoi);
-            gbTimKiem.Location = new Point(5, 337);
+            gbTimKiem.Location = new Point(5, 355);
             gbTimKiem.Name = "gbTimKiem";
-            gbTimKiem.Size = new Size(450, 109);
+            gbTimKiem.Size = new Size(470, 115);
             gbTimKiem.TabIndex = 2;
             gbTimKiem.TabStop = false;
             gbTimKiem.Text = "Tìm kiếm";
@@ -347,7 +345,7 @@ namespace NPC.Server
             // lblTimKiem
             // 
             lblTimKiem.AutoSize = true;
-            lblTimKiem.Location = new Point(12, 27);
+            lblTimKiem.Location = new Point(12, 28);
             lblTimKiem.Name = "lblTimKiem";
             lblTimKiem.Size = new Size(37, 20);
             lblTimKiem.TabIndex = 0;
@@ -355,16 +353,15 @@ namespace NPC.Server
             // 
             // txtTimKiem
             // 
-            txtTimKiem.Location = new Point(50, 23);
+            txtTimKiem.Location = new Point(50, 24);
             txtTimKiem.Name = "txtTimKiem";
-            txtTimKiem.Size = new Size(110, 26);
+            txtTimKiem.Size = new Size(110, 27);
             txtTimKiem.TabIndex = 1;
-            txtTimKiem.TextChanged += txtTimKiem_TextChanged;
             // 
             // lblTimKiemLoai
             // 
             lblTimKiemLoai.AutoSize = true;
-            lblTimKiemLoai.Location = new Point(170, 27);
+            lblTimKiemLoai.Location = new Point(170, 28);
             lblTimKiemLoai.Name = "lblTimKiemLoai";
             lblTimKiemLoai.Size = new Size(40, 20);
             lblTimKiemLoai.TabIndex = 2;
@@ -373,19 +370,18 @@ namespace NPC.Server
             // cboTimKiemLoai
             // 
             cboTimKiemLoai.FormattingEnabled = true;
-            cboTimKiemLoai.Location = new Point(215, 23);
+            cboTimKiemLoai.Location = new Point(215, 24);
             cboTimKiemLoai.Name = "cboTimKiemLoai";
-            cboTimKiemLoai.Size = new Size(120, 27);
+            cboTimKiemLoai.Size = new Size(120, 28);
             cboTimKiemLoai.TabIndex = 3;
             cboTimKiemLoai.Text = "-- Tất cả --";
-            cboTimKiemLoai.SelectedIndexChanged += cboTimKiemLoai_SelectedIndexChanged;
             // 
             // chkTonKhoThap
             // 
             chkTonKhoThap.AutoSize = true;
-            chkTonKhoThap.Location = new Point(50, 65);
+            chkTonKhoThap.Location = new Point(50, 68);
             chkTonKhoThap.Name = "chkTonKhoThap";
-            chkTonKhoThap.Size = new Size(143, 24);
+            chkTonKhoThap.Size = new Size(146, 24);
             chkTonKhoThap.TabIndex = 4;
             chkTonKhoThap.Text = "Cảnh báo sắp hết";
             chkTonKhoThap.UseVisualStyleBackColor = true;
@@ -393,13 +389,12 @@ namespace NPC.Server
             // btnLamMoi
             // 
             btnLamMoi.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnLamMoi.Location = new Point(325, 21);
+            btnLamMoi.Location = new Point(345, 22);
             btnLamMoi.Name = "btnLamMoi";
-            btnLamMoi.Size = new Size(110, 71);
+            btnLamMoi.Size = new Size(110, 75);
             btnLamMoi.TabIndex = 5;
             btnLamMoi.Text = "Làm mới";
             btnLamMoi.UseVisualStyleBackColor = true;
-            btnLamMoi.Click += btnLamMoi_Click;
             // 
             // gbDanhSach
             // 
@@ -408,7 +403,7 @@ namespace NPC.Server
             gbDanhSach.Dock = DockStyle.Fill;
             gbDanhSach.Location = new Point(493, 3);
             gbDanhSach.Name = "gbDanhSach";
-            gbDanhSach.Size = new Size(504, 441);
+            gbDanhSach.Size = new Size(564, 574);
             gbDanhSach.TabIndex = 1;
             gbDanhSach.TabStop = false;
             gbDanhSach.Text = "Danh sách thực đơn và kho";
@@ -417,13 +412,11 @@ namespace NPC.Server
             // 
             dgvMonAn.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvMonAn.Dock = DockStyle.Fill;
-            dgvMonAn.Location = new Point(3, 22);
+            dgvMonAn.Location = new Point(3, 23);
             dgvMonAn.Name = "dgvMonAn";
             dgvMonAn.RowHeadersWidth = 51;
-            dgvMonAn.Size = new Size(498, 383);
+            dgvMonAn.Size = new Size(558, 513);
             dgvMonAn.TabIndex = 0;
-            dgvMonAn.CellClick += dgvMonAn_CellClick;
-            dgvMonAn.SelectionChanged += dgvMonAn_SelectionChanged;
             // 
             // pnlSummary
             // 
@@ -431,9 +424,9 @@ namespace NPC.Server
             pnlSummary.Controls.Add(lblTongTonKho);
             pnlSummary.Controls.Add(lblCanhBao);
             pnlSummary.Dock = DockStyle.Bottom;
-            pnlSummary.Location = new Point(3, 405);
+            pnlSummary.Location = new Point(3, 536);
             pnlSummary.Name = "pnlSummary";
-            pnlSummary.Size = new Size(498, 33);
+            pnlSummary.Size = new Size(558, 35);
             pnlSummary.TabIndex = 1;
             // 
             // lblTongSoMon
@@ -472,16 +465,16 @@ namespace NPC.Server
             pnlChucNang.Controls.Add(btnNhapKho);
             pnlChucNang.Controls.Add(btnDong);
             pnlChucNang.Dock = DockStyle.Bottom;
-            pnlChucNang.Location = new Point(0, 490);
+            pnlChucNang.Location = new Point(0, 625);
             pnlChucNang.Name = "pnlChucNang";
-            pnlChucNang.Size = new Size(1000, 52);
+            pnlChucNang.Size = new Size(1060, 55);
             pnlChucNang.TabIndex = 2;
             // 
             // btnThem
             // 
             btnThem.Location = new Point(10, 8);
             btnThem.Name = "btnThem";
-            btnThem.Size = new Size(110, 38);
+            btnThem.Size = new Size(110, 40);
             btnThem.TabIndex = 0;
             btnThem.Text = "Thêm";
             btnThem.UseVisualStyleBackColor = true;
@@ -491,7 +484,7 @@ namespace NPC.Server
             // 
             btnSua.Location = new Point(126, 8);
             btnSua.Name = "btnSua";
-            btnSua.Size = new Size(110, 38);
+            btnSua.Size = new Size(110, 40);
             btnSua.TabIndex = 1;
             btnSua.Text = "Sửa";
             btnSua.UseVisualStyleBackColor = true;
@@ -501,7 +494,7 @@ namespace NPC.Server
             // 
             btnXoa.Location = new Point(242, 8);
             btnXoa.Name = "btnXoa";
-            btnXoa.Size = new Size(110, 38);
+            btnXoa.Size = new Size(110, 40);
             btnXoa.TabIndex = 2;
             btnXoa.Text = "Xóa";
             btnXoa.UseVisualStyleBackColor = true;
@@ -511,7 +504,7 @@ namespace NPC.Server
             // 
             btnNhapLai.Location = new Point(358, 8);
             btnNhapLai.Name = "btnNhapLai";
-            btnNhapLai.Size = new Size(110, 38);
+            btnNhapLai.Size = new Size(110, 40);
             btnNhapLai.TabIndex = 3;
             btnNhapLai.Text = "Nhập lại";
             btnNhapLai.UseVisualStyleBackColor = true;
@@ -521,7 +514,7 @@ namespace NPC.Server
             // 
             btnNhapKho.Location = new Point(474, 8);
             btnNhapKho.Name = "btnNhapKho";
-            btnNhapKho.Size = new Size(140, 38);
+            btnNhapKho.Size = new Size(140, 40);
             btnNhapKho.TabIndex = 4;
             btnNhapKho.Text = "Nhập thêm kho";
             btnNhapKho.UseVisualStyleBackColor = true;
@@ -530,9 +523,9 @@ namespace NPC.Server
             // btnDong
             // 
             btnDong.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnDong.Location = new Point(880, 8);
+            btnDong.Location = new Point(940, 8);
             btnDong.Name = "btnDong";
-            btnDong.Size = new Size(110, 38);
+            btnDong.Size = new Size(110, 40);
             btnDong.TabIndex = 5;
             btnDong.Text = "Đóng";
             btnDong.UseVisualStyleBackColor = true;
@@ -544,13 +537,13 @@ namespace NPC.Server
             // 
             // frmQuanLyMonAn
             // 
-            AutoScaleDimensions = new SizeF(8F, 19F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 542);
+            ClientSize = new Size(1000, 570);
             Controls.Add(tableMain);
             Controls.Add(pnlChucNang);
             Controls.Add(lblTieuDe);
-            MinimumSize = new Size(900, 458);
+            MinimumSize = new Size(900, 480);
             Name = "frmQuanLyMonAn";
             Text = "Quản lý món ăn";
             Load += frmQuanLyMonAn_Load;
