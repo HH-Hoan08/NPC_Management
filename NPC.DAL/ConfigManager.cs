@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +10,13 @@ namespace NPC.DAL
     public static class ConfigManager
     {
         private static readonly string ConfigPath = AppPaths.ConfigPath;
-        private const string DefaultConnectionString = @"Data Source=.;" +
+        private const string DefaultConnectionString = @"Data Source=.\SQLEXPRESS;" +
+                                                       @"TrustServerCertificate=True;" +
                                                        @"Initial Catalog=NPCData;" +
                                                        @"Integrated Security=True;" +
                                                        @"Connect Timeout=30;";
 
-        #region Mã hóa Base64
+        #region MÃ£ hÃ³a Base64
         public static string EncryptBase64(string plainText)
         {
             if (string.IsNullOrEmpty(plainText)) return string.Empty;
@@ -34,14 +35,14 @@ namespace NPC.DAL
             }
             catch(Exception ex)
             {
-                Logger.LogError("Giải mã Base64 chuỗi kết nối thất bại!", ex);
+                Logger.LogError("Giáº£i mÃ£ Base64 chuá»—i káº¿t ná»‘i tháº¥t báº¡i!", ex);
                 return string.Empty;
             }
         
         }
         #endregion
 
-        #region Đọc và ghi System.IO
+        #region Äá»c vÃ  ghi System.IO
         public static void SaveConnectionString(string raw)
         {
             try
@@ -56,15 +57,15 @@ namespace NPC.DAL
                 using (StreamWriter sw = new StreamWriter(ConfigPath, false, Encoding.UTF8))
                 {
                     sw.WriteLine("[Database]");
-                    sw.WriteLine($"; File cấu hình CSDL (Ma hoa Base64)");
-                    sw.WriteLine($"; Cập nhật: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                    sw.WriteLine($"; File cáº¥u hÃ¬nh CSDL (Ma hoa Base64)");
+                    sw.WriteLine($"; Cáº­p nháº­t: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                     sw.WriteLine($"ConnectionString={encoded}");
                 }
-                Logger.LogInfo("Đã lưu chuỗi kết nối CSDL mới vào config.ini.");
+                Logger.LogInfo("ÄÃ£ lÆ°u chuá»—i káº¿t ná»‘i CSDL má»›i vÃ o config.ini.");
             }
             catch (Exception ex)
             {
-                Logger.LogError("Lỗi khi ghi file cấu hình config.ini", ex);
+                Logger.LogError("Lá»—i khi ghi file cáº¥u hÃ¬nh config.ini", ex);
                 throw;
             }
         }
@@ -76,7 +77,7 @@ namespace NPC.DAL
                 if (!File.Exists(ConfigPath))
                 {
                     SaveConnectionString(DefaultConnectionString);
-                    Logger.LogInfo("Khởi tạo file config.ini mặc định thành công.");
+                    Logger.LogInfo("Khá»Ÿi táº¡o file config.ini máº·c Ä‘á»‹nh thÃ nh cÃ´ng.");
                     return DefaultConnectionString;
                 }
 
@@ -84,7 +85,7 @@ namespace NPC.DAL
                 foreach (string line in lines)
                 {
                     string trimmed = line.Trim();
-                    // Bỏ qua chú thích hoặc header section [Database]
+                    // Bá» qua chÃº thÃ­ch hoáº·c header section [Database]
                     if (trimmed.StartsWith(";") || trimmed.StartsWith("#") || trimmed.StartsWith("["))
                         continue;
                     if (trimmed.StartsWith("ConnectionString=", StringComparison.OrdinalIgnoreCase))
@@ -101,7 +102,7 @@ namespace NPC.DAL
             }
             catch (Exception ex)
             {
-                Logger.LogError("Lỗi khi đọc file cấu hình config.ini", ex);
+                Logger.LogError("Lá»—i khi Ä‘á»c file cáº¥u hÃ¬nh config.ini", ex);
                 return DefaultConnectionString;
             }
         }

@@ -14,59 +14,66 @@ namespace NPC.DAL
         /// <summary>Thực thi INSERT, UPDATE, DELETE — tự mở kết nối riêng.</summary>
         public static int ExecuteNonQuery(string query, params SqlParameter[] parameters)
         {
-            if (NPCData.IsOK == true)
+            using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))
             {
-                using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        if (parameters != null) cmd.Parameters.AddRange(parameters);
-                        conn.Open();
-                        return cmd.ExecuteNonQuery();
-                    }
+                    if (parameters != null && parameters.Length > 0)
+                        cmd.Parameters.AddRange(parameters);
+
+                    conn.Open();
+                    return cmd.ExecuteNonQuery();
                 }
             }
-            return -1;
         }
 
         /// <summary>Thực thi SELECT lấy 1 giá trị (COUNT, MAX, IDENTITY...) — tự mở kết nối riêng.</summary>
-        public static object ExecuteScalar(string query, params SqlParameter[] parameters)
+        public static object? ExecuteScalar(string query, params SqlParameter[] parameters)
         {
-            if (NPCData.IsOK == true)
+            using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))
             {
-                using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        if (parameters != null) cmd.Parameters.AddRange(parameters);
-                        conn.Open();
-                        return cmd.ExecuteScalar();
-                    }
+                    if (parameters != null && parameters.Length > 0)
+                        cmd.Parameters.AddRange(parameters);
+
+                    conn.Open();
+                    return cmd.ExecuteScalar();
                 }
             }
-            return null;
         }
 
-        /// <summary>Thực thi SELECT lấy DataTable — tự mở kết nối riêng.</summary>
-        public static DataTable ExecuteQuery(string query, params SqlParameter[] parameters)
+        /// <summary>
+        /// Thực thi SELECT lấy dữ liệu đổ vào DataTable bằng SqlDataAdapter.
+        /// </summary>
+        public static DataTable GetDataToTable(string query, params SqlParameter[] parameters)
         {
             DataTable dt = new DataTable();
-            if (NPCData.IsOK == true)
+            using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))
             {
-                using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    if (parameters != null && parameters.Length > 0)
+                        cmd.Parameters.AddRange(parameters);
+
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                     {
-                        if (parameters != null) cmd.Parameters.AddRange(parameters);
-                        conn.Open();
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            dt.Load(reader);
-                        }
+                        da.Fill(dt);
                     }
                 }
             }
             return dt;
+        }
+
+        public static DataTable GetDataToTable(string query)
+        {
+            return GetDataToTable(query, Array.Empty<SqlParameter>());
+        }
+
+        /// <summary>Thực thi SELECT lấy DataTable — gọi qua GetDataToTable.</summary>
+        public static DataTable ExecuteQuery(string query, params SqlParameter[] parameters)
+        {
+            return GetDataToTable(query, parameters);
         }
 
         // =====================================================================
@@ -88,7 +95,9 @@ namespace NPC.DAL
         {
             using (SqlCommand cmd = new SqlCommand(query, conn, tran))
             {
-                if (parameters != null) cmd.Parameters.AddRange(parameters);
+                if (parameters != null && parameters.Length > 0)
+                    cmd.Parameters.AddRange(parameters);
+
                 return cmd.ExecuteNonQuery();
             }
         }
@@ -96,12 +105,14 @@ namespace NPC.DAL
         /// <summary>
         /// Thực thi SELECT lấy 1 giá trị trong một SqlTransaction đang mở.
         /// </summary>
-        public static object ExecuteScalar(SqlConnection conn, SqlTransaction tran,
+        public static object? ExecuteScalar(SqlConnection conn, SqlTransaction tran,
             string query, params SqlParameter[] parameters)
         {
             using (SqlCommand cmd = new SqlCommand(query, conn, tran))
             {
-                if (parameters != null) cmd.Parameters.AddRange(parameters);
+                if (parameters != null && parameters.Length > 0)
+                    cmd.Parameters.AddRange(parameters);
+
                 return cmd.ExecuteScalar();
             }
         }
@@ -115,7 +126,9 @@ namespace NPC.DAL
             DataTable dt = new DataTable();
             using (SqlCommand cmd = new SqlCommand(query, conn, tran))
             {
-                if (parameters != null) cmd.Parameters.AddRange(parameters);
+                if (parameters != null && parameters.Length > 0)
+                    cmd.Parameters.AddRange(parameters);
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     dt.Load(reader);
