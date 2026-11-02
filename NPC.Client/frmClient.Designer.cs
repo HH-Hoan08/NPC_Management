@@ -30,6 +30,7 @@ namespace NPC.Client
         {
             components = new System.ComponentModel.Container();
             pnlKhoa = new Panel();
+            picNen = new PictureBox();
             pnlDangNhap = new Panel();
             lblTieuDe = new Label();
             lblTenMay = new Label();
@@ -39,8 +40,8 @@ namespace NPC.Client
             txtMatKhau = new TextBox();
             btnDangNhap = new Button();
             lblThongBao = new Label();
-            picNen = new PictureBox();
             pnlThanhNoi = new Panel();
+            btnThuGon = new Button();
             lblTenHoiVien = new Label();
             lblSoDu = new Label();
             lblThoiGianConLai = new Label();
@@ -48,12 +49,13 @@ namespace NPC.Client
             lblDonGiaGio = new Label();
             btnGoiMon = new Button();
             btnTraMay = new Button();
+            btnIconThuGon = new Button();
             tmrDemGio = new System.Windows.Forms.Timer(components);
             tmrTruTien = new System.Windows.Forms.Timer(components);
             tmrDongBo = new System.Windows.Forms.Timer(components);
             pnlKhoa.SuspendLayout();
-            pnlDangNhap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picNen).BeginInit();
+            pnlDangNhap.SuspendLayout();
             pnlThanhNoi.SuspendLayout();
             SuspendLayout();
             // 
@@ -69,6 +71,17 @@ namespace NPC.Client
             pnlKhoa.Name = "pnlKhoa";
             pnlKhoa.Size = new Size(1250, 750);
             pnlKhoa.TabIndex = 0;
+            // 
+            // picNen
+            // 
+            picNen.Dock = DockStyle.Fill;
+            picNen.Image = Properties.Resources.NVIDIA_GeForce;
+            picNen.Location = new Point(0, 0);
+            picNen.Name = "picNen";
+            picNen.Size = new Size(1250, 750);
+            picNen.SizeMode = PictureBoxSizeMode.StretchImage;
+            picNen.TabIndex = 1;
+            picNen.TabStop = false;
             // 
             // pnlDangNhap
             // 
@@ -184,21 +197,11 @@ namespace NPC.Client
             lblThongBao.Text = "Máy đang khóa – vui lòng đăng nhập";
             lblThongBao.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // picNen
-            // 
-            picNen.Dock = DockStyle.Fill;
-            picNen.Image = Properties.Resources.NVIDIA_GeForce;
-            picNen.Location = new Point(0, 0);
-            picNen.Name = "picNen";
-            picNen.Size = new Size(1250, 750);
-            picNen.SizeMode = PictureBoxSizeMode.StretchImage;
-            picNen.TabIndex = 1;
-            picNen.TabStop = false;
-            // 
             // pnlThanhNoi
             // 
             pnlThanhNoi.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pnlThanhNoi.BackColor = Color.FromArgb(33, 38, 49);
+            pnlThanhNoi.Controls.Add(btnThuGon);
             pnlThanhNoi.Controls.Add(lblTenHoiVien);
             pnlThanhNoi.Controls.Add(lblSoDu);
             pnlThanhNoi.Controls.Add(lblThoiGianConLai);
@@ -213,6 +216,21 @@ namespace NPC.Client
             pnlThanhNoi.TabIndex = 1;
             pnlThanhNoi.Visible = false;
             // 
+            // btnThuGon
+            // 
+            btnThuGon.BackColor = Color.Transparent;
+            btnThuGon.FlatAppearance.BorderSize = 0;
+            btnThuGon.FlatStyle = FlatStyle.Flat;
+            btnThuGon.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnThuGon.ForeColor = Color.White;
+            btnThuGon.Location = new Point(335, 5);
+            btnThuGon.Name = "btnThuGon";
+            btnThuGon.Size = new Size(38, 32);
+            btnThuGon.TabIndex = 7;
+            btnThuGon.Text = "—";
+            btnThuGon.UseVisualStyleBackColor = false;
+            btnThuGon.Click += btnThuGon_Click;
+            // 
             // lblTenHoiVien
             // 
             lblTenHoiVien.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
@@ -220,7 +238,7 @@ namespace NPC.Client
             lblTenHoiVien.Location = new Point(12, 10);
             lblTenHoiVien.Margin = new Padding(4, 0, 4, 0);
             lblTenHoiVien.Name = "lblTenHoiVien";
-            lblTenHoiVien.Size = new Size(355, 28);
+            lblTenHoiVien.Size = new Size(315, 28);
             lblTenHoiVien.TabIndex = 0;
             lblTenHoiVien.Text = "Hội viên: nguyenvana";
             // 
@@ -301,6 +319,22 @@ namespace NPC.Client
             btnTraMay.UseVisualStyleBackColor = false;
             btnTraMay.Click += btnTraMay_Click;
             // 
+            // btnIconThuGon
+            // 
+            btnIconThuGon.BackColor = Color.FromArgb(0, 122, 255);
+            btnIconThuGon.FlatAppearance.BorderSize = 0;
+            btnIconThuGon.FlatStyle = FlatStyle.Flat;
+            btnIconThuGon.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnIconThuGon.ForeColor = Color.White;
+            btnIconThuGon.Location = new Point(0, 0);
+            btnIconThuGon.Name = "btnIconThuGon";
+            btnIconThuGon.Size = new Size(50, 50);
+            btnIconThuGon.TabIndex = 2;
+            btnIconThuGon.Text = "⚡";
+            btnIconThuGon.UseVisualStyleBackColor = false;
+            btnIconThuGon.Visible = false;
+            btnIconThuGon.Click += btnIconThuGon_Click;
+            // 
             // tmrDemGio
             // 
             tmrDemGio.Interval = 1000;
@@ -324,6 +358,7 @@ namespace NPC.Client
             BackColor = Color.FromArgb(15, 23, 42);
             ClientSize = new Size(1250, 750);
             ControlBox = false;
+            Controls.Add(btnIconThuGon);
             Controls.Add(pnlThanhNoi);
             Controls.Add(pnlKhoa);
             FormBorderStyle = FormBorderStyle.None;
@@ -359,6 +394,7 @@ namespace NPC.Client
         private Button btnDangNhap;
         private Label lblThongBao;
         private Panel pnlThanhNoi;
+        private Button btnThuGon;
         private Label lblTenHoiVien;
         private Label lblSoDu;
         private Label lblThoiGianConLai;
@@ -366,9 +402,9 @@ namespace NPC.Client
         private Label lblDonGiaGio;
         private Button btnGoiMon;
         private Button btnTraMay;
+        private Button btnIconThuGon;
         private System.Windows.Forms.Timer tmrDemGio;
         private System.Windows.Forms.Timer tmrTruTien;
         private System.Windows.Forms.Timer tmrDongBo;
     }
 }
-

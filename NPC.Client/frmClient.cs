@@ -8,7 +8,7 @@ namespace NPC.Client
 {
     public partial class frmClient : Form
     {
-        private const string TenMay = "MAY-01";
+        private const string TenMay = "MAY-09";
         private const decimal SoDuToiThieu = 5000m;
         private const int PhutCanhBao = 5;
 
@@ -21,9 +21,47 @@ namespace NPC.Client
         private bool _choPhepThoat;
         private frmGoiMonClient? _frmGoiMon;
 
+        private bool _isDragging = false;
+        private Point _dragCursorPoint;
+        private Point _dragFormPoint;
+        private bool _hasDragged = false;
+
         public frmClient()
         {
             InitializeComponent();
+
+            btnIconThuGon.MouseDown += BtnIconThuGon_MouseDown;
+            btnIconThuGon.MouseMove += BtnIconThuGon_MouseMove;
+            btnIconThuGon.MouseUp += BtnIconThuGon_MouseUp;
+        }
+
+        private void BtnIconThuGon_MouseDown(object? sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                _isDragging = true;
+                _hasDragged = false;
+                _dragCursorPoint = Cursor.Position;
+                _dragFormPoint = this.Location;
+            }
+        }
+
+        private void BtnIconThuGon_MouseMove(object? sender, MouseEventArgs e)
+        {
+            if (_isDragging)
+            {
+                Point diff = Point.Subtract(Cursor.Position, new Size(_dragCursorPoint));
+                if (Math.Abs(diff.X) > 3 || Math.Abs(diff.Y) > 3)
+                {
+                    _hasDragged = true;
+                }
+                this.Location = Point.Add(_dragFormPoint, new Size(diff));
+            }
+        }
+
+        private void BtnIconThuGon_MouseUp(object? sender, MouseEventArgs e)
+        {
+            _isDragging = false;
         }
 
         private void frmClient_Load(object? sender, EventArgs e)
@@ -99,6 +137,7 @@ namespace NPC.Client
             _frmGoiMon?.DongKhongHoi();
 
             pnlThanhNoi.Visible = false;
+            btnIconThuGon.Visible = false;
             WindowState = FormWindowState.Maximized;
             TopMost = !System.Diagnostics.Debugger.IsAttached;
             pnlKhoa.Visible = true;
@@ -126,6 +165,16 @@ namespace NPC.Client
             CapNhatSoDu();
 
             pnlKhoa.Visible = false;
+            btnIconThuGon.Visible = false;
+            HienThiThanhNoiDayDu();
+
+            tmrDemGio.Start();
+            tmrTruTien.Start();
+        }
+
+        private void HienThiThanhNoiDayDu()
+        {
+            btnIconThuGon.Visible = false;
             WindowState = FormWindowState.Normal;
             MinimumSize = Size.Empty;
             pnlThanhNoi.Anchor = AnchorStyles.Top | AnchorStyles.Left;
@@ -136,9 +185,31 @@ namespace NPC.Client
             pnlThanhNoi.Visible = true;
             pnlThanhNoi.BringToFront();
             TopMost = !System.Diagnostics.Debugger.IsAttached;
+        }
 
-            tmrDemGio.Start();
-            tmrTruTien.Start();
+        private void HienThiIconThuGon()
+        {
+            pnlThanhNoi.Visible = false;
+            WindowState = FormWindowState.Normal;
+            MinimumSize = Size.Empty;
+            btnIconThuGon.Location = Point.Empty;
+            ClientSize = btnIconThuGon.Size;
+            Rectangle vung = Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 1280, 720);
+            Location = new Point(vung.Right - Width - 10, vung.Top + 10);
+            btnIconThuGon.Visible = true;
+            btnIconThuGon.BringToFront();
+            TopMost = !System.Diagnostics.Debugger.IsAttached;
+        }
+
+        private void btnThuGon_Click(object? sender, EventArgs e)
+        {
+            HienThiIconThuGon();
+        }
+
+        private void btnIconThuGon_Click(object? sender, EventArgs e)
+        {
+            if (_hasDragged) return; // Nếu vừa kéo thả vị trí thì không mở bung thanh nổi
+            HienThiThanhNoiDayDu();
         }
 
         private void HienThongBao(string noiDung, bool laLoi)
