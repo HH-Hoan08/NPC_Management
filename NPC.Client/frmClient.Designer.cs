@@ -30,7 +30,6 @@ namespace NPC.Client
         {
             components = new System.ComponentModel.Container();
             pnlKhoa = new Panel();
-            picNen = new PictureBox();
             pnlDangNhap = new Panel();
             lblTieuDe = new Label();
             lblTenMay = new Label();
@@ -40,6 +39,7 @@ namespace NPC.Client
             txtMatKhau = new TextBox();
             btnDangNhap = new Button();
             lblThongBao = new Label();
+            picNen = new PictureBox();
             pnlThanhNoi = new Panel();
             btnThuGon = new Button();
             lblTenHoiVien = new Label();
@@ -54,8 +54,8 @@ namespace NPC.Client
             tmrTruTien = new System.Windows.Forms.Timer(components);
             tmrDongBo = new System.Windows.Forms.Timer(components);
             pnlKhoa.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)picNen).BeginInit();
             pnlDangNhap.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picNen).BeginInit();
             pnlThanhNoi.SuspendLayout();
             SuspendLayout();
             // 
@@ -72,21 +72,10 @@ namespace NPC.Client
             pnlKhoa.Size = new Size(1250, 750);
             pnlKhoa.TabIndex = 0;
             // 
-            // picNen
-            // 
-            picNen.Dock = DockStyle.Fill;
-            picNen.Image = Properties.Resources.NVIDIA_GeForce;
-            picNen.Location = new Point(0, 0);
-            picNen.Name = "picNen";
-            picNen.Size = new Size(1250, 750);
-            picNen.SizeMode = PictureBoxSizeMode.StretchImage;
-            picNen.TabIndex = 1;
-            picNen.TabStop = false;
-            // 
             // pnlDangNhap
             // 
             pnlDangNhap.Anchor = AnchorStyles.None;
-            pnlDangNhap.BackColor = Color.Silver;
+            pnlDangNhap.BackColor = Color.Snow;
             pnlDangNhap.Controls.Add(lblTieuDe);
             pnlDangNhap.Controls.Add(lblTenMay);
             pnlDangNhap.Controls.Add(lblTenDangNhap);
@@ -187,7 +176,7 @@ namespace NPC.Client
             // lblThongBao
             // 
             lblThongBao.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblThongBao.ForeColor = Color.Yellow;
+            lblThongBao.ForeColor = Color.Black;
             lblThongBao.ImageAlign = ContentAlignment.MiddleRight;
             lblThongBao.Location = new Point(50, 395);
             lblThongBao.Margin = new Padding(4, 0, 4, 0);
@@ -197,10 +186,21 @@ namespace NPC.Client
             lblThongBao.Text = "Máy đang khóa – vui lòng đăng nhập";
             lblThongBao.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // picNen
+            // 
+            picNen.Dock = DockStyle.Fill;
+            picNen.Image = Properties.Resources.NVIDIA_GeForce;
+            picNen.Location = new Point(0, 0);
+            picNen.Name = "picNen";
+            picNen.Size = new Size(1250, 750);
+            picNen.SizeMode = PictureBoxSizeMode.StretchImage;
+            picNen.TabIndex = 1;
+            picNen.TabStop = false;
+            // 
             // pnlThanhNoi
             // 
             pnlThanhNoi.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pnlThanhNoi.BackColor = Color.FromArgb(33, 38, 49);
+            pnlThanhNoi.BackColor = Color.Navy;
             pnlThanhNoi.Controls.Add(btnThuGon);
             pnlThanhNoi.Controls.Add(lblTenHoiVien);
             pnlThanhNoi.Controls.Add(lblSoDu);
