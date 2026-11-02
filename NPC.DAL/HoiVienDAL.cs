@@ -115,11 +115,11 @@ namespace NPC.DAL
             thongBaoLoi = string.Empty;
             try
             {
-                string query = @" UPDATE dbo.HoiVien 
-                                  SET HoTen = @HoTen,
-                                      DienThoai = @DienThoai,
-                                      TrangThai = @TrangThai " + (doiMatKhau ? ", MatKhau = @MatKhau " : " ") +
-                                " WHERE MaHoiVien = @MaHoiVien";
+                string query = @"UPDATE dbo.HoiVien 
+                                 SET HoTen = @HoTen,
+                                     DienThoai = @DienThoai,
+                                     TrangThai = @TrangThai " + (doiMatKhau ? ", MatKhau = @MatKhau " : " ") +
+                                "WHERE MaHoiVien = @MaHoiVien";
                 List<SqlParameter> pars = new List<SqlParameter>
                 {
                     new SqlParameter("@HoTen", hv.HoTen.Trim()),
