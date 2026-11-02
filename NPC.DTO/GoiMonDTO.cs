@@ -12,23 +12,6 @@ namespace NPC.DTO
     }
 
     /// <summary>
-    /// DTO thông tin món ăn trên thực đơn
-    /// </summary>
-    public class MonAnDTO
-    {
-        public int MaMon { get; set; }
-        public int MaDanhMuc { get; set; }
-        public string TenDanhMuc { get; set; } = string.Empty;
-        public string TenMon { get; set; } = string.Empty;
-        public decimal DonGia { get; set; }
-        public int SoLuongTon { get; set; }
-        public string? HinhAnh { get; set; }
-        public bool ConPhucVu { get; set; }
-        public decimal GiaNhap { get; set; }
-        public string DonViTinh { get; set; } = string.Empty;
-    }
-
-    /// <summary>
     /// DTO đại diện cho một món trong giỏ hàng hoặc một chi tiết đơn hàng
     /// </summary>
     public class ChiTietDonHangDTO

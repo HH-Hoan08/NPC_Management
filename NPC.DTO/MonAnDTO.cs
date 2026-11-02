@@ -8,6 +8,7 @@ namespace NPC.DTO
 {
     public class MonAnDTO
     {
+        // Các thuộc tính ánh xạ từ Database
         public int MaMon { get; set; }
         public int MaDanhMuc { get; set; }
         public string TenDanhMuc { get; set; } = string.Empty;
@@ -15,12 +16,14 @@ namespace NPC.DTO
         public decimal DonGia { get; set; }
         public decimal GiaNhap { get; set; }
         public int SoLuongTon { get; set; }
+
+        // Giá trị mặc định (phù hợp cho việc thêm mới)
         public string DonViTinh { get; set; } = "Phần";
-        public string HinhAnh { get; set; } = string.Empty;
+        public string? HinhAnh { get; set; }
         public bool ConPhucVu { get; set; } = true;
 
-        // Thuộc tính hiển thị phụ trợ trên DataGridView
+        // Thuộc tính hiển thị phụ trợ trên DataGridView (Chỉ đọc)
         public string TrangThaiText => ConPhucVu ? "Còn phục vụ" : "Ngừng phục vụ";
-        public string CanhBaoTonKho => SoLuongTon < 5 ? "Sắp hết hàng" : "Đủ hàng";
+        public string CanhBaoTonKho => SoLuongTon <= 0 ? "Hết hàng" : (SoLuongTon < 5 ? "Sắp hết hàng" : "Đủ hàng");
     }
 }

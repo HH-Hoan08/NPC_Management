@@ -36,6 +36,7 @@
             tsmiDangXuat = new ToolStripMenuItem();
             tsmiCaiDatGiaoDien = new ToolStripMenuItem();
             tsmiThoat = new ToolStripMenuItem();
+            tsmiSoDoPhongMay = new ToolStripMenuItem();
             tsmiQuanLy = new ToolStripMenuItem();
             tsmiHoiVien = new ToolStripMenuItem();
             tsmiMonAn = new ToolStripMenuItem();
@@ -46,7 +47,6 @@
             tsmiNhatKyHV = new ToolStripMenuItem();
             tsmiThongKe = new ToolStripMenuItem();
             tsmiNhatKyHT = new ToolStripMenuItem();
-            tsmiSoDoPhongMay = new ToolStripMenuItem();
             tsmiDoanhThu = new ToolStripMenuItem();
             msMenuChinh.SuspendLayout();
             SuspendLayout();
@@ -110,10 +110,10 @@
             // tsmiSoDoPhongMay
             // 
             tsmiSoDoPhongMay.Name = "tsmiSoDoPhongMay";
-            tsmiSoDoPhongMay.Size = new Size(137, 24);
+            tsmiSoDoPhongMay.Size = new Size(141, 24);
             tsmiSoDoPhongMay.Text = "Sơ đồ phòng máy";
             tsmiSoDoPhongMay.Click += tsmiSoDoPhongMay_Click;
-            //
+            // 
             // tsmiQuanLy
             // 
             tsmiQuanLy.DropDownItems.AddRange(new ToolStripItem[] { tsmiHoiVien, tsmiMonAn });
