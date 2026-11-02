@@ -59,5 +59,15 @@ namespace NPC.Client.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NVIDIA_GeForce {
+            get {
+                object obj = ResourceManager.GetObject("NVIDIA GeForce", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

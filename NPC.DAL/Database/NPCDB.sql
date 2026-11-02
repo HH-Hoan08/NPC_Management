@@ -1,3 +1,11 @@
+-- ======================================================================================
+-- ĐỒ ÁN LẬP TRÌNH WINDOWS: HỆ THỐNG QUẢN LÝ QUÁN NÉT (NPC MANAGEMENT)
+-- CƠ SỞ DỮ LIỆU CHUẨN 3NF: NPCData
+-- CHUẨN HÓA 100% TIẾNG VIỆT: TÊN BẢNG, TÊN CỘT, DỮ LIỆU TRẠNG THÁI & HỆ THỐNG VIEWS
+-- Phụ trách thiết kế & Cài đặt: Phú
+-- Tương thích: Microsoft SQL Server 2019/2022 & SQL Server LocalDB
+-- ======================================================================================
+
 USE master;
 GO
 
@@ -994,5 +1002,3 @@ INSERT INTO dbo.GiaoDich (MaHoiVien, MaNhanVien, SoTien, HinhThucThanhToan, Ngay
 (4, 2, 20000.00, N'Tiền mặt', DATEADD(DAY, -1, GETDATE()), N'Nạp tiền trước khi vi phạm');
 GO
 
-PRINT N'>>> CÀI ĐẶT CƠ SỞ DỮ LIỆU NPCData (FULL TIẾNG VIỆT 3NF & HỆ THỐNG V_VIEWS) HOÀN TẤT THÀNH CÔNG! <<<';
-GO

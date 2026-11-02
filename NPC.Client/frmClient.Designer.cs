@@ -1,4 +1,4 @@
-﻿namespace NPC.Client
+namespace NPC.Client
 {
     partial class frmClient
     {
@@ -39,6 +39,7 @@
             txtMatKhau = new TextBox();
             btnDangNhap = new Button();
             lblThongBao = new Label();
+            picNen = new PictureBox();
             pnlThanhNoi = new Panel();
             lblTenHoiVien = new Label();
             lblSoDu = new Label();
@@ -52,6 +53,7 @@
             tmrDongBo = new System.Windows.Forms.Timer(components);
             pnlKhoa.SuspendLayout();
             pnlDangNhap.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picNen).BeginInit();
             pnlThanhNoi.SuspendLayout();
             SuspendLayout();
             // 
@@ -59,6 +61,7 @@
             // 
             pnlKhoa.BackColor = Color.FromArgb(24, 28, 36);
             pnlKhoa.Controls.Add(pnlDangNhap);
+            pnlKhoa.Controls.Add(picNen);
             pnlKhoa.Dock = DockStyle.Fill;
             pnlKhoa.ForeColor = SystemColors.Control;
             pnlKhoa.Location = new Point(0, 0);
@@ -181,6 +184,17 @@
             lblThongBao.Text = "Máy đang khóa – vui lòng đăng nhập";
             lblThongBao.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // picNen
+            // 
+            picNen.Dock = DockStyle.Fill;
+            picNen.Image = Properties.Resources.NVIDIA_GeForce;
+            picNen.Location = new Point(0, 0);
+            picNen.Name = "picNen";
+            picNen.Size = new Size(1250, 750);
+            picNen.SizeMode = PictureBoxSizeMode.StretchImage;
+            picNen.TabIndex = 1;
+            picNen.TabStop = false;
+            // 
             // pnlThanhNoi
             // 
             pnlThanhNoi.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -294,7 +308,7 @@
             // 
             // tmrTruTien
             // 
-            tmrTruTien.Interval = 60000;
+            tmrTruTien.Interval = 1000;
             tmrTruTien.Tick += tmrTruTien_Tick;
             // 
             // tmrDongBo
@@ -326,6 +340,7 @@
             pnlKhoa.ResumeLayout(false);
             pnlDangNhap.ResumeLayout(false);
             pnlDangNhap.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picNen).EndInit();
             pnlThanhNoi.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -333,6 +348,7 @@
         #endregion
 
         private Panel pnlKhoa;
+        private PictureBox picNen;
         private Panel pnlDangNhap;
         private Label lblTieuDe;
         private Label lblTenMay;
@@ -355,3 +371,4 @@
         private System.Windows.Forms.Timer tmrDongBo;
     }
 }
+

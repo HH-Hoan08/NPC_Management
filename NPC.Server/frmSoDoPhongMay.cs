@@ -11,6 +11,9 @@ namespace NPC.Server
     public partial class frmSoDoPhongMay : Form
     {
         private System.Windows.Forms.Timer _timerDemGio;
+        private int _demGiayQuetDb = 0;
+        private Dictionary<int, long> _danhSachPhienChoiCu = new Dictionary<int, long>();
+        private bool _lanDauLoad = true;
 
         public frmSoDoPhongMay()
         {
@@ -24,12 +27,21 @@ namespace NPC.Server
             _timerDemGio.Interval = 1000;
             _timerDemGio.Tick += (s, e) =>
             {
+                // Cập nhật tăng giây hiển thị trên các máy đang dùng
                 foreach (Control ctrl in flpDanhSachMay.Controls)
                 {
                     if (ctrl is ucMayTram uc && uc.Data != null && uc.Data.TrangThai == "Đang dùng")
                     {
                         uc.BindingData(uc.Data);
                     }
+                }
+
+                // Cứ mỗi 2 giây quét Database 1 lần để phát hiện Client vừa mở máy / trả máy
+                _demGiayQuetDb++;
+                if (_demGiayQuetDb >= 2)
+                {
+                    _demGiayQuetDb = 0;
+                    DongBoMayTramTuCSDL();
                 }
             };
         }
@@ -109,14 +121,78 @@ namespace NPC.Server
                     uc.ActionTriggered += Uc_ActionTriggered;
 
                     flpDanhSachMay.Controls.Add(uc);
+
+                    if (may.MaPhienChoi.HasValue)
+                        _danhSachPhienChoiCu[may.MaMay] = may.MaPhienChoi.Value;
+                    else
+                        _danhSachPhienChoiCu[may.MaMay] = 0;
                 }
 
                 flpDanhSachMay.ResumeLayout();
+                _lanDauLoad = false;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi tải danh sách máy trạm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void DongBoMayTramTuCSDL()
+        {
+            try
+            {
+                int? maPhong = null;
+                if (cboKhuVuc.SelectedValue != null && int.TryParse(cboKhuVuc.SelectedValue.ToString(), out int p) && p > 0)
+                {
+                    maPhong = p;
+                }
+
+                string? trangThai = cboTrangThai.SelectedItem?.ToString();
+                if (trangThai == "Tất cả") trangThai = null;
+
+                List<MayTramDTO> listMayMoi = MayTramBLL.LayDanhSachMayTram(maPhong, trangThai);
+                CapNhatThongKe(listMayMoi);
+
+                Dictionary<int, MayTramDTO> dictMoi = listMayMoi.ToDictionary(m => m.MaMay);
+
+                foreach (Control ctrl in flpDanhSachMay.Controls)
+                {
+                    if (ctrl is ucMayTram uc && uc.Data != null && dictMoi.ContainsKey(uc.Data.MaMay))
+                    {
+                        MayTramDTO dataMoi = dictMoi[uc.Data.MaMay];
+
+                        long phienCu = _danhSachPhienChoiCu.ContainsKey(dataMoi.MaMay) ? _danhSachPhienChoiCu[dataMoi.MaMay] : 0;
+                        long phienMoi = dataMoi.MaPhienChoi ?? 0;
+
+                        // Kiểm tra nếu vừa có phiên chơi mới mở từ Client
+                        if (!_lanDauLoad && phienCu == 0 && phienMoi > 0 && dataMoi.TrangThai == "Đang dùng")
+                        {
+                            string khach = string.IsNullOrEmpty(dataMoi.TenHoiVien) ? "Khách vãng lai" : dataMoi.TenHoiVien;
+                            ThongBaoMoMay(dataMoi.TenMay, khach);
+                        }
+
+                        _danhSachPhienChoiCu[dataMoi.MaMay] = phienMoi;
+                        uc.BindingData(dataMoi);
+                    }
+                }
+            }
+            catch
+            {
+                // Bỏ qua lỗi kết nối tạm thời để không gián đoạn giao diện
+            }
+        }
+
+        private void ThongBaoMoMay(string tenMay, string tenNguoiDung)
+        {
+            // Hiển thị thông báo hoặc phát âm thanh báo máy đang sử dụng
+            try
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+            }
+            catch { }
+
+            MessageBox.Show($"Máy [{tenMay}] vừa đăng nhập sử dụng thành công!\nNgười dùng: {tenNguoiDung}",
+                "Thông Báo Máy Bắt Đầu Sử Dụng", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void CapNhatThongKe(List<MayTramDTO> list)

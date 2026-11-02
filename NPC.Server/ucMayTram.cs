@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using NPC.DTO;
@@ -85,7 +85,15 @@ namespace NPC.Server
 
                 if (Data.MaHoiVien.HasValue)
                 {
-                    lblSoDu.Text = $"Dư: {Data.SoDuHoiVien:N0} đ";
+                    decimal soDuHienTai = Data.SoDuHoiVien;
+                    if (Data.ThoiGianBatDau.HasValue && Data.DonGiaGio > 0)
+                    {
+                        TimeSpan duration = DateTime.Now - Data.ThoiGianBatDau.Value;
+                        int phut = Math.Max(1, (int)duration.TotalMinutes);
+                        decimal tienDaChoi = Math.Round(phut / 60m * Data.DonGiaGio, 0, MidpointRounding.AwayFromZero);
+                        soDuHienTai = Math.Max(0m, Data.SoDuHoiVien - tienDaChoi);
+                    }
+                    lblSoDu.Text = $"Dư: {soDuHienTai:N0} đ";
                 }
                 else
                 {
@@ -93,8 +101,8 @@ namespace NPC.Server
                     if (Data.ThoiGianBatDau.HasValue)
                     {
                         TimeSpan duration = DateTime.Now - Data.ThoiGianBatDau.Value;
-                        double totalHours = duration.TotalHours;
-                        tienHienTai = Math.Round((decimal)totalHours * Data.DonGiaGio, 0);
+                        int phut = Math.Max(1, (int)duration.TotalMinutes);
+                        tienHienTai = Math.Round(phut / 60m * Data.DonGiaGio, 0, MidpointRounding.AwayFromZero);
                     }
                     else
                     {
