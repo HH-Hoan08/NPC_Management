@@ -1,4 +1,4 @@
-using NPC.BLL;
+﻿using NPC.BLL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -120,11 +120,16 @@ namespace NPC.Server
         private void LamMoiForm()
         {
             txtMaHoiVien.Text = "";
+            txtMaHoiVien.ReadOnly = false;
             txtHoTen.Text = "";
             txtMatKhau.Text = "";
             txtDienThoai.Text = "";
             txtSoDu.Text = "0";
-            cboTrangThai.SelectedIndex = 0;
+            txtSoDu.ReadOnly = false;
+            if (cboTrangThai.Items.Count > 0)
+            {
+                cboTrangThai.SelectedIndex = 0;
+            }
             txtHoTen.Focus();
         }
 
@@ -171,6 +176,7 @@ namespace NPC.Server
                 txtSoDu.Text = $"{Convert.ToDecimal(dr["SoDu"]):N0}";
                 cboTrangThai.SelectedItem = dr["TrangThai"]?.ToString() ?? "Hoạt động";
                 txtMaHoiVien.ReadOnly = true;
+                txtSoDu.ReadOnly = true;
             }
             else if (row.DataBoundItem is HoiVienDTO hv)
             {
@@ -181,6 +187,7 @@ namespace NPC.Server
                 txtSoDu.Text = $"{hv.SoDu:N0}";
                 cboTrangThai.SelectedItem = hv.TrangThai;
                 txtMaHoiVien.ReadOnly = true;
+                txtSoDu.ReadOnly = true;
             }
             else
             {
@@ -191,6 +198,7 @@ namespace NPC.Server
                 txtSoDu.Text = row.Cells["colSoDu"]?.Value?.ToString() ?? "0";
                 cboTrangThai.SelectedItem = row.Cells["colTrangThai"]?.Value?.ToString() ?? "Hoạt động";
                 txtMaHoiVien.ReadOnly = true;
+                txtSoDu.ReadOnly = true;
             }
         }
 
