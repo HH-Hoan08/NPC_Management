@@ -91,7 +91,7 @@ namespace NPC.Server
             lblTieuDe.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             lblTieuDe.Location = new Point(0, 0);
             lblTieuDe.Name = "lblTieuDe";
-            lblTieuDe.Size = new Size(1060, 45);
+            lblTieuDe.Size = new Size(1000, 45);
             lblTieuDe.TabIndex = 0;
             lblTieuDe.Text = "QUẢN LÝ THỰC ĐƠN VÀ KIỂM KÊ KHO HÀNG";
             lblTieuDe.TextAlign = ContentAlignment.MiddleCenter;
@@ -108,7 +108,7 @@ namespace NPC.Server
             tableMain.Name = "tableMain";
             tableMain.RowCount = 1;
             tableMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableMain.Size = new Size(1060, 580);
+            tableMain.Size = new Size(1000, 470);
             tableMain.TabIndex = 1;
             // 
             // pnlLeft
@@ -120,7 +120,7 @@ namespace NPC.Server
             pnlLeft.Dock = DockStyle.Fill;
             pnlLeft.Location = new Point(3, 3);
             pnlLeft.Name = "pnlLeft";
-            pnlLeft.Size = new Size(484, 574);
+            pnlLeft.Size = new Size(484, 464);
             pnlLeft.TabIndex = 0;
             // 
             // gbThongTin
@@ -144,7 +144,7 @@ namespace NPC.Server
             gbThongTin.Controls.Add(cboTrangThai);
             gbThongTin.Location = new Point(5, 5);
             gbThongTin.Name = "gbThongTin";
-            gbThongTin.Size = new Size(470, 215);
+            gbThongTin.Size = new Size(449, 215);
             gbThongTin.TabIndex = 0;
             gbThongTin.TabStop = false;
             gbThongTin.Text = "Thông tin món ăn và kho";
@@ -290,7 +290,7 @@ namespace NPC.Server
             gbHinhAnh.Controls.Add(btnXoaAnh);
             gbHinhAnh.Location = new Point(5, 225);
             gbHinhAnh.Name = "gbHinhAnh";
-            gbHinhAnh.Size = new Size(470, 125);
+            gbHinhAnh.Size = new Size(449, 125);
             gbHinhAnh.TabIndex = 1;
             gbHinhAnh.TabStop = false;
             gbHinhAnh.Text = "Hình ảnh món";
@@ -301,7 +301,7 @@ namespace NPC.Server
             picHinhAnh.BorderStyle = BorderStyle.FixedSingle;
             picHinhAnh.Location = new Point(15, 24);
             picHinhAnh.Name = "picHinhAnh";
-            picHinhAnh.Size = new Size(315, 90);
+            picHinhAnh.Size = new Size(294, 90);
             picHinhAnh.SizeMode = PictureBoxSizeMode.Zoom;
             picHinhAnh.TabIndex = 0;
             picHinhAnh.TabStop = false;
@@ -309,7 +309,7 @@ namespace NPC.Server
             // btnChonAnh
             // 
             btnChonAnh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnChonAnh.Location = new Point(345, 24);
+            btnChonAnh.Location = new Point(324, 24);
             btnChonAnh.Name = "btnChonAnh";
             btnChonAnh.Size = new Size(110, 40);
             btnChonAnh.TabIndex = 1;
@@ -319,7 +319,7 @@ namespace NPC.Server
             // btnXoaAnh
             // 
             btnXoaAnh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnXoaAnh.Location = new Point(345, 72);
+            btnXoaAnh.Location = new Point(324, 72);
             btnXoaAnh.Name = "btnXoaAnh";
             btnXoaAnh.Size = new Size(110, 40);
             btnXoaAnh.TabIndex = 2;
@@ -337,7 +337,7 @@ namespace NPC.Server
             gbTimKiem.Controls.Add(btnLamMoi);
             gbTimKiem.Location = new Point(5, 355);
             gbTimKiem.Name = "gbTimKiem";
-            gbTimKiem.Size = new Size(470, 115);
+            gbTimKiem.Size = new Size(449, 115);
             gbTimKiem.TabIndex = 2;
             gbTimKiem.TabStop = false;
             gbTimKiem.Text = "Tìm kiếm";
@@ -389,7 +389,7 @@ namespace NPC.Server
             // btnLamMoi
             // 
             btnLamMoi.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnLamMoi.Location = new Point(345, 22);
+            btnLamMoi.Location = new Point(324, 22);
             btnLamMoi.Name = "btnLamMoi";
             btnLamMoi.Size = new Size(110, 75);
             btnLamMoi.TabIndex = 5;
@@ -403,7 +403,7 @@ namespace NPC.Server
             gbDanhSach.Dock = DockStyle.Fill;
             gbDanhSach.Location = new Point(493, 3);
             gbDanhSach.Name = "gbDanhSach";
-            gbDanhSach.Size = new Size(564, 574);
+            gbDanhSach.Size = new Size(504, 464);
             gbDanhSach.TabIndex = 1;
             gbDanhSach.TabStop = false;
             gbDanhSach.Text = "Danh sách thực đơn và kho";
@@ -415,7 +415,7 @@ namespace NPC.Server
             dgvMonAn.Location = new Point(3, 23);
             dgvMonAn.Name = "dgvMonAn";
             dgvMonAn.RowHeadersWidth = 51;
-            dgvMonAn.Size = new Size(558, 513);
+            dgvMonAn.Size = new Size(498, 403);
             dgvMonAn.TabIndex = 0;
             // 
             // pnlSummary
@@ -424,9 +424,9 @@ namespace NPC.Server
             pnlSummary.Controls.Add(lblTongTonKho);
             pnlSummary.Controls.Add(lblCanhBao);
             pnlSummary.Dock = DockStyle.Bottom;
-            pnlSummary.Location = new Point(3, 536);
+            pnlSummary.Location = new Point(3, 426);
             pnlSummary.Name = "pnlSummary";
-            pnlSummary.Size = new Size(558, 35);
+            pnlSummary.Size = new Size(498, 35);
             pnlSummary.TabIndex = 1;
             // 
             // lblTongSoMon
@@ -465,9 +465,9 @@ namespace NPC.Server
             pnlChucNang.Controls.Add(btnNhapKho);
             pnlChucNang.Controls.Add(btnDong);
             pnlChucNang.Dock = DockStyle.Bottom;
-            pnlChucNang.Location = new Point(0, 625);
+            pnlChucNang.Location = new Point(0, 515);
             pnlChucNang.Name = "pnlChucNang";
-            pnlChucNang.Size = new Size(1060, 55);
+            pnlChucNang.Size = new Size(1000, 55);
             pnlChucNang.TabIndex = 2;
             // 
             // btnThem
@@ -523,7 +523,7 @@ namespace NPC.Server
             // btnDong
             // 
             btnDong.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnDong.Location = new Point(940, 8);
+            btnDong.Location = new Point(880, 8);
             btnDong.Name = "btnDong";
             btnDong.Size = new Size(110, 40);
             btnDong.TabIndex = 5;
