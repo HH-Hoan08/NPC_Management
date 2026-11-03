@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using NPC.BLL;
@@ -25,6 +25,7 @@ namespace NPC.Client
         private Point _dragCursorPoint;
         private Point _dragFormPoint;
         private bool _hasDragged = false;
+        private bool _isTamKhoa = false;
 
         public frmClient()
         {
@@ -33,6 +34,13 @@ namespace NPC.Client
             btnIconThuGon.MouseDown += BtnIconThuGon_MouseDown;
             btnIconThuGon.MouseMove += BtnIconThuGon_MouseMove;
             btnIconThuGon.MouseUp += BtnIconThuGon_MouseUp;
+
+            btnMenhGia10k.Click += (s, e) => txtSoTienNapClient.Text = "10000";
+            btnMenhGia20k.Click += (s, e) => txtSoTienNapClient.Text = "20000";
+            btnMenhGia50k.Click += (s, e) => txtSoTienNapClient.Text = "50000";
+            btnMenhGia100k.Click += (s, e) => txtSoTienNapClient.Text = "100000";
+            btnMenhGia200k.Click += (s, e) => txtSoTienNapClient.Text = "200000";
+            btnMenhGia500k.Click += (s, e) => txtSoTienNapClient.Text = "500000";
         }
 
         private void BtnIconThuGon_MouseDown(object? sender, MouseEventArgs e)
@@ -109,7 +117,133 @@ namespace NPC.Client
             }
         }
 
-        private void frmClient_Resize(object? sender, EventArgs e) => CanGiuaPanelDangNhap();
+        private void frmClient_Resize(object? sender, EventArgs e)
+        {
+            CanGiuaPanelDangNhap();
+            CanGiuaPanelTamKhoa();
+        }
+
+        private void CanGiuaPanelTamKhoa()
+        {
+            if (!pnlTamKhoa.Visible) return;
+            pnlTamKhoaContent.Left = Math.Max(0, (pnlTamKhoa.ClientSize.Width - pnlTamKhoaContent.Width) / 2);
+            pnlTamKhoaContent.Top = Math.Max(0, (pnlTamKhoa.ClientSize.Height - pnlTamKhoaContent.Height) / 2);
+            pnlTamKhoaContent.BringToFront();
+        }
+
+        private void BatTamKhoaMay()
+        {
+            if (_isTamKhoa) return;
+            _isTamKhoa = true;
+            _frmGoiMon?.DongKhongHoi();
+            pnlNapTienClient.Visible = false;
+            pnlThanhNoi.Visible = false;
+            btnIconThuGon.Visible = false;
+            WindowState = FormWindowState.Maximized;
+            TopMost = !System.Diagnostics.Debugger.IsAttached;
+            pnlTamKhoa.Visible = true;
+            pnlTamKhoa.BringToFront();
+            CanGiuaPanelTamKhoa();
+            tmrDemGio.Stop();
+            tmrTruTien.Stop();
+            Activate();
+        }
+
+        private void TatTamKhoaMay()
+        {
+            if (!_isTamKhoa) return;
+            _isTamKhoa = false;
+            pnlTamKhoa.Visible = false;
+            HienThiThanhNoiDayDu();
+            tmrDemGio.Start();
+            tmrTruTien.Start();
+        }
+
+        private void btnNapTienClient_Click(object? sender, EventArgs e)
+        {
+            if (_maPhienChoi == 0) return;
+            if (_maHoiVien <= 0)
+            {
+                MessageBox.Show(this, "Khách vãng lai vui lòng thanh toán và nạp tiền tại quầy thu ngân!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            TimeSpan daChoi = DateTime.Now - _batDau;
+            decimal soDuHienTai = ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, daChoi);
+            lblNapTienSoDu.Text = $"Số dư hiện tại: {soDuHienTai:N0} đ";
+            txtSoTienNapClient.Text = "50000";
+            if (cboHinhThucNap.Items.Count > 0 && cboHinhThucNap.SelectedIndex < 0)
+                cboHinhThucNap.SelectedIndex = 0;
+
+            pnlThanhNoi.Visible = false;
+            btnIconThuGon.Visible = false;
+            WindowState = FormWindowState.Normal;
+            MinimumSize = Size.Empty;
+            pnlNapTienClient.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            pnlNapTienClient.Location = Point.Empty;
+            ClientSize = pnlNapTienClient.Size;
+            Rectangle vung = Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 1280, 720);
+            Location = new Point(vung.Right - Width - 10, vung.Top + 10);
+            pnlNapTienClient.Visible = true;
+            pnlNapTienClient.BringToFront();
+            TopMost = !System.Diagnostics.Debugger.IsAttached;
+        }
+
+        private void btnDongNapTienClient_Click(object? sender, EventArgs e)
+        {
+            pnlNapTienClient.Visible = false;
+            HienThiThanhNoiDayDu();
+        }
+
+        private void btnXacNhanNapClient_Click(object? sender, EventArgs e)
+        {
+            if (_maPhienChoi == 0 || _maHoiVien <= 0) return;
+
+            string raw = txtSoTienNapClient.Text.Replace(",", "").Replace(".", "").Trim();
+            if (!decimal.TryParse(raw, out decimal soTien) || soTien <= 0)
+            {
+                MessageBox.Show(this, "Số tiền nạp không hợp lệ (phải là số tiền dương)!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (soTien % 1000 != 0)
+            {
+                MessageBox.Show(this, "Số tiền nạp phải là bội số của 1.000 đ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            btnXacNhanNapClient.Enabled = false;
+            try
+            {
+                string hinhThuc = cboHinhThucNap.SelectedItem?.ToString() ?? "Tiền mặt tại quầy";
+                var dto = new NapTienDTO
+                {
+                    MaHoiVien = _maHoiVien,
+                    SoTienNap = soTien,
+                    MaNhanVien = 1,
+                    HinhThucThanhToan = hinhThuc,
+                    GhiChu = $"Hội viên tự nạp tại máy {TenMay} ({hinhThuc})"
+                };
+
+                KetQuaNapTienDTO kq = GiaoDichBLL.NapTien(dto);
+                _soDuBanDau = kq.SoDuMoi;
+                CapNhatSoDu();
+                CapNhatThoiGian();
+
+                MessageBox.Show(this, $"Nạp thành công {soTien:N0} đ vào tài khoản!\nSố dư mới: {kq.SoDuMoi:N0} đ", "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                pnlNapTienClient.Visible = false;
+                HienThiThanhNoiDayDu();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "Nạp tiền thất bại: " + ex.Message, "Lỗi nạp tiền", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnXacNhanNapClient.Enabled = true;
+            }
+        }
 
         private void ThoatUngDung()
         {
@@ -341,20 +475,64 @@ namespace NPC.Client
 
                 if (_maPhienChoi != 0)
                 {
+                    // Phiên chơi đã bị đóng từ quầy (trả máy / thanh toán)
                     if (dongBo.MaPhienChoi == 0 || dongBo.MaPhienChoi != _maPhienChoi)
+                    {
+                        if (_isTamKhoa) TatTamKhoaMay();
+                        pnlNapTienClient.Visible = false;
                         KhoaMay("Phiên chơi đã được kết thúc tại quầy.", false);
+                        return;
+                    }
+
+                    // Kiểm tra trạng thái Khóa máy / Mở khóa máy từ Server
+                    if (dongBo.TrangThaiMay == "Đang khóa" || dongBo.TrangThaiMay == "Locked")
+                    {
+                        BatTamKhoaMay();
+                        return;
+                    }
+                    else if (_isTamKhoa && (dongBo.TrangThaiMay == "Đang dùng" || dongBo.TrangThaiMay == "Active"))
+                    {
+                        TatTamKhoaMay();
+                    }
+
+                    // Kiểm tra nếu quầy vừa nạp tiền vào tài khoản hội viên
+                    if (_maHoiVien > 0 && dongBo.SoDu > _soDuBanDau)
+                    {
+                        decimal napThem = dongBo.SoDu - _soDuBanDau;
+                        _soDuBanDau = dongBo.SoDu;
+                        CapNhatSoDu();
+                        CapNhatThoiGian();
+                        try { System.Media.SystemSounds.Asterisk.Play(); } catch { }
+                        MessageBox.Show(this, $"Tài khoản của bạn vừa được nạp thêm {napThem:N0} đ từ quầy!\nSố dư mới: {dongBo.SoDu:N0} đ", "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+
                     return;
                 }
 
+                // Khi máy chưa có phiên chơi
                 if (dongBo.MaPhienChoi > 0)
                 {
                     BatDauPhienTrenGiaoDien(dongBo.MaPhienChoi, dongBo.MaHoiVien, dongBo.SoDu, dongBo.TenDangNhap, dongBo.GiayDaChoi);
                     return;
                 }
 
+                // Khi máy đang ở màn hình chờ mà Server bấm Khóa máy
                 if (dongBo.TrangThaiMay == "Locked" || dongBo.TrangThaiMay == "Đang khóa")
                 {
-                    HienThongBao("Máy đang bị quầy khóa.", true);
+                    txtTenDangNhap.Enabled = false;
+                    txtMatKhau.Enabled = false;
+                    btnDangNhap.Enabled = false;
+                    HienThongBao("Máy đang bị quầy khóa. Vui lòng liên hệ nhân viên!", true);
+                }
+                else
+                {
+                    txtTenDangNhap.Enabled = true;
+                    txtMatKhau.Enabled = true;
+                    btnDangNhap.Enabled = true;
+                    if (lblThongBao.Text == "Máy đang bị quầy khóa. Vui lòng liên hệ nhân viên!")
+                    {
+                        HienThongBao("Máy đang khóa – vui lòng đăng nhập", false);
+                    }
                 }
             }
             catch

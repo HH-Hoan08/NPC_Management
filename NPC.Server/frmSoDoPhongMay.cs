@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -235,12 +235,68 @@ namespace NPC.Server
                     break;
 
                 case MayTramAction.NapTien:
-                    MessageBox.Show($"Chức năng nạp tiền cho hội viên: {may.TenHoiVien}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    XuLyNapTien(may);
                     break;
 
                 case MayTramAction.ChuyenMay:
                     MessageBox.Show($"Chức năng chuyển máy cho {may.TenMay}", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     break;
+            }
+        }
+
+
+        private void XuLyNapTien(MayTramDTO may)
+        {
+            if (!may.MaHoiVien.HasValue || string.IsNullOrEmpty(may.TenHoiVien))
+            {
+                MessageBox.Show($"Máy [{may.TenMay}] hiện chưa có tài khoản hội viên nào đang đăng nhập để nạp tiền trực tiếp.\nKhách vãng lai thanh toán tiền giờ khi trả máy!", 
+                    "Thông báo nạp tiền", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string input = Microsoft.VisualBasic.Interaction.InputBox(
+                $"Nhập số tiền cần nạp cho hội viên [{may.TenHoiVien}] trên {may.TenMay} (VNĐ):",
+                "Nạp Tiền Hội Viên Nhanh", "50000");
+
+            if (string.IsNullOrWhiteSpace(input)) return;
+
+            string cleanNumber = input.Replace(",", "").Replace(".", "").Trim();
+            if (decimal.TryParse(cleanNumber, out decimal soTienNap) && soTienNap > 0)
+            {
+                if (soTienNap % 1000 != 0)
+                {
+                    MessageBox.Show("Số tiền nạp phải là bội số của 1.000 VNĐ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                try
+                {
+                    var dto = new NapTienDTO
+                    {
+                        MaHoiVien = may.MaHoiVien.Value,
+                        SoTienNap = soTienNap,
+                        MaNhanVien = 1,
+                        HinhThucThanhToan = "Tiền mặt",
+                        GhiChu = $"Nạp tiền tại quầy sơ đồ phòng máy cho {may.TenHoiVien} ({may.TenMay})"
+                    };
+
+                    KetQuaNapTienDTO kq = GiaoDichBLL.NapTien(dto);
+                    MessageBox.Show(
+                        $"Nạp thành công {soTienNap:N0} VNĐ cho hội viên [{kq.HoTen}] ({may.TenMay})!\n" +
+                        $"Số dư trước: {kq.SoDuTruoc:N0} VNĐ\n" +
+                        $"Số dư hiện tại: {kq.SoDuMoi:N0} VNĐ",
+                        "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    LoadDanhSachMay();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Nạp tiền thất bại: " + ex.Message, "Lỗi nạp tiền", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Số tiền nạp không hợp lệ (phải là số tiền dương và lớn hơn 0)!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
