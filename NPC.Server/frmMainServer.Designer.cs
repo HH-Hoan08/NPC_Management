@@ -34,7 +34,6 @@
             tsmiCauHinh = new ToolStripMenuItem();
             tsmiTaiKhoan = new ToolStripMenuItem();
             tsmiDangXuat = new ToolStripMenuItem();
-            tsmiCaiDatGiaoDien = new ToolStripMenuItem();
             tsmiThoat = new ToolStripMenuItem();
             tsmiSoDoPhongMay = new ToolStripMenuItem();
             tsmiQuanLy = new ToolStripMenuItem();
@@ -69,7 +68,7 @@
             // 
             // tsmiHeThong
             // 
-            tsmiHeThong.DropDownItems.AddRange(new ToolStripItem[] { tsmiCauHinh, tsmiTaiKhoan, tsmiDangXuat, tsmiCaiDatGiaoDien, tsmiThoat });
+            tsmiHeThong.DropDownItems.AddRange(new ToolStripItem[] { tsmiCauHinh, tsmiTaiKhoan, tsmiDangXuat, tsmiThoat });
             tsmiHeThong.Name = "tsmiHeThong";
             tsmiHeThong.Size = new Size(85, 24);
             tsmiHeThong.Text = "Hệ thống";
@@ -77,33 +76,26 @@
             // tsmiCauHinh
             // 
             tsmiCauHinh.Name = "tsmiCauHinh";
-            tsmiCauHinh.Size = new Size(206, 26);
+            tsmiCauHinh.Size = new Size(224, 26);
             tsmiCauHinh.Text = "Cấu hình CSDL";
             // 
             // tsmiTaiKhoan
             // 
             tsmiTaiKhoan.Name = "tsmiTaiKhoan";
-            tsmiTaiKhoan.Size = new Size(206, 26);
+            tsmiTaiKhoan.Size = new Size(224, 26);
             tsmiTaiKhoan.Text = "Tài khoản";
             // 
             // tsmiDangXuat
             // 
             tsmiDangXuat.Name = "tsmiDangXuat";
-            tsmiDangXuat.Size = new Size(206, 26);
+            tsmiDangXuat.Size = new Size(224, 26);
             tsmiDangXuat.Text = "Đăng xuất";
             tsmiDangXuat.Click += tsmiDangXuat_Click;
-            // 
-            // tsmiCaiDatGiaoDien
-            // 
-            tsmiCaiDatGiaoDien.Name = "tsmiCaiDatGiaoDien";
-            tsmiCaiDatGiaoDien.Size = new Size(206, 26);
-            tsmiCaiDatGiaoDien.Text = "Cài đặt giao diện";
-            tsmiCaiDatGiaoDien.Click += tsmiCaiDatGiaoDien_Click;
             // 
             // tsmiThoat
             // 
             tsmiThoat.Name = "tsmiThoat";
-            tsmiThoat.Size = new Size(206, 26);
+            tsmiThoat.Size = new Size(224, 26);
             tsmiThoat.Text = "Thoát";
             tsmiThoat.Click += tsmiThoat_Click;
             // 
@@ -208,7 +200,6 @@
         private ToolStripMenuItem tsmiCauHinh;
         private ToolStripMenuItem tsmiTaiKhoan;
         private ToolStripMenuItem tsmiDangXuat;
-        private ToolStripMenuItem tsmiCaiDatGiaoDien;
         private ToolStripMenuItem tsmiHoiVien;
         private ToolStripMenuItem tsmiMonAn;
         private ToolStripMenuItem tsmiDoanhThu;

@@ -78,10 +78,5 @@ namespace NPC.Server
         {
             OpenMdiChildForm<frmQuanLyMonAn>();
         }
-
-        private void tsmiCaiDatGiaoDien_Click(object sender, EventArgs e)
-        {
-            OpenMdiChildForm<frmCaiDatGiaoDien>();
-        }
     }
 }
