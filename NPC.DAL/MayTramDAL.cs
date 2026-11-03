@@ -127,6 +127,13 @@ namespace NPC.DAL
             return SQLHelper.ExecuteNonQuery(query, pars);
         }
 
+        public static bool KiemTraCoPhienDangChay(int maMay)
+        {
+            string query = "SELECT COUNT(1) FROM dbo.PhienChoi WHERE MaMay = @MaMay AND (TrangThaiPhien = N'Đang chơi' OR TrangThaiPhien = 'Active')";
+            object? val = SQLHelper.ExecuteScalar(query, new SqlParameter("@MaMay", maMay));
+            return val != null && Convert.ToInt32(val) > 0;
+        }
+
         public static void KetThucPhienChoiSP(long maPhienChoi)
         {
             using (SqlConnection conn = new SqlConnection(NPCData.ConnectionString))

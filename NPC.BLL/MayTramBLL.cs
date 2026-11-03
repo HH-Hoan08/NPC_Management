@@ -79,7 +79,16 @@ namespace NPC.BLL
         {
             try
             {
-                string trangThaiMoi = (trangThaiHienTai == "Đang khóa") ? "Đang dùng" : "Đang khóa";
+                bool coPhien = MayTramDAL.KiemTraCoPhienDangChay(maMay);
+                string trangThaiMoi;
+                if (trangThaiHienTai == "Đang khóa")
+                {
+                    trangThaiMoi = coPhien ? "Đang dùng" : "Sẵn sàng";
+                }
+                else
+                {
+                    trangThaiMoi = "Đang khóa";
+                }
                 int rows = MayTramDAL.CapNhatTrangThaiMay(maMay, trangThaiMoi);
 
                 if (rows <= 0)

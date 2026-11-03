@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using NPC.DTO;
@@ -149,8 +149,9 @@ namespace NPC.Server
                 BorderStyle = BorderStyle.FixedSingle;
 
                 tsmiMoMay.Enabled = true;
-                tsmiKhoaMay.Enabled = false;
-                tsmiNapTien.Enabled = false;
+                tsmiKhoaMay.Enabled = true;
+                tsmiKhoaMay.Text = "Khóa máy";
+                tsmiNapTien.Enabled = true;
                 tsmiThanhToan.Enabled = false;
                 tsmiChuyenMay.Enabled = false;
                 tsmiBaoTri.Enabled = true;
@@ -194,8 +195,9 @@ namespace NPC.Server
                 BorderStyle = BorderStyle.None;
 
                 tsmiMoMay.Enabled = true;
-                tsmiKhoaMay.Enabled = false;
-                tsmiNapTien.Enabled = false;
+                tsmiKhoaMay.Enabled = true;
+                tsmiKhoaMay.Text = "Khóa máy";
+                tsmiNapTien.Enabled = true;
                 tsmiThanhToan.Enabled = false;
                 tsmiChuyenMay.Enabled = false;
                 tsmiBaoTri.Enabled = true;
