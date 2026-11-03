@@ -10,7 +10,8 @@ namespace NPC.DAL
     public static class ConfigManager
     {
         private static readonly string ConfigPath = AppPaths.ConfigPath;
-        private const string DefaultConnectionString = @"Data Source=.;" +
+        private const string DefaultConnectionString = @"Data Source=.\SQLEXPRESS;" +
+                                                       @"TrustServerCertificate=True;" +
                                                        @"Initial Catalog=NPCData;" +
                                                        @"Integrated Security=True;" +
                                                        @"Connect Timeout=30;";

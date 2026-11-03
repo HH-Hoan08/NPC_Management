@@ -336,7 +336,6 @@ namespace NPC.Server
         {
             txtTimKiem.Text = "";
             LamMoiForm();
-            LoadDanhSachHoiVien();
         }
 
         private void btnXuatFile_Click(object? sender, EventArgs e)
