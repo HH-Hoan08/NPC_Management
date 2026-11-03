@@ -30,16 +30,6 @@
         {
             components = new System.ComponentModel.Container();
             pnlTopFilter = new Panel();
-            cmsMayTram = new ContextMenuStrip(components);
-            tsmiMoMay = new ToolStripMenuItem();
-            tsmiMoKhach = new ToolStripMenuItem();
-            tsmiMoHoiVien = new ToolStripMenuItem();
-            tsmiKhoaMay = new ToolStripMenuItem();
-            tsmiNapTien = new ToolStripMenuItem();
-            tsmiThanhToan = new ToolStripMenuItem();
-            toolStripMenuItem1 = new ToolStripSeparator();
-            tsmiChuyenMay = new ToolStripMenuItem();
-            tsmiBaoTri = new ToolStripMenuItem();
             btnLamMoi = new Button();
             lblBaoTri = new Label();
             lblMayTrong = new Label();
@@ -49,6 +39,15 @@
             lblTrangThai = new Label();
             lblKhuVuc = new Label();
             cboKhuVuc = new ComboBox();
+            cmsMayTram = new ContextMenuStrip(components);
+            tsmiMoMay = new ToolStripMenuItem();
+            tsmiMoKhach = new ToolStripMenuItem();
+            tsmiMoHoiVien = new ToolStripMenuItem();
+            tsmiKhoaMay = new ToolStripMenuItem();
+            tsmiThanhToan = new ToolStripMenuItem();
+            toolStripMenuItem1 = new ToolStripSeparator();
+            tsmiChuyenMay = new ToolStripMenuItem();
+            tsmiBaoTri = new ToolStripMenuItem();
             flpDanhSachMay = new FlowLayoutPanel();
             pnlTopFilter.SuspendLayout();
             cmsMayTram.SuspendLayout();
@@ -56,7 +55,6 @@
             // 
             // pnlTopFilter
             // 
-            // pnlTopFilter.ContextMenuStrip = null;
             pnlTopFilter.Controls.Add(btnLamMoi);
             pnlTopFilter.Controls.Add(lblBaoTri);
             pnlTopFilter.Controls.Add(lblMayTrong);
@@ -69,15 +67,97 @@
             pnlTopFilter.Dock = DockStyle.Top;
             pnlTopFilter.Location = new Point(0, 0);
             pnlTopFilter.Name = "pnlTopFilter";
-            pnlTopFilter.Size = new Size(889, 95);
+            pnlTopFilter.Size = new Size(889, 100);
             pnlTopFilter.TabIndex = 0;
+            // 
+            // btnLamMoi
+            // 
+            btnLamMoi.Location = new Point(712, 25);
+            btnLamMoi.Name = "btnLamMoi";
+            btnLamMoi.Size = new Size(140, 41);
+            btnLamMoi.TabIndex = 8;
+            btnLamMoi.Text = "Làm mới";
+            btnLamMoi.UseVisualStyleBackColor = true;
+            btnLamMoi.Click += btnLamMoi_Click;
+            // 
+            // lblBaoTri
+            // 
+            lblBaoTri.AutoSize = true;
+            lblBaoTri.Location = new Point(551, 67);
+            lblBaoTri.Name = "lblBaoTri";
+            lblBaoTri.Size = new Size(53, 20);
+            lblBaoTri.TabIndex = 7;
+            lblBaoTri.Text = "Bảo trì";
+            // 
+            // lblMayTrong
+            // 
+            lblMayTrong.AutoSize = true;
+            lblMayTrong.Location = new Point(551, 9);
+            lblMayTrong.Name = "lblMayTrong";
+            lblMayTrong.Size = new Size(47, 20);
+            lblMayTrong.TabIndex = 6;
+            lblMayTrong.Text = "Trống";
+            // 
+            // lblDangOnline
+            // 
+            lblDangOnline.AutoSize = true;
+            lblDangOnline.Location = new Point(391, 67);
+            lblDangOnline.Name = "lblDangOnline";
+            lblDangOnline.Size = new Size(52, 20);
+            lblDangOnline.TabIndex = 5;
+            lblDangOnline.Text = "Online";
+            // 
+            // lblTongSoMay
+            // 
+            lblTongSoMay.AutoSize = true;
+            lblTongSoMay.Location = new Point(391, 9);
+            lblTongSoMay.Name = "lblTongSoMay";
+            lblTongSoMay.Size = new Size(43, 20);
+            lblTongSoMay.TabIndex = 4;
+            lblTongSoMay.Text = "Tổng";
+            // 
+            // cboTrangThai
+            // 
+            cboTrangThai.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboTrangThai.FormattingEnabled = true;
+            cboTrangThai.Location = new Point(106, 64);
+            cboTrangThai.Name = "cboTrangThai";
+            cboTrangThai.Size = new Size(210, 28);
+            cboTrangThai.TabIndex = 3;
+            // 
+            // lblTrangThai
+            // 
+            lblTrangThai.AutoSize = true;
+            lblTrangThai.Location = new Point(12, 67);
+            lblTrangThai.Name = "lblTrangThai";
+            lblTrangThai.Size = new Size(75, 20);
+            lblTrangThai.TabIndex = 2;
+            lblTrangThai.Text = "Trạng thái";
+            // 
+            // lblKhuVuc
+            // 
+            lblKhuVuc.AutoSize = true;
+            lblKhuVuc.Location = new Point(12, 9);
+            lblKhuVuc.Name = "lblKhuVuc";
+            lblKhuVuc.Size = new Size(61, 20);
+            lblKhuVuc.TabIndex = 1;
+            lblKhuVuc.Text = "Khu vực";
+            // 
+            // cboKhuVuc
+            // 
+            cboKhuVuc.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboKhuVuc.FormattingEnabled = true;
+            cboKhuVuc.Location = new Point(106, 6);
+            cboKhuVuc.Name = "cboKhuVuc";
+            cboKhuVuc.Size = new Size(210, 28);
+            cboKhuVuc.TabIndex = 0;
             // 
             // cmsMayTram
             // 
             cmsMayTram.ImageScalingSize = new Size(19, 19);
-            cmsMayTram.Items.AddRange(new ToolStripItem[] { tsmiMoMay, tsmiKhoaMay, tsmiNapTien, tsmiThanhToan, toolStripMenuItem1, tsmiChuyenMay, tsmiBaoTri });
+            cmsMayTram.Items.AddRange(new ToolStripItem[] { tsmiMoMay, tsmiKhoaMay, tsmiThanhToan, toolStripMenuItem1, tsmiChuyenMay, tsmiBaoTri });
             cmsMayTram.Name = "cmsMayTram";
-            cmsMayTram.Size = new Size(219, 154);
+            cmsMayTram.Size = new Size(219, 130);
             // 
             // tsmiMoMay
             // 
@@ -89,13 +169,13 @@
             // tsmiMoKhach
             // 
             tsmiMoKhach.Name = "tsmiMoKhach";
-            tsmiMoKhach.Size = new Size(187, 26);
+            tsmiMoKhach.Size = new Size(188, 26);
             tsmiMoKhach.Text = "Khách vãng lai";
             // 
             // tsmiMoHoiVien
             // 
             tsmiMoHoiVien.Name = "tsmiMoHoiVien";
-            tsmiMoHoiVien.Size = new Size(187, 26);
+            tsmiMoHoiVien.Size = new Size(188, 26);
             tsmiMoHoiVien.Text = "Hội viên";
             // 
             // tsmiKhoaMay
@@ -103,12 +183,6 @@
             tsmiKhoaMay.Name = "tsmiKhoaMay";
             tsmiKhoaMay.Size = new Size(218, 24);
             tsmiKhoaMay.Text = "Khóa máy";
-            // 
-            // tsmiNapTien
-            // 
-            tsmiNapTien.Name = "tsmiNapTien";
-            tsmiNapTien.Size = new Size(218, 24);
-            tsmiNapTien.Text = "Nạp tiền";
             // 
             // tsmiThanhToan
             // 
@@ -133,104 +207,22 @@
             tsmiBaoTri.Size = new Size(218, 24);
             tsmiBaoTri.Text = "Bảo trì / Bỏ bảo trì";
             // 
-            // btnLamMoi
-            // 
-            btnLamMoi.Location = new Point(712, 24);
-            btnLamMoi.Name = "btnLamMoi";
-            btnLamMoi.Size = new Size(140, 39);
-            btnLamMoi.TabIndex = 8;
-            btnLamMoi.Text = "Làm mới";
-            btnLamMoi.UseVisualStyleBackColor = true;
-            btnLamMoi.Click += btnLamMoi_Click;
-            // 
-            // lblBaoTri
-            // 
-            lblBaoTri.AutoSize = true;
-            lblBaoTri.Location = new Point(551, 64);
-            lblBaoTri.Name = "lblBaoTri";
-            lblBaoTri.Size = new Size(53, 20);
-            lblBaoTri.TabIndex = 7;
-            lblBaoTri.Text = "Bảo trì";
-            // 
-            // lblMayTrong
-            // 
-            lblMayTrong.AutoSize = true;
-            lblMayTrong.Location = new Point(551, 9);
-            lblMayTrong.Name = "lblMayTrong";
-            lblMayTrong.Size = new Size(47, 20);
-            lblMayTrong.TabIndex = 6;
-            lblMayTrong.Text = "Trống";
-            // 
-            // lblDangOnline
-            // 
-            lblDangOnline.AutoSize = true;
-            lblDangOnline.Location = new Point(391, 64);
-            lblDangOnline.Name = "lblDangOnline";
-            lblDangOnline.Size = new Size(52, 20);
-            lblDangOnline.TabIndex = 5;
-            lblDangOnline.Text = "Online";
-            // 
-            // lblTongSoMay
-            // 
-            lblTongSoMay.AutoSize = true;
-            lblTongSoMay.Location = new Point(391, 9);
-            lblTongSoMay.Name = "lblTongSoMay";
-            lblTongSoMay.Size = new Size(43, 20);
-            lblTongSoMay.TabIndex = 4;
-            lblTongSoMay.Text = "Tổng";
-            // 
-            // cboTrangThai
-            // 
-            cboTrangThai.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboTrangThai.FormattingEnabled = true;
-            cboTrangThai.Location = new Point(106, 61);
-            cboTrangThai.Name = "cboTrangThai";
-            cboTrangThai.Size = new Size(210, 27);
-            cboTrangThai.TabIndex = 3;
-            // 
-            // lblTrangThai
-            // 
-            lblTrangThai.AutoSize = true;
-            lblTrangThai.Location = new Point(12, 64);
-            lblTrangThai.Name = "lblTrangThai";
-            lblTrangThai.Size = new Size(75, 20);
-            lblTrangThai.TabIndex = 2;
-            lblTrangThai.Text = "Trạng thái";
-            // 
-            // lblKhuVuc
-            // 
-            lblKhuVuc.AutoSize = true;
-            lblKhuVuc.Location = new Point(12, 9);
-            lblKhuVuc.Name = "lblKhuVuc";
-            lblKhuVuc.Size = new Size(61, 20);
-            lblKhuVuc.TabIndex = 1;
-            lblKhuVuc.Text = "Khu vực";
-            // 
-            // cboKhuVuc
-            // 
-            cboKhuVuc.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboKhuVuc.FormattingEnabled = true;
-            cboKhuVuc.Location = new Point(106, 6);
-            cboKhuVuc.Name = "cboKhuVuc";
-            cboKhuVuc.Size = new Size(210, 27);
-            cboKhuVuc.TabIndex = 0;
-            // 
             // flpDanhSachMay
             // 
             flpDanhSachMay.AutoScroll = true;
             flpDanhSachMay.ContextMenuStrip = cmsMayTram;
             flpDanhSachMay.Dock = DockStyle.Fill;
-            flpDanhSachMay.Location = new Point(0, 95);
+            flpDanhSachMay.Location = new Point(0, 100);
             flpDanhSachMay.Name = "flpDanhSachMay";
-            flpDanhSachMay.Padding = new Padding(10);
-            flpDanhSachMay.Size = new Size(889, 570);
+            flpDanhSachMay.Padding = new Padding(10, 11, 10, 11);
+            flpDanhSachMay.Size = new Size(889, 600);
             flpDanhSachMay.TabIndex = 1;
             // 
             // frmSoDoPhongMay
             // 
-            AutoScaleDimensions = new SizeF(8F, 19F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(889, 665);
+            ClientSize = new Size(889, 700);
             Controls.Add(flpDanhSachMay);
             Controls.Add(pnlTopFilter);
             Name = "frmSoDoPhongMay";
@@ -259,7 +251,6 @@
         private ToolStripMenuItem tsmiMoKhach;
         private ToolStripMenuItem tsmiMoHoiVien;
         private ToolStripMenuItem tsmiKhoaMay;
-        private ToolStripMenuItem tsmiNapTien;
         private ToolStripMenuItem tsmiThanhToan;
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem tsmiChuyenMay;
