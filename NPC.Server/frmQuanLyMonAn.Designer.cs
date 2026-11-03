@@ -417,6 +417,7 @@ namespace NPC.Server
             dgvMonAn.RowHeadersWidth = 51;
             dgvMonAn.Size = new Size(470, 403);
             dgvMonAn.TabIndex = 0;
+            dgvMonAn.CellClick += dgvMonAn_CellClick;
             // 
             // pnlSummary
             // 
