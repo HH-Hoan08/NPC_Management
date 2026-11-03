@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using NPC.DAL;
@@ -8,44 +9,13 @@ namespace NPC.BLL
 {
     /// <summary>
     /// Tầng nghiệp vụ (BLL) xử lý các giao dịch tài chính, bọc SqlTransaction bảo đảm chuẩn ACID:
-    ///   - TraMay() : Thanh toán tiền giờ, đồ ăn, đóng phiên và trả máy.
-    ///   - NapTien() : Nạp tiền tăng số dư tài khoản hội viên.
+    ///   - TraMay()         : Thanh toán tiền giờ, đồ ăn, đóng phiên và trả máy.
+    ///   - NapTien()        : Nạp tiền tăng số dư tài khoản hội viên.
+    ///   - GuiYeuCauNapTien : Client gửi yêu cầu nạp tiền, chờ Server duyệt.
+    ///   - DuyetYeuCauNapTien / TuChoiYeuCauNapTien : Server xử lý yêu cầu.
     /// </summary>
     public static class GiaoDichBLL
     {
-        /// <summary>
-        /// Thực hiện quy trình thanh toán và trả máy bọc trong 1 SqlTransaction:
-        /// 1. Khóa và lấy thông tin phiên chơi.
-        /// 2. Tính toán tiền giờ thực tế và tổng tiền đồ ăn.
-        /// 3. Khấu trừ số dư nếu là hội viên (kiểm tra số dư đủ).
-        /// 4. Đóng phiên chơi, cập nhật trạng thái máy về 'Sẵn sàng'.
-        /// 5. Ghi lịch sử giao dịch vào bảng GiaoDich và Commit.
-        /// </summary>
-        /// <example>
-        /// Cách gọi từ tầng GUI (Form):
-        /// <code>
-        /// try
-        /// {
-        ///     long maPhienChoi = 105;
-        ///     int maNhanVien = 1;
-        ///     string hinhThuc = "Tiền mặt";
-        ///     
-        ///     KetQuaTraMayDTO kq = GiaoDichBLL.TraMay(maPhienChoi, maNhanVien, hinhThuc);
-        ///     MessageBox.Show($"Trả máy thành công! Tổng thu: {kq.TongTienThanhToan:N0} VND\n(Tiền giờ: {kq.TienGio:N0}đ, Đồ ăn: {kq.TienDoAn:N0}đ)", 
-        ///                     "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        /// }
-        /// catch (Exception ex)
-        /// {
-        ///     MessageBox.Show(ex.Message, "Lỗi trả máy", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        /// }
-        /// </code>
-        /// </example>
-        /// <param name="maPhienChoi">Mã phiên chơi cần trả máy và thanh toán.</param>
-        /// <param name="maNhanVien">Mã nhân viên thu ngân thực hiện giao dịch.</param>
-        /// <param name="hinhThucThanhToan">Phương thức thanh toán (ví dụ: "Tiền mặt", "Chuyển khoản VietQR").</param>
-        /// <returns>Đối tượng KetQuaTraMayDTO chứa chi tiết thời gian và các khoản tiền thanh toán.</returns>
-        /// <exception cref="InvalidOperationException">Ném ngoại lệ khi có lỗi vi phạm điều kiện nghiệp vụ.</exception>
-        /// <exception cref="Exception">Ném ngoại lệ chung khi có lỗi kỹ thuật hoặc lỗi hệ thống CSDL.</exception>
         public static KetQuaTraMayDTO TraMay(long maPhienChoi, int maNhanVien, string hinhThucThanhToan)
         {
             using SqlConnection conn = GiaoDichDAL.MoKetNoi();
@@ -125,42 +95,6 @@ namespace NPC.BLL
             }
         }
 
-        /// <summary>
-        /// Thực hiện quy trình nạp tiền vào tài khoản hội viên bọc trong 1 SqlTransaction:
-        /// 1. Kiểm tra tính hợp lệ của số tiền nạp (> 0).
-        /// 2. Khóa và kiểm tra thông tin, trạng thái hội viên (không bị khóa).
-        /// 3. Cộng số dư tài khoản hội viên.
-        /// 4. Ghi lịch sử giao dịch vào bảng GiaoDich và Commit.
-        /// </summary>
-        /// <example>
-        /// Cách gọi từ tầng GUI (Form):
-        /// <code>
-        /// try
-        /// {
-        ///     var dto = new NapTienDTO
-        ///     {
-        ///         MaHoiVien = 12,
-        ///         MaNhanVien = 1,
-        ///         SoTienNap = 50000m,
-        ///         HinhThucThanhToan = "Tiền mặt",
-        ///         GhiChu = "Nạp tiền chơi game"
-        ///     };
-        ///     
-        ///     KetQuaNapTienDTO kq = GiaoDichBLL.NapTien(dto);
-        ///     MessageBox.Show($"Nạp tiền thành công cho hội viên {kq.HoTen}!\nSố dư cũ: {kq.SoDuTruoc:N0}đ\nSố dư mới: {kq.SoDuMoi:N0}đ",
-        ///                     "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        /// }
-        /// catch (Exception ex)
-        /// {
-        ///     MessageBox.Show(ex.Message, "Lỗi nạp tiền", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        /// }
-        /// </code>
-        /// </example>
-        /// <param name="dto">Đối tượng NapTienDTO mang thông tin nạp tiền từ giao diện.</param>
-        /// <returns>Đối tượng KetQuaNapTienDTO chứa họ tên, số dư trước và sau khi nạp.</returns>
-        /// <exception cref="ArgumentException">Ném ngoại lệ khi số tiền nạp không hợp lệ (nhỏ hơn hoặc bằng 0).</exception>
-        /// <exception cref="InvalidOperationException">Ném ngoại lệ khi tài khoản hội viên không tồn tại hoặc đang bị khóa.</exception>
-        /// <exception cref="Exception">Ném ngoại lệ chung khi có lỗi kỹ thuật hoặc lỗi hệ thống CSDL.</exception>
         public static KetQuaNapTienDTO NapTien(NapTienDTO dto)
         {
             if (dto.SoTienNap <= 0)
@@ -211,6 +145,94 @@ namespace NPC.BLL
                 SafeRollback(tran);
                 Logger.LogError($"[NapTien] Lỗi kỹ thuật hội viên #{dto.MaHoiVien}:", ex);
                 throw new Exception("Lỗi hệ thống khi nạp tiền. Vui lòng thử lại.", ex);
+            }
+        }
+
+        // ─── Luồng yêu cầu nạp tiền từ Client (cần Server duyệt) ─────────────────
+
+        /// <summary>
+        /// Client gọi hàm này khi bấm "Xác nhận nạp" trên màn hình Client.
+        /// Ghi yêu cầu vào DB và trả về MaYeuCau để Client theo dõi.
+        /// </summary>
+        public static int GuiYeuCauNapTien(int maHoiVien, int maMay, string tenMay,
+            decimal soTienNap, string hinhThuc)
+        {
+            if (soTienNap <= 0)
+                throw new ArgumentException("Số tiền nạp phải lớn hơn 0.");
+            return GiaoDichDAL.GuiYeuCauNapTien(maHoiVien, maMay, tenMay, soTienNap, hinhThuc);
+        }
+
+        /// <summary>
+        /// Client poll trạng thái yêu cầu: "ChoDuyet" | "DaDuyet" | "TuChoi" | ""
+        /// </summary>
+        public static string KiemTraTrangThaiYeuCau(int maYeuCau)
+            => GiaoDichDAL.LayTrangThaiYeuCau(maYeuCau);
+
+        /// <summary>
+        /// Server lấy danh sách yêu cầu nạp tiền đang chờ xử lý.
+        /// </summary>
+        public static List<YeuCauNapTienDTO> LayYeuCauChoDuyet()
+            => GiaoDichDAL.LayYeuCauChoDuyet();
+
+        /// <summary>
+        /// Server đồng ý → nạp tiền thật + cập nhật trạng thái "DaDuyet".
+        /// </summary>
+        public static KetQuaNapTienDTO DuyetYeuCauNapTien(YeuCauNapTienDTO yeuCau, int maNhanVien)
+        {
+            using SqlConnection conn = GiaoDichDAL.MoKetNoi();
+            conn.Open();
+            SqlTransaction tran = conn.BeginTransaction(IsolationLevel.ReadCommitted);
+            try
+            {
+                var (hoTen, soDuTruoc, trangThai) = GiaoDichDAL.LockVaLayHoiVien(conn, tran, yeuCau.MaHoiVien);
+
+                if (trangThai == "Bị khóa")
+                    throw new InvalidOperationException($"Tài khoản '{hoTen}' đang bị khóa. Không thể nạp tiền.");
+
+                GiaoDichDAL.CongSoDuHoiVien(conn, tran, yeuCau.MaHoiVien, yeuCau.SoTienNap);
+                decimal soDuMoi = GiaoDichDAL.LaySoDuHoiVien(conn, tran, yeuCau.MaHoiVien);
+
+                string ghiChu = $"Duyệt nạp tiền tại máy {yeuCau.TenMay} ({yeuCau.HinhThucThanhToan}): " +
+                                $"+{yeuCau.SoTienNap:N0} VND | {soDuTruoc:N0} → {soDuMoi:N0} VND.";
+                GiaoDichDAL.GhiGiaoDich(conn, tran, yeuCau.MaHoiVien, maNhanVien,
+                    yeuCau.SoTienNap, yeuCau.HinhThucThanhToan, ghiChu);
+
+                // Đánh dấu yêu cầu là đã duyệt
+                GiaoDichDAL.CapNhatTrangThaiYeuCau(conn, tran, yeuCau.MaYeuCau, "DaDuyet");
+
+                tran.Commit();
+
+                Logger.LogBusiness("Server", "Duyệt nạp tiền",
+                    $"Yêu cầu #{yeuCau.MaYeuCau} | HV #{yeuCau.MaHoiVien} '{hoTen}' | " +
+                    $"+{yeuCau.SoTienNap:N0} VND | {soDuTruoc:N0} → {soDuMoi:N0} | Máy {yeuCau.TenMay}");
+
+                return new KetQuaNapTienDTO { HoTen = hoTen, SoDuTruoc = soDuTruoc, SoDuMoi = soDuMoi };
+            }
+            catch
+            {
+                SafeRollback(tran);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Server từ chối → chỉ cập nhật trạng thái "TuChoi", không nạp tiền.
+        /// </summary>
+        public static void TuChoiYeuCauNapTien(int maYeuCau)
+        {
+            using SqlConnection conn = GiaoDichDAL.MoKetNoi();
+            conn.Open();
+            SqlTransaction tran = conn.BeginTransaction(IsolationLevel.ReadCommitted);
+            try
+            {
+                GiaoDichDAL.CapNhatTrangThaiYeuCau(conn, tran, maYeuCau, "TuChoi");
+                tran.Commit();
+                Logger.LogBusiness("Server", "Từ chối nạp tiền", $"Yêu cầu #{maYeuCau} bị từ chối.");
+            }
+            catch
+            {
+                SafeRollback(tran);
+                throw;
             }
         }
 

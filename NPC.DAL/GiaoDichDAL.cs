@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using NPC.DTO;
@@ -17,10 +18,6 @@ namespace NPC.DAL
         /// <summary>
         /// Khóa dòng dữ liệu phiên chơi (UPDLOCK, ROWLOCK) để chống xung đột đồng thời và lấy thông tin phiên.
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maPhienChoi">Mã phiên chơi cần truy vấn.</param>
-        /// <returns>Đối tượng PhienChoiDTO chứa thông tin phiên, hoặc null nếu không tồn tại.</returns>
         public static PhienChoiDTO? LockVaLayPhienChoi(SqlConnection conn, SqlTransaction tran, long maPhienChoi)
         {
             string sql =
@@ -46,10 +43,6 @@ namespace NPC.DAL
         /// <summary>
         /// Khóa dòng dữ liệu hội viên (UPDLOCK, ROWLOCK) và lấy số dư hiện tại.
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maHoiVien">Mã hội viên cần truy vấn.</param>
-        /// <returns>Số dư hiện tại, hoặc null nếu hội viên không tồn tại.</returns>
         public static decimal? LockVaLaySoDuHoiVien(SqlConnection conn, SqlTransaction tran, int maHoiVien)
         {
             string sql =
@@ -64,10 +57,6 @@ namespace NPC.DAL
         /// <summary>
         /// Tính tổng tiền đồ ăn của các đơn hàng có trạng thái 'Đã giao' trong một phiên chơi.
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maPhienChoi">Mã phiên chơi cần thống kê.</param>
-        /// <returns>Tổng tiền đồ ăn dịch vụ phát sinh trong phiên.</returns>
         public static decimal LayTienDoAnPhien(SqlConnection conn, SqlTransaction tran, long maPhienChoi)
         {
             string sql =
@@ -82,14 +71,7 @@ namespace NPC.DAL
 
         /// <summary>
         /// Trừ số dư tài khoản hội viên và cộng tích lũy tổng thời gian chơi.
-        /// Có điều kiện chặn: chỉ trừ nếu số dư hiện tại >= số tiền cần trừ.
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maHoiVien">Mã hội viên.</param>
-        /// <param name="soTienTru">Số tiền cần khấu trừ vào tài khoản.</param>
-        /// <param name="tongPhut">Số phút chơi phát sinh cần cộng thêm.</param>
-        /// <returns>Số dòng bị ảnh hưởng (1 nếu thành công, 0 nếu không đủ số dư).</returns>
         public static int TruSoDuHoiVien(SqlConnection conn, SqlTransaction tran,
             int maHoiVien, decimal soTienTru, int tongPhut)
         {
@@ -108,15 +90,7 @@ namespace NPC.DAL
 
         /// <summary>
         /// Đóng phiên chơi: cập nhật thời gian kết thúc, tổng phút chơi, tiền giờ và trạng thái sang 'Đã kết thúc'.
-        /// Có điều kiện chặn: chỉ cập nhật nếu phiên đang có trạng thái 'Đang chơi'.
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maPhienChoi">Mã phiên chơi cần đóng.</param>
-        /// <param name="thoiGianKetThuc">Thời điểm kết thúc.</param>
-        /// <param name="tongPhut">Tổng số phút chơi thực tế.</param>
-        /// <param name="tienGio">Tổng tiền giờ phát sinh.</param>
-        /// <returns>Số dòng bị ảnh hưởng (1 nếu thành công, 0 nếu phiên đã bị đóng trước đó).</returns>
         public static int DongPhienChoi(SqlConnection conn, SqlTransaction tran,
             long maPhienChoi, DateTime thoiGianKetThuc, int tongPhut, decimal tienGio)
         {
@@ -139,9 +113,6 @@ namespace NPC.DAL
         /// <summary>
         /// Cập nhật trạng thái máy trạm sang 'Sẵn sàng' sau khi phiên kết thúc.
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maMay">Mã máy trạm cần giải phóng.</param>
         public static void CapNhatTrangThaiMay(SqlConnection conn, SqlTransaction tran, int maMay)
         {
             SQLHelper.ExecuteNonQuery(conn, tran,
@@ -152,13 +123,6 @@ namespace NPC.DAL
         /// <summary>
         /// Ghi nhận một giao dịch mới vào bảng lịch sử giao dịch (GiaoDich).
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maHoiVien">Mã hội viên (null nếu là khách vãng lai).</param>
-        /// <param name="maNhanVien">Mã nhân viên thực hiện thu ngân.</param>
-        /// <param name="soTien">Số tiền giao dịch.</param>
-        /// <param name="hinhThuc">Hình thức thanh toán (Tiền mặt, Chuyển khoản, v.v.).</param>
-        /// <param name="ghiChu">Ghi chú diễn giải nội dung giao dịch.</param>
         public static void GhiGiaoDich(SqlConnection conn, SqlTransaction tran,
             int? maHoiVien, int maNhanVien, decimal soTien, string hinhThuc, string ghiChu)
         {
@@ -179,11 +143,6 @@ namespace NPC.DAL
         /// <summary>
         /// Khóa dòng dữ liệu hội viên (UPDLOCK, ROWLOCK) và lấy họ tên, số dư, trạng thái phục vụ việc nạp tiền.
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maHoiVien">Mã hội viên cần nạp tiền.</param>
-        /// <returns>Tuple gồm (HoTen, SoDu, TrangThai).</returns>
-        /// <exception cref="InvalidOperationException">Ném ngoại lệ nếu không tìm thấy hội viên.</exception>
         public static (string HoTen, decimal SoDu, string TrangThai) LockVaLayHoiVien(
             SqlConnection conn, SqlTransaction tran, int maHoiVien)
         {
@@ -203,10 +162,6 @@ namespace NPC.DAL
         /// <summary>
         /// Cộng thêm tiền vào số dư của hội viên.
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maHoiVien">Mã hội viên được nạp.</param>
-        /// <param name="soTienNap">Số tiền nạp cần cộng vào số dư.</param>
         public static void CongSoDuHoiVien(SqlConnection conn, SqlTransaction tran,
             int maHoiVien, decimal soTienNap)
         {
@@ -219,10 +174,6 @@ namespace NPC.DAL
         /// <summary>
         /// Lấy số dư hiện tại của hội viên từ CSDL.
         /// </summary>
-        /// <param name="conn">Kết nối CSDL.</param>
-        /// <param name="tran">Transaction đang thực thi.</param>
-        /// <param name="maHoiVien">Mã hội viên cần tra cứu.</param>
-        /// <returns>Số dư hiện tại.</returns>
         public static decimal LaySoDuHoiVien(SqlConnection conn, SqlTransaction tran, int maHoiVien)
         {
             object raw = SQLHelper.ExecuteScalar(conn, tran,
@@ -234,7 +185,97 @@ namespace NPC.DAL
         /// <summary>
         /// Khởi tạo và trả về một kết nối SqlConnection mới dựa trên chuỗi kết nối của hệ thống.
         /// </summary>
-        /// <returns>Đối tượng SqlConnection.</returns>
         public static SqlConnection MoKetNoi() => new SqlConnection(NPCData.ConnectionString);
+
+        // ─── YeuCauNapTien ──────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Ghi yêu cầu nạp tiền từ Client vào DB với trạng thái "ChoDuyet".
+        /// Trả về MaYeuCau vừa tạo.
+        /// </summary>
+        public static int GuiYeuCauNapTien(int maHoiVien, int maMay, string tenMay,
+            decimal soTienNap, string hinhThuc)
+        {
+            string sql = @"
+                INSERT INTO dbo.YeuCauNapTien
+                    (MaHoiVien, MaMay, TenMay, SoTienNap, HinhThucThanhToan, TrangThai, ThoiGianGui)
+                VALUES
+                    (@MaHoiVien, @MaMay, @TenMay, @SoTienNap, @HinhThuc, N'ChoDuyet', GETDATE());
+                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+            using SqlConnection conn = MoKetNoi();
+            conn.Open();
+            using SqlCommand cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@MaHoiVien", maHoiVien);
+            cmd.Parameters.AddWithValue("@MaMay", maMay);
+            cmd.Parameters.AddWithValue("@TenMay", tenMay);
+            cmd.Parameters.AddWithValue("@SoTienNap", soTienNap);
+            cmd.Parameters.AddWithValue("@HinhThuc", hinhThuc);
+            object? result = cmd.ExecuteScalar();
+            return result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        }
+
+        /// <summary>
+        /// Lấy trạng thái hiện tại của 1 yêu cầu nạp tiền theo MaYeuCau.
+        /// Trả về "ChoDuyet" | "DaDuyet" | "TuChoi" | "" nếu không tìm thấy.
+        /// </summary>
+        public static string LayTrangThaiYeuCau(int maYeuCau)
+        {
+            string sql = "SELECT TrangThai FROM dbo.YeuCauNapTien WHERE MaYeuCau = @Ma";
+            object? raw = SQLHelper.ExecuteScalar(sql, new SqlParameter("@Ma", maYeuCau));
+            return raw != null && raw != DBNull.Value ? raw.ToString()! : string.Empty;
+        }
+
+        /// <summary>
+        /// Lấy danh sách tất cả yêu cầu nạp tiền đang ở trạng thái "ChoDuyet".
+        /// Server sẽ poll list này để hiển thị xác nhận.
+        /// </summary>
+        public static List<YeuCauNapTienDTO> LayYeuCauChoDuyet()
+        {
+            string sql = @"
+                SELECT y.MaYeuCau, y.MaHoiVien, y.MaMay, y.TenMay,
+                       y.SoTienNap, y.HinhThucThanhToan, y.TrangThai, y.ThoiGianGui,
+                       h.HoTen
+                FROM dbo.YeuCauNapTien y
+                LEFT JOIN dbo.HoiVien h ON h.MaHoiVien = y.MaHoiVien
+                WHERE y.TrangThai = N'ChoDuyet'
+                ORDER BY y.ThoiGianGui ASC";
+
+            DataTable dt = SQLHelper.ExecuteQuery(sql);
+            var list = new List<YeuCauNapTienDTO>();
+            if (dt == null) return list;
+            foreach (DataRow r in dt.Rows)
+            {
+                list.Add(new YeuCauNapTienDTO
+                {
+                    MaYeuCau          = Convert.ToInt32(r["MaYeuCau"]),
+                    MaHoiVien         = Convert.ToInt32(r["MaHoiVien"]),
+                    MaMay             = Convert.ToInt32(r["MaMay"]),
+                    TenMay            = r["TenMay"].ToString()!,
+                    SoTienNap         = Convert.ToDecimal(r["SoTienNap"]),
+                    HinhThucThanhToan = r["HinhThucThanhToan"].ToString()!,
+                    TrangThai         = r["TrangThai"].ToString()!,
+                    ThoiGianGui       = Convert.ToDateTime(r["ThoiGianGui"]),
+                    // GhiChu tạm dùng để truyền HoTen sang Server UI
+                    GhiChu            = r["HoTen"] == DBNull.Value ? null : r["HoTen"].ToString()
+                });
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// Server cập nhật trạng thái yêu cầu thành "DaDuyet" hoặc "TuChoi".
+        /// Phải gọi bên trong transaction đang mở.
+        /// </summary>
+        public static void CapNhatTrangThaiYeuCau(SqlConnection conn, SqlTransaction tran,
+            int maYeuCau, string trangThaiMoi)
+        {
+            SQLHelper.ExecuteNonQuery(conn, tran,
+                @"UPDATE dbo.YeuCauNapTien
+                  SET TrangThai = @TrangThai, ThoiGianXuLy = GETDATE()
+                  WHERE MaYeuCau = @Ma",
+                P("@TrangThai", trangThaiMoi),
+                P("@Ma", maYeuCau));
+        }
     }
 }

@@ -36,5 +36,17 @@ namespace NPC.DTO
         public decimal SoDuTruoc { get; set; }
         public decimal SoDuMoi { get; set; }
     }
-}
 
+    public class YeuCauNapTienDTO
+    {
+        public int MaYeuCau { get; set; }
+        public int MaHoiVien { get; set; }
+        public int MaMay { get; set; }
+        public string TenMay { get; set; } = string.Empty;
+        public decimal SoTienNap { get; set; }
+        public string HinhThucThanhToan { get; set; } = string.Empty;
+        public string TrangThai { get; set; } = "ChoDuyet";
+        public DateTime ThoiGianGui { get; set; }
+        public string? GhiChu { get; set; }
+    }
+}

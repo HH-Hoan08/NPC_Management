@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using NPC.BLL;
@@ -27,6 +27,9 @@ namespace NPC.Client
         private bool _hasDragged = false;
         private bool _isTamKhoa = false;
 
+        // ─── Yêu cầu nạp tiền đang chờ Server duyệt ────────────────────────────
+        private int _maYeuCauNapDangCho = 0;   // 0 = không có yêu cầu đang chờ
+
         public frmClient()
         {
             InitializeComponent();
@@ -35,9 +38,9 @@ namespace NPC.Client
             btnIconThuGon.MouseMove += BtnIconThuGon_MouseMove;
             btnIconThuGon.MouseUp += BtnIconThuGon_MouseUp;
 
-            btnMenhGia10k.Click += (s, e) => txtSoTienNapClient.Text = "10000";
-            btnMenhGia20k.Click += (s, e) => txtSoTienNapClient.Text = "20000";
-            btnMenhGia50k.Click += (s, e) => txtSoTienNapClient.Text = "50000";
+            btnMenhGia10k.Click  += (s, e) => txtSoTienNapClient.Text = "10000";
+            btnMenhGia20k.Click  += (s, e) => txtSoTienNapClient.Text = "20000";
+            btnMenhGia50k.Click  += (s, e) => txtSoTienNapClient.Text = "50000";
             btnMenhGia100k.Click += (s, e) => txtSoTienNapClient.Text = "100000";
             btnMenhGia200k.Click += (s, e) => txtSoTienNapClient.Text = "200000";
             btnMenhGia500k.Click += (s, e) => txtSoTienNapClient.Text = "500000";
@@ -127,7 +130,7 @@ namespace NPC.Client
         {
             if (!pnlTamKhoa.Visible) return;
             pnlTamKhoaContent.Left = Math.Max(0, (pnlTamKhoa.ClientSize.Width - pnlTamKhoaContent.Width) / 2);
-            pnlTamKhoaContent.Top = Math.Max(0, (pnlTamKhoa.ClientSize.Height - pnlTamKhoaContent.Height) / 2);
+            pnlTamKhoaContent.Top  = Math.Max(0, (pnlTamKhoa.ClientSize.Height - pnlTamKhoaContent.Height) / 2);
             pnlTamKhoaContent.BringToFront();
         }
 
@@ -137,10 +140,10 @@ namespace NPC.Client
             _isTamKhoa = true;
             _frmGoiMon?.DongKhongHoi();
             pnlNapTienClient.Visible = false;
-            pnlThanhNoi.Visible = false;
-            btnIconThuGon.Visible = false;
+            pnlThanhNoi.Visible      = false;
+            btnIconThuGon.Visible    = false;
             WindowState = FormWindowState.Maximized;
-            TopMost = !System.Diagnostics.Debugger.IsAttached;
+            TopMost     = !System.Diagnostics.Debugger.IsAttached;
             pnlTamKhoa.Visible = true;
             pnlTamKhoa.BringToFront();
             CanGiuaPanelTamKhoa();
@@ -168,6 +171,13 @@ namespace NPC.Client
                 return;
             }
 
+            // Nếu đang có yêu cầu chưa được xử lý thì không cho gửi thêm
+            if (_maYeuCauNapDangCho > 0)
+            {
+                MessageBox.Show(this, "Bạn đã có yêu cầu nạp tiền đang chờ quầy xác nhận.\nVui lòng chờ nhân viên xử lý!", "Đang chờ xác nhận", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             TimeSpan daChoi = DateTime.Now - _batDau;
             decimal soDuHienTai = ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, daChoi);
             lblNapTienSoDu.Text = $"Số dư hiện tại: {soDuHienTai:N0} đ";
@@ -175,11 +185,11 @@ namespace NPC.Client
             if (cboHinhThucNap.Items.Count > 0 && cboHinhThucNap.SelectedIndex < 0)
                 cboHinhThucNap.SelectedIndex = 0;
 
-            pnlThanhNoi.Visible = false;
-            btnIconThuGon.Visible = false;
-            WindowState = FormWindowState.Normal;
-            MinimumSize = Size.Empty;
-            pnlNapTienClient.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            pnlThanhNoi.Visible      = false;
+            btnIconThuGon.Visible    = false;
+            WindowState              = FormWindowState.Normal;
+            MinimumSize              = Size.Empty;
+            pnlNapTienClient.Anchor  = AnchorStyles.Top | AnchorStyles.Left;
             pnlNapTienClient.Location = Point.Empty;
             ClientSize = pnlNapTienClient.Size;
             Rectangle vung = Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 1280, 720);
@@ -195,6 +205,10 @@ namespace NPC.Client
             HienThiThanhNoiDayDu();
         }
 
+        /// <summary>
+        /// Client bấm "Xác nhận nạp" → ghi yêu cầu vào DB, chờ Server duyệt.
+        /// Không nạp tiền ngay lập tức.
+        /// </summary>
         private void btnXacNhanNapClient_Click(object? sender, EventArgs e)
         {
             if (_maPhienChoi == 0 || _maHoiVien <= 0) return;
@@ -216,28 +230,32 @@ namespace NPC.Client
             try
             {
                 string hinhThuc = cboHinhThucNap.SelectedItem?.ToString() ?? "Tiền mặt tại quầy";
-                var dto = new NapTienDTO
+
+                // Gửi yêu cầu lên DB, chờ Server xác nhận
+                int maYeuCau = GiaoDichBLL.GuiYeuCauNapTien(
+                    _maHoiVien, _maMay, TenMay, soTien, hinhThuc);
+
+                if (maYeuCau <= 0)
                 {
-                    MaHoiVien = _maHoiVien,
-                    SoTienNap = soTien,
-                    MaNhanVien = 1,
-                    HinhThucThanhToan = hinhThuc,
-                    GhiChu = $"Hội viên tự nạp tại máy {TenMay} ({hinhThuc})"
-                };
+                    MessageBox.Show(this, "Không thể gửi yêu cầu nạp tiền. Vui lòng thử lại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
-                KetQuaNapTienDTO kq = GiaoDichBLL.NapTien(dto);
-                _soDuBanDau = kq.SoDuMoi;
-                CapNhatSoDu();
-                CapNhatThoiGian();
+                _maYeuCauNapDangCho = maYeuCau;
 
-                MessageBox.Show(this, $"Nạp thành công {soTien:N0} đ vào tài khoản!\nSố dư mới: {kq.SoDuMoi:N0} đ", "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this,
+                    $"Yêu cầu nạp {soTien:N0} đ đã được gửi đến quầy.\n" +
+                    $"Hình thức: {hinhThuc}\n\n" +
+                    "Vui lòng chờ nhân viên xác nhận thanh toán.\n" +
+                    "Tiền sẽ được cộng tự động sau khi quầy đồng ý.",
+                    "Đã gửi yêu cầu", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 pnlNapTienClient.Visible = false;
                 HienThiThanhNoiDayDu();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "Nạp tiền thất bại: " + ex.Message, "Lỗi nạp tiền", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, "Lỗi gửi yêu cầu nạp tiền: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -258,7 +276,7 @@ namespace NPC.Client
         {
             if (!pnlKhoa.Visible) return;
             pnlDangNhap.Left = Math.Max(0, (pnlKhoa.ClientSize.Width - pnlDangNhap.Width) / 2);
-            pnlDangNhap.Top = Math.Max(0, (pnlKhoa.ClientSize.Height - pnlDangNhap.Height) / 2);
+            pnlDangNhap.Top  = Math.Max(0, (pnlKhoa.ClientSize.Height - pnlDangNhap.Height) / 2);
             pnlDangNhap.BringToFront();
         }
 
@@ -267,13 +285,14 @@ namespace NPC.Client
             tmrDemGio.Stop();
             tmrTruTien.Stop();
             _maPhienChoi = 0;
-            _maHoiVien = 0;
+            _maHoiVien   = 0;
+            _maYeuCauNapDangCho = 0;   // reset yêu cầu
             _frmGoiMon?.DongKhongHoi();
 
-            pnlThanhNoi.Visible = false;
+            pnlThanhNoi.Visible   = false;
             btnIconThuGon.Visible = false;
             WindowState = FormWindowState.Maximized;
-            TopMost = !System.Diagnostics.Debugger.IsAttached;
+            TopMost     = !System.Diagnostics.Debugger.IsAttached;
             pnlKhoa.Visible = true;
             pnlKhoa.BringToFront();
             CanGiuaPanelDangNhap();
@@ -287,18 +306,18 @@ namespace NPC.Client
 
         private void BatDauPhienTrenGiaoDien(long maPhien, int maHoiVien, decimal soDu, string tenDangNhap, int giayDaChoi)
         {
-            _maPhienChoi = maPhien;
-            _maHoiVien = maHoiVien;
-            _soDuBanDau = soDu;
-            _batDau = DateTime.Now.AddSeconds(-giayDaChoi);
+            _maPhienChoi  = maPhien;
+            _maHoiVien    = maHoiVien;
+            _soDuBanDau   = soDu;
+            _batDau       = DateTime.Now.AddSeconds(-giayDaChoi);
 
-            lblTenHoiVien.Text = maHoiVien > 0 ? "Hội viên: " + tenDangNhap : "Khách vãng lai";
-            lblDonGiaGio.Text = $"Giá giờ: {_donGiaGio:N0} đ/giờ";
+            lblTenHoiVien.Text     = maHoiVien > 0 ? "Hội viên: " + tenDangNhap : "Khách vãng lai";
+            lblDonGiaGio.Text      = $"Giá giờ: {_donGiaGio:N0} đ/giờ";
             lblThoiGianConLai.ForeColor = Color.Black;
             CapNhatThoiGian();
             CapNhatSoDu();
 
-            pnlKhoa.Visible = false;
+            pnlKhoa.Visible       = false;
             btnIconThuGon.Visible = false;
             HienThiThanhNoiDayDu();
 
@@ -311,7 +330,7 @@ namespace NPC.Client
             btnIconThuGon.Visible = false;
             WindowState = FormWindowState.Normal;
             MinimumSize = Size.Empty;
-            pnlThanhNoi.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            pnlThanhNoi.Anchor   = AnchorStyles.Top | AnchorStyles.Left;
             pnlThanhNoi.Location = Point.Empty;
             ClientSize = pnlThanhNoi.Size;
             Rectangle vung = Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 1280, 720);
@@ -323,7 +342,7 @@ namespace NPC.Client
 
         private void HienThiIconThuGon()
         {
-            pnlThanhNoi.Visible = false;
+            pnlThanhNoi.Visible   = false;
             WindowState = FormWindowState.Normal;
             MinimumSize = Size.Empty;
             btnIconThuGon.Location = Point.Empty;
@@ -342,19 +361,19 @@ namespace NPC.Client
 
         private void btnIconThuGon_Click(object? sender, EventArgs e)
         {
-            if (_hasDragged) return; // Nếu vừa kéo thả vị trí thì không mở bung thanh nổi
+            if (_hasDragged) return;
             HienThiThanhNoiDayDu();
         }
 
         private void HienThongBao(string noiDung, bool laLoi)
         {
-            lblThongBao.Text = noiDung;
+            lblThongBao.Text     = noiDung;
             lblThongBao.ForeColor = laLoi ? Color.Red : Color.FromArgb(64, 64, 64);
         }
 
         private void btnDangNhap_Click(object? sender, EventArgs e)
         {
-            string ten = txtTenDangNhap.Text.Trim();
+            string ten     = txtTenDangNhap.Text.Trim();
             string matKhau = txtMatKhau.Text;
             if (string.IsNullOrEmpty(ten) || string.IsNullOrEmpty(matKhau))
             {
@@ -394,7 +413,6 @@ namespace NPC.Client
             CapNhatSoDu();
             if (CapNhatThoiGian()) HetTien();
 
-            // Cứ mỗi 10 giây đồng bộ số dư và tiền giờ về Database một lần
             _demGiaySyncDb++;
             if (_demGiaySyncDb >= 10)
             {
@@ -415,8 +433,8 @@ namespace NPC.Client
             if (_maPhienChoi == 0) return;
             try
             {
-                TimeSpan daChoi = DateTime.Now - _batDau;
-                decimal tienGio = ClientBLL.TinhTienGio(daChoi, _donGiaGio);
+                TimeSpan daChoi  = DateTime.Now - _batDau;
+                decimal tienGio  = ClientBLL.TinhTienGio(daChoi, _donGiaGio);
                 decimal soDuConLai = (_maHoiVien > 0) ? ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, daChoi) : 0m;
                 ClientBLL.CapNhatTienRealTime(_maPhienChoi, tienGio, _maHoiVien, soDuConLai);
             }
@@ -435,7 +453,7 @@ namespace NPC.Client
             }
 
             TimeSpan conLai = ClientBLL.TinhThoiGianConLai(_soDuBanDau, _donGiaGio, daChoi);
-            lblThoiGianConLai.Text = "Còn lại: " + ClientBLL.DinhDangThoiGian(conLai);
+            lblThoiGianConLai.Text      = "Còn lại: " + ClientBLL.DinhDangThoiGian(conLai);
             lblThoiGianConLai.ForeColor = conLai.TotalMinutes <= PhutCanhBao ? Color.Red : Color.Black;
             return conLai <= TimeSpan.Zero;
         }
@@ -448,7 +466,7 @@ namespace NPC.Client
                 return;
             }
             TimeSpan daChoi = DateTime.Now - _batDau;
-            decimal soDu = ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, daChoi);
+            decimal soDu    = ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, daChoi);
             lblSoDu.Text = $"Số dư: {soDu:N0} đ";
             if (soDu <= 0) HetTien();
         }
@@ -475,7 +493,7 @@ namespace NPC.Client
 
                 if (_maPhienChoi != 0)
                 {
-                    // Phiên chơi đã bị đóng từ quầy (trả máy / thanh toán)
+                    // Phiên đã bị đóng từ quầy
                     if (dongBo.MaPhienChoi == 0 || dongBo.MaPhienChoi != _maPhienChoi)
                     {
                         if (_isTamKhoa) TatTamKhoaMay();
@@ -484,7 +502,7 @@ namespace NPC.Client
                         return;
                     }
 
-                    // Kiểm tra trạng thái Khóa máy / Mở khóa máy từ Server
+                    // Khóa / mở khóa từ Server
                     if (dongBo.TrangThaiMay == "Đang khóa" || dongBo.TrangThaiMay == "Locked")
                     {
                         BatTamKhoaMay();
@@ -495,8 +513,55 @@ namespace NPC.Client
                         TatTamKhoaMay();
                     }
 
-                    // Kiểm tra nếu quầy vừa nạp tiền vào tài khoản hội viên
-                    if (_maHoiVien > 0 && dongBo.SoDu > _soDuBanDau)
+                    // ── Poll kết quả yêu cầu nạp tiền ──────────────────────────
+                    if (_maYeuCauNapDangCho > 0)
+                    {
+                        try
+                        {
+                            string trangThai = GiaoDichBLL.KiemTraTrangThaiYeuCau(_maYeuCauNapDangCho);
+
+                            if (trangThai == "DaDuyet")
+                            {
+                                // Server đã nạp tiền → reload số dư từ đồng bộ
+                                _maYeuCauNapDangCho = 0;
+                                if (_maHoiVien > 0 && dongBo.SoDu > _soDuBanDau)
+                                {
+                                    decimal napThem = dongBo.SoDu - _soDuBanDau;
+                                    _soDuBanDau = dongBo.SoDu;
+                                    CapNhatSoDu();
+                                    CapNhatThoiGian();
+                                    try { System.Media.SystemSounds.Asterisk.Play(); } catch { }
+                                    MessageBox.Show(this,
+                                        $"Quầy đã xác nhận!\nTài khoản được nạp thêm {napThem:N0} đ.\nSố dư mới: {dongBo.SoDu:N0} đ",
+                                        "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                {
+                                    // Trường hợp số dư chưa kịp sync nhưng trạng thái đã DaDuyet
+                                    _soDuBanDau = dongBo.SoDu;
+                                    CapNhatSoDu();
+                                    CapNhatThoiGian();
+                                    try { System.Media.SystemSounds.Asterisk.Play(); } catch { }
+                                    MessageBox.Show(this,
+                                        "Quầy đã xác nhận nạp tiền!\nSố dư đã được cập nhật.",
+                                        "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                            }
+                            else if (trangThai == "TuChoi")
+                            {
+                                _maYeuCauNapDangCho = 0;
+                                try { System.Media.SystemSounds.Exclamation.Play(); } catch { }
+                                MessageBox.Show(this,
+                                    "Quầy đã từ chối yêu cầu nạp tiền của bạn.\nVui lòng liên hệ nhân viên để biết thêm chi tiết.",
+                                    "Yêu Cầu Bị Từ Chối", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                            // "ChoDuyet" → tiếp tục chờ, không làm gì
+                        }
+                        catch { /* im lặng nếu poll thất bại */ }
+                    }
+
+                    // Quầy nạp tiền trực tiếp (nạp từ Server không qua yêu cầu)
+                    if (_maYeuCauNapDangCho == 0 && _maHoiVien > 0 && dongBo.SoDu > _soDuBanDau)
                     {
                         decimal napThem = dongBo.SoDu - _soDuBanDau;
                         _soDuBanDau = dongBo.SoDu;
@@ -509,35 +574,30 @@ namespace NPC.Client
                     return;
                 }
 
-                // Khi máy chưa có phiên chơi
+                // Khi máy chưa có phiên
                 if (dongBo.MaPhienChoi > 0)
                 {
                     BatDauPhienTrenGiaoDien(dongBo.MaPhienChoi, dongBo.MaHoiVien, dongBo.SoDu, dongBo.TenDangNhap, dongBo.GiayDaChoi);
                     return;
                 }
 
-                // Khi máy đang ở màn hình chờ mà Server bấm Khóa máy
                 if (dongBo.TrangThaiMay == "Locked" || dongBo.TrangThaiMay == "Đang khóa")
                 {
                     txtTenDangNhap.Enabled = false;
-                    txtMatKhau.Enabled = false;
-                    btnDangNhap.Enabled = false;
+                    txtMatKhau.Enabled     = false;
+                    btnDangNhap.Enabled    = false;
                     HienThongBao("Máy đang bị quầy khóa. Vui lòng liên hệ nhân viên!", true);
                 }
                 else
                 {
                     txtTenDangNhap.Enabled = true;
-                    txtMatKhau.Enabled = true;
-                    btnDangNhap.Enabled = true;
+                    txtMatKhau.Enabled     = true;
+                    btnDangNhap.Enabled    = true;
                     if (lblThongBao.Text == "Máy đang bị quầy khóa. Vui lòng liên hệ nhân viên!")
-                    {
                         HienThongBao("Máy đang khóa – vui lòng đăng nhập", false);
-                    }
                 }
             }
-            catch
-            {
-            }
+            catch { }
         }
 
         private void btnGoiMon_Click(object? sender, EventArgs e)
@@ -556,8 +616,8 @@ namespace NPC.Client
             if (_maPhienChoi == 0) return;
             TimeSpan daChoi = DateTime.Now - _batDau;
             decimal tienGio = ClientBLL.TinhTienGio(daChoi, _donGiaGio);
-            string noiDung = $"Bạn muốn trả máy?\n\nThời gian chơi: {ClientBLL.DinhDangThoiGian(daChoi)}\nTiền giờ tạm tính: {tienGio:N0} đ"
-                           + (_maHoiVien == 0 ? "\n(Khách vãng lai – thanh toán tại quầy)" : "");
+            string noiDung  = $"Bạn muốn trả máy?\n\nThời gian chơi: {ClientBLL.DinhDangThoiGian(daChoi)}\nTiền giờ tạm tính: {tienGio:N0} đ"
+                            + (_maHoiVien == 0 ? "\n(Khách vãng lai – thanh toán tại quầy)" : "");
             if (MessageBox.Show(this, noiDung, "Trả máy", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 return;
 
