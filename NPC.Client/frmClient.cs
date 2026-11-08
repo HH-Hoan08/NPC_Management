@@ -30,6 +30,13 @@ namespace NPC.Client
         // ─── Yêu cầu nạp tiền đang chờ Server duyệt ────────────────────────────
         private int _maYeuCauNapDangCho = 0;   // 0 = không có yêu cầu đang chờ
 
+        // ─── Đồng bộ số dư với CSDL ────────────────────────────────────────────
+        // _soDuBanDau = số dư đầu phiên + tổng tiền đã nạp thêm trong phiên.
+        // _tienDaTruDB = tổng tiền giờ client đã trừ (tương đối) vào HoiVien.SoDu.
+        // => Số dư kỳ vọng trong CSDL = _soDuBanDau - _tienDaTruDB.
+        private decimal _tienDaTruDB = 0m;
+        private bool _dangDongBo = false;
+
         public frmClient()
         {
             InitializeComponent();
@@ -287,6 +294,7 @@ namespace NPC.Client
             _maPhienChoi = 0;
             _maHoiVien   = 0;
             _maYeuCauNapDangCho = 0;   // reset yêu cầu
+            _tienDaTruDB = 0m;
             _frmGoiMon?.DongKhongHoi();
 
             pnlThanhNoi.Visible   = false;
@@ -304,18 +312,19 @@ namespace NPC.Client
             txtTenDangNhap.Focus();
         }
 
-        private void BatDauPhienTrenGiaoDien(long maPhien, int maHoiVien, decimal soDu, string tenDangNhap, int giayDaChoi)
+        private void BatDauPhienTrenGiaoDien(long maPhien, int maHoiVien, decimal soDu, string tenDangNhap, int giayDaChoi, decimal tienDaTru = 0m)
         {
             _maPhienChoi  = maPhien;
             _maHoiVien    = maHoiVien;
-            _soDuBanDau   = soDu;
+            _tienDaTruDB  = maHoiVien > 0 ? Math.Max(0m, tienDaTru) : 0m;
+            // soDu lấy từ CSDL là số dư ĐÃ trừ tienDaTru → cộng lại để ra số dư đầu phiên
+            _soDuBanDau   = soDu + _tienDaTruDB;
             _batDau       = DateTime.Now.AddSeconds(-giayDaChoi);
 
             lblTenHoiVien.Text     = maHoiVien > 0 ? "Hội viên: " + tenDangNhap : "Khách vãng lai";
             lblDonGiaGio.Text      = $"Giá giờ: {_donGiaGio:N0} đ/giờ";
             lblThoiGianConLai.ForeColor = Color.Black;
-            CapNhatThoiGian();
-            CapNhatSoDu();
+            CapNhatHienThi();
 
             pnlKhoa.Visible       = false;
             btnIconThuGon.Visible = false;
@@ -405,26 +414,17 @@ namespace NPC.Client
             }
         }
 
-        private int _demGiaySyncDb = 0;
-
+        /// <summary>Mỗi giây: cập nhật đồng thời thời gian đã chơi, thời gian còn lại và số dư.</summary>
         private void tmrDemGio_Tick(object? sender, EventArgs e)
         {
             if (_maPhienChoi == 0) return;
-            CapNhatSoDu();
-            if (CapNhatThoiGian()) HetTien();
-
-            _demGiaySyncDb++;
-            if (_demGiaySyncDb >= 10)
-            {
-                _demGiaySyncDb = 0;
-                DongBoTienRealTimeVeCSDL();
-            }
+            if (CapNhatHienThi()) HetTien();
         }
 
+        /// <summary>Mỗi giây: trừ phần tiền giờ phát sinh vào CSDL.</summary>
         private void tmrTruTien_Tick(object? sender, EventArgs e)
         {
             if (_maPhienChoi == 0) return;
-            CapNhatSoDu();
             DongBoTienRealTimeVeCSDL();
         }
 
@@ -433,15 +433,29 @@ namespace NPC.Client
             if (_maPhienChoi == 0) return;
             try
             {
-                TimeSpan daChoi  = DateTime.Now - _batDau;
-                decimal tienGio  = ClientBLL.TinhTienGio(daChoi, _donGiaGio);
-                decimal soDuConLai = (_maHoiVien > 0) ? ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, daChoi) : 0m;
-                ClientBLL.CapNhatTienRealTime(_maPhienChoi, tienGio, _maHoiVien, soDuConLai);
+                TimeSpan daChoi = DateTime.Now - _batDau;
+                decimal tienGio = ClientBLL.TinhTienGio(daChoi, _donGiaGio);
+
+                decimal truThem = 0m;
+                decimal tienDaTruMoi = _tienDaTruDB;
+                if (_maHoiVien > 0)
+                {
+                    // Không trừ vượt quá số dư đang có
+                    tienDaTruMoi = Math.Min(tienGio, Math.Max(0m, _soDuBanDau));
+                    truThem = Math.Max(0m, tienDaTruMoi - _tienDaTruDB);
+                }
+
+                if (ClientBLL.CapNhatTienRealTime(_maPhienChoi, tienGio, _maHoiVien, truThem) && _maHoiVien > 0)
+                    _tienDaTruDB = Math.Max(_tienDaTruDB, tienDaTruMoi);
             }
             catch { }
         }
 
-        private bool CapNhatThoiGian()
+        /// <summary>
+        /// Tính toán 1 lần từ cùng một mốc thời gian để thời gian còn lại và số dư luôn khớp nhau.
+        /// Trả về true nếu đã hết tiền / hết giờ.
+        /// </summary>
+        private bool CapNhatHienThi()
         {
             TimeSpan daChoi = DateTime.Now - _batDau;
             lblDaChoi.Text = "Đã chơi: " + ClientBLL.DinhDangThoiGian(daChoi);
@@ -449,26 +463,36 @@ namespace NPC.Client
             if (_maHoiVien == 0)
             {
                 lblThoiGianConLai.Text = "Chơi tự do";
+                lblSoDu.Text = "Thanh toán tại quầy";
                 return false;
             }
 
+            decimal  soDu   = ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, daChoi);
             TimeSpan conLai = ClientBLL.TinhThoiGianConLai(_soDuBanDau, _donGiaGio, daChoi);
+
+            lblSoDu.Text                = $"Số dư: {Math.Floor(soDu):N0} đ";
             lblThoiGianConLai.Text      = "Còn lại: " + ClientBLL.DinhDangThoiGian(conLai);
             lblThoiGianConLai.ForeColor = conLai.TotalMinutes <= PhutCanhBao ? Color.Red : Color.Black;
-            return conLai <= TimeSpan.Zero;
+
+            return soDu <= 0 || conLai <= TimeSpan.Zero;
         }
 
-        private void CapNhatSoDu()
+        /// <summary>
+        /// Đối soát số dư trong CSDL với số dư kỳ vọng. Nếu quầy nạp thêm (hoặc điều chỉnh)
+        /// thì cộng phần chênh lệch vào _soDuBanDau → thời gian còn lại tăng tương ứng.
+        /// Trả về số tiền tăng thêm (0 nếu không tăng).
+        /// </summary>
+        private decimal DoiSoatSoDu(decimal soDuTrongCSDL)
         {
-            if (_maHoiVien == 0)
-            {
-                lblSoDu.Text = "Thanh toán tại quầy";
-                return;
-            }
-            TimeSpan daChoi = DateTime.Now - _batDau;
-            decimal soDu    = ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, daChoi);
-            lblSoDu.Text = $"Số dư: {soDu:N0} đ";
-            if (soDu <= 0) HetTien();
+            if (_maHoiVien <= 0) return 0m;
+
+            decimal soDuKyVong = _soDuBanDau - _tienDaTruDB;
+            decimal chenhLech  = soDuTrongCSDL - soDuKyVong;
+            if (Math.Abs(chenhLech) < 0.01m) return 0m;
+
+            _soDuBanDau += chenhLech;
+            if (CapNhatHienThi()) HetTien();
+            return chenhLech > 0 ? chenhLech : 0m;
         }
 
         private void HetTien()
@@ -486,6 +510,21 @@ namespace NPC.Client
         }
 
         private void tmrDongBo_Tick(object? sender, EventArgs e)
+        {
+            // MessageBox bên trong không chặn Timer → tránh chạy chồng
+            if (_dangDongBo) return;
+            _dangDongBo = true;
+            try
+            {
+                DongBoVoiServer();
+            }
+            finally
+            {
+                _dangDongBo = false;
+            }
+        }
+
+        private void DongBoVoiServer()
         {
             try
             {
@@ -513,6 +552,10 @@ namespace NPC.Client
                         TatTamKhoaMay();
                     }
 
+                    // ── Đối soát số dư CSDL (bắt được cả nạp qua yêu cầu lẫn nạp trực tiếp tại quầy)
+                    decimal napThem = DoiSoatSoDu(dongBo.SoDu);
+                    if (_maPhienChoi == 0) return; // có thể đã HetTien trong lúc đối soát
+
                     // ── Poll kết quả yêu cầu nạp tiền ──────────────────────────
                     if (_maYeuCauNapDangCho > 0)
                     {
@@ -522,30 +565,24 @@ namespace NPC.Client
 
                             if (trangThai == "DaDuyet")
                             {
-                                // Server đã nạp tiền → reload số dư từ đồng bộ
                                 _maYeuCauNapDangCho = 0;
-                                if (_maHoiVien > 0 && dongBo.SoDu > _soDuBanDau)
+
+                                // Số dư được đọc trước khi đọc trạng thái → có thể chưa thấy tiền mới, đọc lại 1 lần
+                                if (napThem <= 0)
                                 {
-                                    decimal napThem = dongBo.SoDu - _soDuBanDau;
-                                    _soDuBanDau = dongBo.SoDu;
-                                    CapNhatSoDu();
-                                    CapNhatThoiGian();
-                                    try { System.Media.SystemSounds.Asterisk.Play(); } catch { }
-                                    MessageBox.Show(this,
-                                        $"Quầy đã xác nhận!\nTài khoản được nạp thêm {napThem:N0} đ.\nSố dư mới: {dongBo.SoDu:N0} đ",
-                                        "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    ClientDongBoDTO lai = ClientBLL.DongBoTrangThai(_maMay);
+                                    if (lai.MaPhienChoi == _maPhienChoi)
+                                        napThem = DoiSoatSoDu(lai.SoDu);
                                 }
-                                else
-                                {
-                                    // Trường hợp số dư chưa kịp sync nhưng trạng thái đã DaDuyet
-                                    _soDuBanDau = dongBo.SoDu;
-                                    CapNhatSoDu();
-                                    CapNhatThoiGian();
-                                    try { System.Media.SystemSounds.Asterisk.Play(); } catch { }
-                                    MessageBox.Show(this,
-                                        "Quầy đã xác nhận nạp tiền!\nSố dư đã được cập nhật.",
-                                        "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                }
+
+                                decimal soDuMoi = ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, DateTime.Now - _batDau);
+                                TimeSpan conLai = ClientBLL.TinhThoiGianConLai(_soDuBanDau, _donGiaGio, DateTime.Now - _batDau);
+                                try { System.Media.SystemSounds.Asterisk.Play(); } catch { }
+                                MessageBox.Show(this,
+                                    $"Quầy đã xác nhận!\nTài khoản được nạp thêm {napThem:N0} đ.\n" +
+                                    $"Số dư mới: {Math.Floor(soDuMoi):N0} đ\nThời gian còn lại: {ClientBLL.DinhDangThoiGian(conLai)}",
+                                    "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                return;
                             }
                             else if (trangThai == "TuChoi")
                             {
@@ -555,20 +592,21 @@ namespace NPC.Client
                                     "Quầy đã từ chối yêu cầu nạp tiền của bạn.\nVui lòng liên hệ nhân viên để biết thêm chi tiết.",
                                     "Yêu Cầu Bị Từ Chối", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             }
-                            // "ChoDuyet" → tiếp tục chờ, không làm gì
+                            // "ChoDuyet" → tiếp tục chờ
                         }
                         catch { /* im lặng nếu poll thất bại */ }
                     }
 
                     // Quầy nạp tiền trực tiếp (nạp từ Server không qua yêu cầu)
-                    if (_maYeuCauNapDangCho == 0 && _maHoiVien > 0 && dongBo.SoDu > _soDuBanDau)
+                    if (napThem > 0)
                     {
-                        decimal napThem = dongBo.SoDu - _soDuBanDau;
-                        _soDuBanDau = dongBo.SoDu;
-                        CapNhatSoDu();
-                        CapNhatThoiGian();
+                        decimal soDuMoi = ClientBLL.TinhSoDuHienTai(_soDuBanDau, _donGiaGio, DateTime.Now - _batDau);
+                        TimeSpan conLai = ClientBLL.TinhThoiGianConLai(_soDuBanDau, _donGiaGio, DateTime.Now - _batDau);
                         try { System.Media.SystemSounds.Asterisk.Play(); } catch { }
-                        MessageBox.Show(this, $"Tài khoản của bạn vừa được nạp thêm {napThem:N0} đ từ quầy!\nSố dư mới: {dongBo.SoDu:N0} đ", "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(this,
+                            $"Tài khoản của bạn vừa được nạp thêm {napThem:N0} đ từ quầy!\n" +
+                            $"Số dư mới: {Math.Floor(soDuMoi):N0} đ\nThời gian còn lại: {ClientBLL.DinhDangThoiGian(conLai)}",
+                            "Nạp Tiền Thành Công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
                     return;
@@ -577,7 +615,7 @@ namespace NPC.Client
                 // Khi máy chưa có phiên
                 if (dongBo.MaPhienChoi > 0)
                 {
-                    BatDauPhienTrenGiaoDien(dongBo.MaPhienChoi, dongBo.MaHoiVien, dongBo.SoDu, dongBo.TenDangNhap, dongBo.GiayDaChoi);
+                    BatDauPhienTrenGiaoDien(dongBo.MaPhienChoi, dongBo.MaHoiVien, dongBo.SoDu, dongBo.TenDangNhap, dongBo.GiayDaChoi, dongBo.TienGioDaTru);
                     return;
                 }
 

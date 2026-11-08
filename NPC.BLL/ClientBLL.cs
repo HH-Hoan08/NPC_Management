@@ -202,29 +202,40 @@ namespace NPC.BLL
             }
         }
 
-        public static void CapNhatTienRealTime(long maPhienChoi, decimal tienGio, int maHoiVien, decimal soDuConLai)
+        /// <summary>
+        /// Đồng bộ tiền giờ về CSDL. <paramref name="soTienTruThem"/> là phần tiền phát sinh
+        /// kể từ lần đồng bộ trước (trừ tương đối, không ghi đè số dư).
+        /// </summary>
+        public static bool CapNhatTienRealTime(long maPhienChoi, decimal tienGio, int maHoiVien, decimal soTienTruThem)
         {
             try
             {
-                ClientDAL.CapNhatTienGioPhienChoi(maPhienChoi, tienGio, maHoiVien > 0 ? maHoiVien : (int?)null, soDuConLai);
+                return ClientDAL.CapNhatTienGioPhienChoi(maPhienChoi, tienGio, maHoiVien > 0 ? maHoiVien : (int?)null, soTienTruThem);
             }
             catch (Exception ex)
             {
                 Logger.LogError($"[ClientBLL] Lỗi cập nhật tiền Realtime phiên #{maPhienChoi}:", ex);
+                return false;
             }
         }
 
+        /// <summary>
+        /// Tính tiền giờ theo TỪNG GIÂY (làm tròn 2 chữ số thập phân) để số dư và thời gian còn lại
+        /// luôn giảm đồng bộ với nhau.
+        /// </summary>
         public static decimal TinhTienGio(TimeSpan daChoi, decimal donGiaGio)
         {
-            int phut = Math.Max(1, (int)daChoi.TotalMinutes);
-            return Math.Round(phut / 60m * donGiaGio, 0, MidpointRounding.AwayFromZero);
+            if (donGiaGio <= 0 || daChoi <= TimeSpan.Zero) return 0m;
+            decimal giay = (decimal)Math.Floor(daChoi.TotalSeconds);
+            return Math.Round(giay * donGiaGio / 3600m, 2, MidpointRounding.AwayFromZero);
         }
 
         public static TimeSpan TinhThoiGianConLai(decimal soDuBanDau, decimal donGiaGio, TimeSpan daChoi)
         {
             if (donGiaGio <= 0) return TimeSpan.Zero;
-            double tongGiay = (double)(soDuBanDau / donGiaGio) * 3600.0;
-            return TimeSpan.FromSeconds(Math.Max(0, tongGiay - daChoi.TotalSeconds));
+            decimal soDu = TinhSoDuHienTai(soDuBanDau, donGiaGio, daChoi);
+            double giayConLai = Math.Floor((double)(soDu * 3600m / donGiaGio));
+            return TimeSpan.FromSeconds(Math.Max(0, giayConLai));
         }
 
         public static decimal TinhSoDuHienTai(decimal soDuBanDau, decimal donGiaGio, TimeSpan daChoi)

@@ -110,22 +110,40 @@ namespace NPC.DAL
             }
         }
 
-        public static void CapNhatTienGioPhienChoi(long maPhienChoi, decimal tienGio, int? maHoiVien, decimal soDuConLai)
+        /// <summary>
+        /// Cập nhật tiền giờ của phiên và TRỪ TƯƠNG ĐỐI (SoDu = SoDu - @SoTienTru) vào số dư hội viên.
+        /// Không ghi đè số dư tuyệt đối để không làm mất tiền quầy vừa nạp trong lúc phiên đang chạy.
+        /// Trả về true nếu phiên vẫn đang chơi và cập nhật thành công.
+        /// </summary>
+        public static bool CapNhatTienGioPhienChoi(long maPhienChoi, decimal tienGio, int? maHoiVien, decimal soTienTruThem)
         {
-            string sqlPhien = "UPDATE dbo.PhienChoi SET TienGio = @TienGio WHERE MaPhienChoi = @MaPhienChoi AND TrangThaiPhien = N'Đang chơi'";
-            SQLHelper.ExecuteNonQuery(sqlPhien, new SqlParameter("@TienGio", tienGio), new SqlParameter("@MaPhienChoi", maPhienChoi));
+            string sql = @"
+                UPDATE dbo.PhienChoi SET TienGio = @TienGio
+                WHERE MaPhienChoi = @MaPhienChoi AND TrangThaiPhien IN (N'Đang chơi', N'Active');
 
-            if (maHoiVien.HasValue && maHoiVien.Value > 0)
-            {
-                string sqlHoiVien = "UPDATE dbo.HoiVien SET SoDu = @SoDu WHERE MaHoiVien = @MaHoiVien";
-                SQLHelper.ExecuteNonQuery(sqlHoiVien, new SqlParameter("@SoDu", Math.Max(0m, soDuConLai)), new SqlParameter("@MaHoiVien", maHoiVien.Value));
-            }
+                DECLARE @SoPhien INT = @@ROWCOUNT;
+
+                IF @SoPhien > 0 AND @MaHoiVien IS NOT NULL AND @SoTienTru > 0
+                    UPDATE dbo.HoiVien
+                    SET SoDu = CASE WHEN SoDu >= @SoTienTru THEN SoDu - @SoTienTru ELSE 0 END
+                    WHERE MaHoiVien = @MaHoiVien;
+
+                SELECT @SoPhien;";
+
+            object? raw = SQLHelper.ExecuteScalar(sql,
+                new SqlParameter("@TienGio", tienGio),
+                new SqlParameter("@MaPhienChoi", maPhienChoi),
+                new SqlParameter("@MaHoiVien", SqlDbType.Int) { Value = (maHoiVien.HasValue && maHoiVien.Value > 0) ? (object)maHoiVien.Value : DBNull.Value },
+                new SqlParameter("@SoTienTru", SqlDbType.Decimal) { Precision = 18, Scale = 2, Value = Math.Max(0m, soTienTruThem) });
+
+            return raw != null && raw != DBNull.Value && Convert.ToInt32(raw) > 0;
         }
 
         public static ClientDongBoDTO? LayPhienDangChay(int maMay)
         {
             string sql = @"SELECT TOP 1 p.MaPhienChoi, p.MaHoiVien, h.TenDangNhap, h.SoDu,
-                                  DATEDIFF(SECOND, p.ThoiGianBatDau, GETDATE()) AS Giay
+                                  DATEDIFF(SECOND, p.ThoiGianBatDau, GETDATE()) AS Giay,
+                                  ISNULL(p.TienGio, 0) AS TienGioDaTru
                            FROM dbo.PhienChoi p LEFT JOIN dbo.HoiVien h ON p.MaHoiVien = h.MaHoiVien
                            WHERE p.MaMay = @Ma AND (p.TrangThaiPhien = N'Active' OR p.TrangThaiPhien = N'Đang chơi')
                            ORDER BY p.MaPhienChoi DESC";
@@ -140,7 +158,8 @@ namespace NPC.DAL
                 MaHoiVien = r["MaHoiVien"] == DBNull.Value ? 0 : Convert.ToInt32(r["MaHoiVien"]),
                 TenDangNhap = r["TenDangNhap"] == DBNull.Value ? string.Empty : r["TenDangNhap"].ToString()!,
                 SoDu = r["SoDu"] == DBNull.Value ? 0m : Convert.ToDecimal(r["SoDu"]),
-                GiayDaChoi = r["Giay"] == DBNull.Value ? 0 : Convert.ToInt32(r["Giay"])
+                GiayDaChoi = r["Giay"] == DBNull.Value ? 0 : Convert.ToInt32(r["Giay"]),
+                TienGioDaTru = r["TienGioDaTru"] == DBNull.Value ? 0m : Convert.ToDecimal(r["TienGioDaTru"])
             };
         }
     }
