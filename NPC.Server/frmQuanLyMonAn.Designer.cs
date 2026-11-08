@@ -315,6 +315,7 @@ namespace NPC.Server
             btnChonAnh.TabIndex = 1;
             btnChonAnh.Text = "Chọn ảnh";
             btnChonAnh.UseVisualStyleBackColor = true;
+            btnChonAnh.Click += btnChonAnh_Click;
             // 
             // btnXoaAnh
             // 
@@ -325,6 +326,7 @@ namespace NPC.Server
             btnXoaAnh.TabIndex = 2;
             btnXoaAnh.Text = "Xóa ảnh";
             btnXoaAnh.UseVisualStyleBackColor = true;
+            btnXoaAnh.Click += btnXoaAnh_Click;
             // 
             // gbTimKiem
             // 

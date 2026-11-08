@@ -197,8 +197,9 @@ namespace NPC.Client
 
             try
             {
-                string duongDan = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, hinhAnh.Replace('/', Path.DirectorySeparatorChar));
-                if (!File.Exists(duongDan)) return;
+                // Tìm ảnh trong thư mục Resources dùng chung với Server (nơi Server lưu ảnh món ăn)
+                string? duongDan = NPC.DAL.AppPaths.ResolveImagePath(hinhAnh);
+                if (duongDan == null) return;
 
                 using (var ms = new MemoryStream(File.ReadAllBytes(duongDan)))
                 using (var anh = Image.FromStream(ms))

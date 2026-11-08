@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using NPC.BLL;
+using NPC.DAL;
 using NPC.DTO;
 
 namespace NPC.Server
@@ -446,26 +447,15 @@ namespace NPC.Server
                     oldImg.Dispose();
                 }
 
-                if (string.IsNullOrWhiteSpace(duongDan))
-                {
-                    picHinhAnh.Image = null;
-                    return;
-                }
+                string? fullPath = AppPaths.ResolveImagePath(duongDan);
+                if (fullPath == null) return;
 
-                string fullPath = Path.IsPathRooted(duongDan)
-                    ? duongDan
-                    : Path.Combine(Application.StartupPath, duongDan);
-
-                if (File.Exists(fullPath))
+                // Đọc toàn bộ vào bộ nhớ rồi copy ra Bitmap mới:
+                // không khóa file và không bị lỗi GDI+ khi stream đã đóng
+                using (var ms = new MemoryStream(File.ReadAllBytes(fullPath)))
+                using (var anh = Image.FromStream(ms))
                 {
-                    using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
-                    {
-                        picHinhAnh.Image = Image.FromStream(fs);
-                    }
-                }
-                else
-                {
-                    picHinhAnh.Image = null;
+                    picHinhAnh.Image = new Bitmap(anh);
                 }
             }
             catch
@@ -474,41 +464,54 @@ namespace NPC.Server
             }
         }
 
-        private void btnChonAnh_Click(object sender, EventArgs e)
+        private void btnChonAnh_Click(object? sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                ofd.Filter = "Image Files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|All Files (*.*)|*.*";
+                ofd.Filter = "Image Files (*.jpg;*.jpeg;*.png;*.bmp;*.gif)|*.jpg;*.jpeg;*.png;*.bmp;*.gif";
                 ofd.Title = "Chọn ảnh món ăn";
 
-                if (ofd.ShowDialog() == DialogResult.OK)
+                if (ofd.ShowDialog(this) != DialogResult.OK) return;
+
+                try
                 {
-                    try
+                    // Kiểm tra file có đúng là ảnh hợp lệ không
+                    using (var ms = new MemoryStream(File.ReadAllBytes(ofd.FileName)))
+                    using (Image.FromStream(ms)) { }
+                }
+                catch
+                {
+                    MessageBox.Show("File đã chọn không phải là ảnh hợp lệ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                try
+                {
+                    // Lưu vào thư mục Resources dùng chung để cả Server lẫn Client đều thấy ảnh
+                    string folder = AppPaths.ProductImageDirectory;
+                    string ext = Path.GetExtension(ofd.FileName).ToLowerInvariant();
+                    string fileName = $"food_{DateTime.Now:yyyyMMdd_HHmmss}_{Guid.NewGuid().ToString("N").Substring(0, 6)}{ext}";
+                    string destPath = Path.Combine(folder, fileName);
+
+                    File.Copy(ofd.FileName, destPath, true);
+
+                    // Lưu đường dẫn tương đối (cùng định dạng dữ liệu mẫu: Images/Products/xxx.png)
+                    _duongDanAnhHienTai = $"Images/Products/{fileName}";
+                    HienThiAnhMonAn(_duongDanAnhHienTai);
+
+                    if (int.TryParse(txtMaMon.Text, out int maMon) && maMon > 0)
                     {
-                        string folder = Path.Combine(Application.StartupPath, "Resources", "Images", "Products");
-                        if (!Directory.Exists(folder))
-                        {
-                            Directory.CreateDirectory(folder);
-                        }
-
-                        string ext = Path.GetExtension(ofd.FileName);
-                        string fileName = $"food_{DateTime.Now:yyyyMMdd_HHmmss}{ext}";
-                        string destPath = Path.Combine(folder, fileName);
-
-                        File.Copy(ofd.FileName, destPath, true);
-
-                        _duongDanAnhHienTai = Path.Combine("Resources", "Images", "Products", fileName);
-                        HienThiAnhMonAn(destPath);
+                        MessageBox.Show("Đã chọn ảnh mới. Bấm \"Sửa\" để lưu ảnh cho món đang chọn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Lỗi khi sao chép ảnh: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi sao chép ảnh: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        private void btnXoaAnh_Click(object sender, EventArgs e)
+        private void btnXoaAnh_Click(object? sender, EventArgs e)
         {
             _duongDanAnhHienTai = string.Empty;
             if (picHinhAnh.Image != null)
