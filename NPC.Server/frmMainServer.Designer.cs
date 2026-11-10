@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            ToolStripMenuItem tsmiDoanhThu;
             msMenuChinh = new MenuStrip();
             tsmiHeThong = new ToolStripMenuItem();
             tsmiCauHinh = new ToolStripMenuItem();
@@ -44,17 +43,9 @@
             tsmiThongTin = new ToolStripMenuItem();
             tsmiBaoCao = new ToolStripMenuItem();
             tsmiNhatKyHV = new ToolStripMenuItem();
-            tsmiThongKe = new ToolStripMenuItem();
             tsmiNhatKyHT = new ToolStripMenuItem();
-            tsmiDoanhThu = new ToolStripMenuItem();
             msMenuChinh.SuspendLayout();
             SuspendLayout();
-            // 
-            // tsmiDoanhThu
-            // 
-            tsmiDoanhThu.Name = "tsmiDoanhThu";
-            tsmiDoanhThu.Size = new Size(267, 26);
-            tsmiDoanhThu.Text = "Doanh thu";
             // 
             // msMenuChinh
             // 
@@ -116,14 +107,14 @@
             // tsmiHoiVien
             // 
             tsmiHoiVien.Name = "tsmiHoiVien";
-            tsmiHoiVien.Size = new Size(211, 26);
+            tsmiHoiVien.Size = new Size(224, 26);
             tsmiHoiVien.Text = "Hội viên/ nạp tiền";
             tsmiHoiVien.Click += tsmiHoiVien_Click;
             // 
             // tsmiMonAn
             // 
             tsmiMonAn.Name = "tsmiMonAn";
-            tsmiMonAn.Size = new Size(211, 26);
+            tsmiMonAn.Size = new Size(224, 26);
             tsmiMonAn.Text = "Món ăn";
             tsmiMonAn.Click += tsmiMonAn_Click;
             // 
@@ -148,7 +139,7 @@
             // 
             // tsmiBaoCao
             // 
-            tsmiBaoCao.DropDownItems.AddRange(new ToolStripItem[] { tsmiDoanhThu, tsmiNhatKyHV, tsmiThongKe, tsmiNhatKyHT });
+            tsmiBaoCao.DropDownItems.AddRange(new ToolStripItem[] { tsmiNhatKyHV, tsmiNhatKyHT });
             tsmiBaoCao.Name = "tsmiBaoCao";
             tsmiBaoCao.Size = new Size(77, 24);
             tsmiBaoCao.Text = "Báo cáo";
@@ -156,20 +147,16 @@
             // tsmiNhatKyHV
             // 
             tsmiNhatKyHV.Name = "tsmiNhatKyHV";
-            tsmiNhatKyHV.Size = new Size(267, 26);
+            tsmiNhatKyHV.Size = new Size(224, 26);
             tsmiNhatKyHV.Text = "Nhật ký hội viên";
-            // 
-            // tsmiThongKe
-            // 
-            tsmiThongKe.Name = "tsmiThongKe";
-            tsmiThongKe.Size = new Size(267, 26);
-            tsmiThongKe.Text = "Thống kê dịch vụ bán chạy";
+            tsmiNhatKyHV.Click += tsmiNhatKyHV_Click;
             // 
             // tsmiNhatKyHT
             // 
             tsmiNhatKyHT.Name = "tsmiNhatKyHT";
-            tsmiNhatKyHT.Size = new Size(267, 26);
+            tsmiNhatKyHT.Size = new Size(224, 26);
             tsmiNhatKyHT.Text = "Nhật ký hệ thống";
+            tsmiNhatKyHT.Click += tsmiNhatKyHT_Click;
             // 
             // frmMainServer
             // 
@@ -202,9 +189,7 @@
         private ToolStripMenuItem tsmiDangXuat;
         private ToolStripMenuItem tsmiHoiVien;
         private ToolStripMenuItem tsmiMonAn;
-        private ToolStripMenuItem tsmiDoanhThu;
         private ToolStripMenuItem tsmiNhatKyHV;
-        private ToolStripMenuItem tsmiThongKe;
         private ToolStripMenuItem tsmiNhatKyHT;
         private ToolStripMenuItem tsmiHuongDan;
         private ToolStripMenuItem tsmiThongTin;

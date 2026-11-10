@@ -27,7 +27,12 @@ namespace NPC.Server
 
         private void OpenMdiChildForm<T>() where T : Form, new()
         {
-            T checkForm = Application.OpenForms.OfType<T>().FirstOrDefault();
+            OpenMdiChildForm(() => new T());
+        }
+
+        private void OpenMdiChildForm<T>(Func<T> formFactory) where T : Form
+        {
+            T? checkForm = Application.OpenForms.OfType<T>().FirstOrDefault();
 
             if (checkForm != null)
             {
@@ -40,7 +45,7 @@ namespace NPC.Server
             {
                 child.Close();
             }
-            T fm = new T();
+            T fm = formFactory();
             fm.MdiParent = this;
             fm.WindowState = FormWindowState.Maximized;
             fm.Show();
@@ -185,6 +190,16 @@ namespace NPC.Server
         private void tsmiMonAn_Click(object sender, EventArgs e)
         {
             OpenMdiChildForm<frmQuanLyMonAn>();
+        }
+
+        private void tsmiNhatKyHV_Click(object sender, EventArgs e)
+        {
+            OpenMdiChildForm(() => new frmXemNhatKy(frmXemNhatKy.LoaiNhatKy.NhatKyHoiVien));
+        }
+
+        private void tsmiNhatKyHT_Click(object sender, EventArgs e)
+        {
+            OpenMdiChildForm(() => new frmXemNhatKy(frmXemNhatKy.LoaiNhatKy.NhatKyHeThong));
         }
     }
 }

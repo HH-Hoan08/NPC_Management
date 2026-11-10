@@ -340,71 +340,29 @@ namespace NPC.Server
 
         private void btnXuatFile_Click(object? sender, EventArgs e)
         {
-            saveFileDialog.Title = "Xuất danh sách hội viên";
-            saveFileDialog.Filter = "Excel Workbook (*.xlsx)|*.xlsx|File CSV (*.csv)|*.csv";
-            saveFileDialog.FilterIndex = 1;
-            saveFileDialog.DefaultExt = "xlsx";
-            saveFileDialog.AddExtension = true;
-            saveFileDialog.FileName = $"DanhSachHoiVien_{DateTime.Now:yyyyMMdd_HHmmss}";
-            if (saveFileDialog.ShowDialog(this) != DialogResult.OK) return;
-
-            try
+            saveFileDialog.Filter = "File CSV (*.csv)|*.csv|All Files (*.*)|*.*";
+            saveFileDialog.FileName = $"DanhSachHoiVien_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Cursor = Cursors.WaitCursor;
-                DataTable dt = _hoiVienBLL.LayDataTable();
-                string duongDan = saveFileDialog.FileName;
-                string nguoiXuat = !string.IsNullOrEmpty(frmDangNhapServer.CurrentUser) ? frmDangNhapServer.CurrentUser : "admin";
-
-                if (Path.GetExtension(duongDan).Equals(".csv", StringComparison.OrdinalIgnoreCase))
-                    XuatCsv(dt, duongDan);
-                else
-                    XuatExcelHoiVien.Xuat(dt, duongDan, nguoiXuat);
-
-                Cursor = Cursors.Default;
-                if (MessageBox.Show(this,
-                        $"Xuất thành công {dt.Rows.Count} hội viên tại:\n{duongDan}\n\nBạn có muốn mở file ngay không?",
-                        "Xuất file thành công", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                try
                 {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(duongDan) { UseShellExecute = true });
+                    DataTable dt = _hoiVienBLL.LayDataTable();
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("Mã HV,Tên đăng nhập,Họ tên,Điện thoại,Số dư,Tổng phút chơi,Ngày tạo,Trạng thái");
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        string dtStr = row["DienThoai"] != DBNull.Value ? row["DienThoai"]?.ToString() ?? "" : "";
+                        DateTime ngayTao = Convert.ToDateTime(row["NgayTao"]);
+                        sb.AppendLine($"{row["MaHoiVien"]},\"{row["TenDangNhap"]}\",\"{row["HoTen"]}\",\"{dtStr}\",{row["SoDu"]},{row["TongThoiGianChoi"]},{ngayTao:yyyy-MM-dd HH:mm:ss},\"{row["TrangThai"]}\"");
+                    }
+                    File.WriteAllText(saveFileDialog.FileName, sb.ToString(), Encoding.UTF8);
+                    MessageBox.Show("Xuất danh sách hội viên thành công tại:\n" + saveFileDialog.FileName, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi xuất file: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (IOException ex)
-            {
-                MessageBox.Show(this, "Không ghi được file (có thể file đang được mở trong Excel):\n" + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, "Lỗi xuất file: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>Xuất CSV (UTF-8 có BOM để Excel hiển thị đúng tiếng Việt).</summary>
-        private static void XuatCsv(DataTable dt, string duongDan)
-        {
-            static string Esc(object? v)
-            {
-                string s = v == null || v == DBNull.Value ? "" : v.ToString() ?? "";
-                return "\"" + s.Replace("\"", "\"\"") + "\"";
-            }
-
-            var sb = new StringBuilder();
-            sb.AppendLine("STT,Mã HV,Tên đăng nhập,Họ và tên,Điện thoại,Số dư (VNĐ),Tổng phút chơi,Ngày tạo,Trạng thái");
-            int stt = 1;
-            foreach (DataRow row in dt.Rows)
-            {
-                string ngayTao = row["NgayTao"] == DBNull.Value ? "" : Convert.ToDateTime(row["NgayTao"]).ToString("dd/MM/yyyy HH:mm");
-                decimal soDu = row["SoDu"] == DBNull.Value ? 0 : Convert.ToDecimal(row["SoDu"]);
-                sb.AppendLine(string.Join(",",
-                    stt++, row["MaHoiVien"], Esc(row["TenDangNhap"]), Esc(row["HoTen"]),
-                    Esc(row["DienThoai"] == DBNull.Value ? "" : $"=\"{row["DienThoai"]}\""),   // giữ số 0 đầu SĐT
-                    soDu.ToString("0", System.Globalization.CultureInfo.InvariantCulture),
-                    row["TongThoiGianChoi"], Esc(ngayTao), Esc(row["TrangThai"])));
-            }
-            File.WriteAllText(duongDan, sb.ToString(), new UTF8Encoding(true));
         }
     }
 }
