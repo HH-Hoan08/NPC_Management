@@ -19,6 +19,7 @@ namespace NPC.Server
         }
 
         private readonly LoaiNhatKy _loaiNhatKy;
+        public LoaiNhatKy LoaiHienTai => _loaiNhatKy;
         private readonly string _filePath;
 
         // UI Controls

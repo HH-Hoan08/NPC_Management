@@ -27,12 +27,12 @@ namespace NPC.Server
 
         private void OpenMdiChildForm<T>() where T : Form, new()
         {
-            OpenMdiChildForm(() => new T());
+            OpenMdiChildForm(() => new T(), null);
         }
 
-        private void OpenMdiChildForm<T>(Func<T> formFactory) where T : Form
+        private void OpenMdiChildForm<T>(Func<T> formFactory, Func<T, bool>? matchPredicate = null) where T : Form
         {
-            T? checkForm = Application.OpenForms.OfType<T>().FirstOrDefault();
+            T? checkForm = Application.OpenForms.OfType<T>().FirstOrDefault(f => matchPredicate == null || matchPredicate(f));
 
             if (checkForm != null)
             {
@@ -194,12 +194,16 @@ namespace NPC.Server
 
         private void tsmiNhatKyHV_Click(object sender, EventArgs e)
         {
-            OpenMdiChildForm(() => new frmXemNhatKy(frmXemNhatKy.LoaiNhatKy.NhatKyHoiVien));
+            OpenMdiChildForm(
+                () => new frmXemNhatKy(frmXemNhatKy.LoaiNhatKy.NhatKyHoiVien),
+                f => f.LoaiHienTai == frmXemNhatKy.LoaiNhatKy.NhatKyHoiVien);
         }
 
         private void tsmiNhatKyHT_Click(object sender, EventArgs e)
         {
-            OpenMdiChildForm(() => new frmXemNhatKy(frmXemNhatKy.LoaiNhatKy.NhatKyHeThong));
+            OpenMdiChildForm(
+                () => new frmXemNhatKy(frmXemNhatKy.LoaiNhatKy.NhatKyHeThong),
+                f => f.LoaiHienTai == frmXemNhatKy.LoaiNhatKy.NhatKyHeThong);
         }
     }
 }
